@@ -523,10 +523,10 @@ shinyServer(function(input, output, session) {
       as.datatable( formattable(acsdt, 
                                 list(    # colore a linha 6 da coluna dois de verde ou vemelho, se ela for menor ou maior que o numero da linha 1 coluna 2
                                   area(row=6, col=2) ~  formatter("span", 
-                                                                  style = x ~ style(color = ifelse(x <= acsdt[1,2], "#108e00", "red"))) ,
+                                                                  style = x ~ formattable::style(color = ifelse(x <= acsdt[1,2], "#108e00", "red"))) ,
                                   # colore o erro estimado de verde ou vemelho, se ela for menor ou maior que o erro desejado
                                   area(row=10, col=2) ~ formatter("span", 
-                                                                  style = x ~ style(color = ifelse(x <= input$erroacs, "#108e00", "red")))
+                                                                  style = x ~ formattable::style(color = ifelse(x <= input$erroacs, "#108e00", "red")))
                                   
                                   
                                 )#list
@@ -739,7 +739,7 @@ shinyServer(function(input, output, session) {
                                 list(
                                   # colore o erro estimado de verde ou vemelho, se ela for menor ou maior que o erro desejado
                                   area(row=5, col=2) ~ formatter("span", 
-                                                                  style = x ~ style(color = ifelse(x <= input$erroace, "#108e00", "red")))
+                                                                  style = x ~ formattable::style(color = ifelse(x <= input$erroace, "#108e00", "red")))
                                   
                                   
                                 )#list
@@ -922,10 +922,10 @@ shinyServer(function(input, output, session) {
       as.datatable( formattable(asdt, 
                                 list(    # colore a linha 6 da coluna dois de verde ou vemelho, se ela for menor ou maior que o numero da linha 1 coluna 2
                                   area(row=6, col=2) ~  formatter("span", 
-                                                                  style = x ~ style(color = ifelse(x <= asdt[1,2], "#108e00", "red"))) ,
+                                                                  style = x ~ formattable::style(color = ifelse(x <= asdt[1,2], "#108e00", "red"))) ,
                                   # colore o erro estimado de verde ou vemelho, se ela for menor ou maior que o erro desejado
                                   area(row=10, col=2) ~ formatter("span", 
-                                                                  style = x ~ style(color = ifelse(x <= input$erroas, "#108e00", "red")))
+                                                                  style = x ~ formattable::style(color = ifelse(x <= input$erroas, "#108e00", "red")))
                                   
                                   
                                 )#list

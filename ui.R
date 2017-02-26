@@ -23,7 +23,7 @@ shinyUI(
                          ),
                          column(6,
                                 img(class="img-polaroid",
-                                    src="http://www.packworld.com/sites/default/files/styles/lightbox/public/dsc00543.jpg?itok=OTOTKpGJ",
+                                    src="intro_picture.jpg",
                                     width  = 655,
                                     height = 595),
                                 tags$small(
