@@ -6,7 +6,7 @@ library(tidyr)
 library(dplyr)
 library(lazyeval)
 library(xlsx)
-library(xlsxjars)
+#library(xlsxjars)
 library(markdown)
 
 # functions ####
@@ -107,7 +107,7 @@ shinyServer(function(input, output, session) {
     # 'size', 'type', e 'datapath' . A coluna 'datapath' 
     # ira conter os nomes dos arquivos locais onde o dado pode ser encontrado
     
-    if (is.null(inFile)){return(NULL)} # se o arquivo nao for carregado, retornar null
+    if (is.null(inFile)){return(NULL )} # se o arquivo nao for carregado, retornar null
     else if(input$excel == F)
     {
       raw_data <- read.csv(inFile$datapath, header=TRUE, sep=input$sep, dec=input$dec,quote='"')
@@ -468,7 +468,7 @@ shinyServer(function(input, output, session) {
         "Selecione as variáveis pivô:", # nome que sera mostrado na UI
         choices = names(data), # como as opcoes serao atualizadas de acordo com o arquivo que o usuario insere, deixamos este campo em branco
         multiple = TRUE,  # permite mais de uma opcao ser selecionada
-        selected = NULL,     
+        selected = list() ,     
         options = list(
           placeholder = 'Selecione as variaveis abaixo',
           onInitialize = I('function() { this.setValue(""); }')
