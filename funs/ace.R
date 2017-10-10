@@ -77,13 +77,13 @@ ace <- function(df,VCC, area_parcela, area_estrato, grupos, idade, alpha = 0.05,
     summarise_(.dots = 
                  setNames( 
                    list(
-                     interp(~ mean(idade), idade = as.name(idade) ),
+                     interp(~ mean(idade,na.rm=T), idade = as.name(idade) ),
                      interp(~ n() ) ,
-                     ~ mean(Nj),
-                     ~ mean(N),
+                     ~ mean(Nj,na.rm=T),
+                     ~ mean(N,na.rm=T),
                      ~ Nj/N,
-                     interp(~ sum(VCC), VCC= as.name(VCC) ),
-                     interp(~ sum(VCC^2), VCC= as.name(VCC) ),
+                     interp(~ sum(VCC,na.rm=T), VCC= as.name(VCC) ),
+                     interp(~ sum(VCC^2,na.rm=T), VCC= as.name(VCC) ),
                      interp(~ mean(VCC, na.rm =T), VCC= as.name(VCC) ),
                      interp(~ Pj * var(VCC, na.rm=T), Pj = as.name("Pj"), VCC = as.name(VCC) ),
                      interp(~ Pj * sd(VCC, na.rm=T), Pj = as.name("Pj"), VCC = as.name(VCC) ),

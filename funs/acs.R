@@ -34,10 +34,10 @@ acs <- function(df,VCC, area_parcela, area_total, idade, grupos, alpha = 0.05, E
       .dots = 
         setNames( 
           list( 
-            interp(~ mean(idade), idade = as.name(idade) ),
+            interp(~ mean(idade,na.rm=T), idade = as.name(idade) ),
             interp(~ n() ),
-            interp(~ mean(area_total) / ( mean(area_parcela)/10000 ), area_total = as.name(area_total), area_parcela = as.name(area_parcela)  ),
-            interp(~ sd(VCC) / mean(VCC) * 100, VCC = as.name(VCC) ),
+            interp(~ mean(area_total,na.rm=T) / ( mean(area_parcela,na.rm=T)/10000 ), area_total = as.name(area_total), area_parcela = as.name(area_parcela)  ),
+            interp(~ sd(VCC) / mean(VCC,na.rm=T) * 100, VCC = as.name(VCC) ),
             ~ qt(alpha/2, df = n-1, lower.tail = FALSE),
             ~ ifelse(pop=="inf", 
                      qt(alpha/2, df = ceiling( t^2 * CV^2 / Erro^2) - 1, lower.tail = FALSE)  ,
@@ -47,8 +47,8 @@ acs <- function(df,VCC, area_parcela, area_total, idade, grupos, alpha = 0.05, E
                      ceiling( t_rec ^2 * CV^2 / ( Erro^2 +(t_rec^2 * CV^2 / N) ) ) ),
             interp(~ mean(VCC, na.rm=T), VCC = as.name(VCC) ),
             interp(~ ifelse(pop=="inf", 
-                            sqrt( var(VCC)/n ), 
-                            sqrt( var(VCC)/n  * (1 - (n/N)) ) ) , 
+                            sqrt( var(VCC,na.rm=T)/n ), 
+                            sqrt( var(VCC,na.rm=T)/n  * (1 - (n/N)) ) ) , 
                    VCC = as.name(VCC), n = as.name("n"), N = as.name("N") ),
             ~ Sy * t ,
             ~ Erroabs / Y * 100,
