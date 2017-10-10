@@ -37,7 +37,7 @@ acs <- function(df,VCC, area_parcela, area_total, idade, grupos, alpha = 0.05, E
             interp(~ mean(idade,na.rm=T), idade = as.name(idade) ),
             interp(~ n() ),
             interp(~ mean(area_total,na.rm=T) / ( mean(area_parcela,na.rm=T)/10000 ), area_total = as.name(area_total), area_parcela = as.name(area_parcela)  ),
-            interp(~ sd(VCC) / mean(VCC,na.rm=T) * 100, VCC = as.name(VCC) ),
+            interp(~ sd(VCC,na.rm=T) / mean(VCC,na.rm=T) * 100, VCC = as.name(VCC) ),
             ~ qt(alpha/2, df = n-1, lower.tail = FALSE),
             ~ ifelse(pop=="inf", 
                      qt(alpha/2, df = ceiling( t^2 * CV^2 / Erro^2) - 1, lower.tail = FALSE)  ,
