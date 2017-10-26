@@ -3,35 +3,35 @@ inv_summary <- function(df,DAP, HT, VCC, area_parcela, groups, area_total,idade,
   suppressPackageStartupMessages(require(dplyr))
   require(lazyeval)
   
-  if( missing(df)||is.null(df)||df==F)
-  {stop("please insert data frame", call.=F)}
+  if( is.na(df) || missing(df)||is.null(df)||df==F)
+  {stop("please insert data frame")}
   
-  if(missing(DAP)||is.null(DAP)||DAP==F||DAP=="" || !is.numeric(df[[DAP]]))
-  {stop("please insert diameter variable", call.=F)}
+  if( is.na(DAP) || missing(DAP)||is.null(DAP)||DAP==F||DAP=="")
+  {stop("please insert diameter variable")}
   
- # if(missing(HT)||is.null(HT)||HT==F||HT=="" || !is.numeric(df[[HT]]))
- # {stop("please insert height variable", call.=F)}
+  if( is.na(HT) || missing(HT)||is.null(HT)||HT==F||HT=="")
+  {stop("please insert height variable")}
   
-  if(missing(VCC)||is.null(VCC)||VCC==F||VCC=="" || !is.numeric(df[[VCC]]))
-  {stop("please insert volume variable", call.=F)}
+  if( is.na(VCC) || missing(VCC)||is.null(VCC)||VCC==F||VCC=="")
+  {stop("please insert volume variable")}
   
-  if(missing(area_parcela)||is.null(area_parcela)||area_parcela==F||area_parcela=="")
-  {stop("please insert sample area variable", call.=F)}
+  if( is.na(area_parcela) || missing(area_parcela)||is.null(area_parcela)||area_parcela==F||area_parcela=="")
+  {stop("please insert sample area variable")}
   
-  if(missing(groups)||is.null(groups)||groups==F||groups==""){groups<-NULL}else{df <-df[  apply(!is.na(df[groups ]) , MARGIN = 1, function(x) all(x) ), ] }
+  if( is.na(groups) || missing(groups)||is.null(groups)||groups==F||groups==""){groups<-NULL}else{df <-df[  apply(!is.na(df[groups ]) , MARGIN = 1, function(x) all(x) ), ] }
   
   
   # argumentos opcionais
-  if(missing(area_total) || is.null(area_total) || is.na(area_total) || area_total==F || area_total==""   ){df$area_total<-NA; area_total <- "area_total"}
-  if(missing(idade)      || is.null(idade)      || is.na(idade)      || idade==F      || idade==""        ){df$idade<-NA;      idade <- "idade"}
-  if(missing(VSC)        || is.null(VSC)        || is.na(VSC)        || VSC==F        || VSC==""          ){df$VSC<-NA;        VSC <- "VSC"}
-  if(missing(HT)         || is.null(HT)         || is.na(HT)         || HT==F         || HT==""           ){df$HT<-NA; df$Hd<-NA; HT <- "HT";   Hd <- "Hd"}
+  if( is.na(area_total) || missing(area_total) || is.null(area_total) || area_total==F || area_total==""   ){df$area_total<-NA; area_total <- "area_total"}
+  if( is.na(idade)      || missing(idade)      || is.null(idade)      || idade==F      || idade==""        ){df$idade<-NA;      idade <- "idade"}
+  if( is.na(VSC)        || missing(VSC)        || is.null(VSC)        || VSC==F        || VSC==""          ){df$VSC<-NA;        VSC <- "VSC"}
   
   # argumentos de area podem ser numericos
-  if(is.numeric(area_parcela)){df$area_parcela <- area_parcela; area_parcela <- "area_parcela"}
-  if(is.numeric(area_total  )){df$area_total   <- area_total; area_total     <- "area_total"}
-
-  if((missing(Hd)||is.null(Hd)|| is.na(Hd)||Hd==F||Hd=="")  &&  !all(is.na(df[[HT]]) )) { # calculo da altura dominante
+  if( !is.na(area_parcela) || is.numeric(area_parcela)){df$area_parcela <- area_parcela; area_parcela <- "area_parcela"}
+  if( !is.na(area_total) || is.numeric(area_total  )){df$area_total   <- area_total; area_total     <- "area_total"}
+  
+  
+  if( is.na(Hd) || missing(Hd)||is.null(Hd)||Hd==F||Hd=="") { # calculo da altura dominante
     
     if(  "HD" %in% names(df) ){ df$HD <- NULL }
     
@@ -55,9 +55,7 @@ inv_summary <- function(df,DAP, HT, VCC, area_parcela, groups, area_total,idade,
         )
       }
     
-  } else{ 
-    x <- df %>% mutate_(HD = Hd) 
-    }
+  } else{ x <- df %>% rename_(HD = Hd) }
   
   
   x %>% 
@@ -72,7 +70,7 @@ inv_summary <- function(df,DAP, HT, VCC, area_parcela, groups, area_total,idade,
           interp(~ round(mean(DAP, na.rm=T), 2), DAP = as.name(DAP) ) ,
           ~ round(sqrt(mean(AS, na.rm=T) * 40000 / pi), 2)  ,
           interp(~round(mean(HT, na.rm=T), 2), HT = as.name(HT) ),
-          ~ round(mean(HD, na.rm=T), 2),
+          ~ round(mean(HD), 2),
           ~ round(sum(AS, na.rm=T) * 10000/AREA_PARCELA, 4),
           interp(~round(sum(VCC, na.rm=T) * 10000/ AREA_PARCELA, 4 ), VCC = as.name(VCC), AREA_PARCELA = as.name("AREA_PARCELA") ),
           interp(~round(sum(VSC, na.rm=T) * 10000/ AREA_PARCELA, 4 ), VSC = as.name(VSC), AREA_PARCELA = as.name("AREA_PARCELA") )

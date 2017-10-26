@@ -4,23 +4,23 @@ ace <- function(df,VCC, area_parcela, area_estrato, grupos, idade, alpha = 0.05,
   suppressPackageStartupMessages(require(dplyr))
   require(lazyeval)
   
-  if(missing(df)||is.null(df)||df==F||df=="")
+  if(missing(df)|| is.na(df) || is.null(df)||df==F||df=="")
   {stop("Escolha o data frame") }
   
-  if(missing(area_estrato)||is.null(area_estrato)||area_estrato==F||area_estrato=="")
+  if(missing(area_estrato) || is.na(area_estrato) ||is.null(area_estrato)||area_estrato==F||area_estrato=="")
   {stop("Escolha a variavel Area do Estrato (ha)") }
   
-  if(missing(area_parcela)||is.null(area_parcela)||area_parcela==F||area_parcela=="")
+  if(missing(area_parcela) || is.na(area_parcela) ||is.null(area_parcela)||area_parcela==F||area_parcela=="")
   {stop("Escolha a variavel Area da parcela (m2)") }
   
-  if(missing(VCC)||is.null(VCC)||VCC==F||VCC=="")
+  if(missing(VCC)|| is.na(VCC) || is.null(VCC)||VCC==F||VCC=="")
   {stop("Escolha a variavel Volume (m3)") }
   
-  if(missing(grupos)||is.null(grupos)||is.na(grupos)||grupos==F||grupos=="")
+  if(missing(grupos)|| is.na(grupos) || is.null(grupos)||is.na(grupos)||grupos==F||grupos=="")
   {stop("Escolha a(s) variavel(is) de estratificacao") }
   
   # argumentos opcionais
-  if(missing(idade)||is.null(idade)||idade==F||idade=="") {df$idade<-NA; idade<-"idade"}
+  if(missing(idade)|| is.na(idade) ||is.null(idade)||idade==F||idade=="") {df$idade<-NA; idade<-"idade"}
   
   # argumentos de area podem ser numericos
   if(is.numeric(area_parcela)){df$area_parcela <- area_parcela; area_parcela <- "area_parcela"}

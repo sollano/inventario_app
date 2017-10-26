@@ -4,22 +4,22 @@ as_diffs <- function(df, VCC, area_parcela, area_total,  idade, grupos, alpha = 
   require(tidyr)
   require(lazyeval)
   
-  if(missing(grupos) || is.null(grupos) || grupos==F || grupos==""){grupos=NULL}
+  if(missing(grupos)||is.null(grupos)|| is.na(grupos) ||grupos==F||grupos==""){grupos<-NULL}
   
-  if(missing(df)||is.null(df)||df==F||df=="")
+  if(missing(df)||is.null(df) || is.na(df) ||df==F||df=="")
   {stop("Escolha o data frame") }
   
-  if(missing(area_total)||is.null(area_total)||area_total==F||area_total=="")
+  if(missing(area_total)|| is.na(area_total) ||is.null(area_total)||area_total==F||area_total=="")
   {stop("Escolha a variavel Area total (ha) ") }
   
-  if(missing(area_parcela)||is.null(area_parcela)||area_parcela==F||area_parcela=="")
+  if(missing(area_parcela) || is.na(area_parcela) ||is.null(area_parcela)||area_parcela==F||area_parcela=="")
   {stop("Escolha a variavel Area da parcela (m2) ") }
   
-  if(missing(VCC)||is.null(VCC)||VCC==F||VCC=="")
+  if(missing(VCC) || is.na(VCC) ||is.null(VCC)||VCC==F||VCC=="")
   {stop("Escolha a variavel Volume (m3)") }
   
   # argumentos opcionais
-  if(missing(idade)||is.null(idade)||idade==F||idade==""){df$idade<-NA; idade <- "idade"}
+  if(missing(idade)|| is.na(idade)||is.null(idade)||idade==F||idade==""){df$idade<-NA; idade <- "idade"}
   
   # argumentos de area podem ser numericos
   if(is.numeric(area_parcela)){df$area_parcela <- area_parcela; area_parcela <- "area_parcela"}
