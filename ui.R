@@ -117,15 +117,6 @@ shinyUI(
                                   
                                   column(4,
                                          wellPanel(
-                                           h3("Espécie"),
-                                           p("Selecione o nome da variável referente à Espécie:"#, 
-                                             #style = "font-family: 'Source Sans Pro';"
-                                           ),
-                                           uiOutput("selec_especies")
-                                         )), # Coluna Espécie
-                                  
-                                  column(4,
-                                         wellPanel(
                                            h3("Parcela"),
                                            p("Selecione o nome da variável referente à Parcela:"#, 
                                              #style = "font-family: 'Source Sans Pro';"
@@ -140,12 +131,7 @@ shinyUI(
                                              #style = "font-family: 'Source Sans Pro';"
                                            ),
                                            uiOutput("selec_dap")
-                                         )) # Coluna dap
-                                  
-                                ), # fluidRow 1
-                                
-                                fluidRow(
-                                  
+                                         )), # Coluna dap
                                   
                                   column(4,
                                          wellPanel(
@@ -154,8 +140,23 @@ shinyUI(
                                              #style = "font-family: 'Source Sans Pro';"
                                            ),
                                            uiOutput("selec_ht")
-                                         )), # Coluna ht
+                                         )) # Coluna ht
                                   
+                                  
+                                ), # fluidRow 1
+                                
+                                fluidRow(
+                                  
+                                  column(4,
+                                         wellPanel(
+                                           h3("Altura dominante"),
+                                           p("Selecione o nome da variável referente à altura dominante"#, 
+                                             #style = "font-family: 'Source Sans Pro';"
+                                           ),
+                                           uiOutput("selec_hd")
+                                         )), # Coluna altura dominante
+
+
                                   column(4,
                                          wellPanel(
                                            h3("Volume com casca"),
@@ -193,7 +194,7 @@ shinyUI(
                                   column(4,
                                          wellPanel(
                                            h3("Área total"),
-                                           p("Selecione o nome da variável referente à Área total (ha)"#, 
+                                           p("Selecione o nome da variável referente à Área total (ha):"#, 
                                              #style = "font-family: 'Source Sans Pro';"
                                            ),
                                            uiOutput("selec_area.total")
@@ -203,7 +204,7 @@ shinyUI(
                                   column(4,
                                          wellPanel(
                                            h3("Estrato"),
-                                           p("Selecione o nome da variável referente à Estrato"#, 
+                                           p("Selecione o nome da variável referente à Estrato:"#, 
                                              #style = "font-family: 'Source Sans Pro';"
                                            ),
                                            uiOutput("selec_estrato")
@@ -216,24 +217,15 @@ shinyUI(
                                 fluidRow(
                                   
                                   
-                                  column(4,
-                                         wellPanel(
-                                           h3("Estrutura vertical"),
-                                           p("Selecione o nome da variável referente à Estrutura vertical"#, 
-                                             #style = "font-family: 'Source Sans Pro';"
-                                           ),
-                                           uiOutput("selec_est.vertical")
-                                         )), # Coluna area.total
-                                  
                                   
                                   column(4,
                                          wellPanel(
-                                           h3("Estrutura interna"),
-                                           p("Selecione o nome da variável referente à Estrutura interna"#, 
+                                           h3("Idade"),
+                                           p("Selecione o nome da variável referente à idade:"#, 
                                              #style = "font-family: 'Source Sans Pro';"
                                            ),
-                                           uiOutput("selec_est.interna")
-                                         )) # Coluna area.total
+                                           uiOutput("selec_idade")
+                                         )) # Coluna idade
                                   
                                   
                                 ) # fluidRow 4
@@ -261,12 +253,10 @@ shinyUI(
                                   sidebarPanel(
                                     
                                     h3("Intervalo de classe"),
-                                    numericInput("int.classe", "Insira o intervalo de classe:", 10, 1, 50, 0.5),
+                                    numericInput("int.classe", "Insira o intervalo de classe:", 2, 1, 50, 0.5),
                                     
                                     h3("Diâmetro mínimo"),
-                                    numericInput("diam.min", "Insira o diâmetro mínimo:", 10, 1, 100, 1),
-                                    
-                                    uiOutput("selec_rotuloNI"),
+                                    numericInput("diam.min", "Insira o diâmetro mínimo:", 5, 1, 100, 1),
                                     
                                     h3("Remover dados"),
                                     
@@ -275,10 +265,10 @@ shinyUI(
                                     uiOutput("rm_vars"),
                                     uiOutput("selec_area_parcela_num"),
                                     uiOutput("selec_area_total_num"),
+                                    uiOutput("ajust_ht"),
                                     uiOutput("ui_estvol1"),
                                     uiOutput("ui_estvol3"),
                                     uiOutput("ui_estvol4"),
-                                    uiOutput("checkbox_calc.est.vert"),
                                     uiOutput("consist_warning1")
                                     
                                     

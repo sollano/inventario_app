@@ -239,26 +239,6 @@ shinyServer(function(input, output, session) {
   # Mapeamento ####
   
   # ui
-  output$selec_especies     <- renderUI({
-    
-    data <- rawData_()
-    
-    selectizeInput( # cria uma lista de opcoes em que o usuario pode clicar
-      "col.especies", # Id
-      NULL, # nome que sera mostrado na UI
-      choices = names(data), # como as opcoes serao atualizadas de acordo com o arquivo que o usuario insere, deixamos este campo em branco
-      selected = especies_names,
-      multiple=T,
-      options = list(
-        maxItems = 1,
-        placeholder = 'selecione uma coluna abaixo'#,
-        #onInitialize = I('function() { this.setValue(""); }')
-      ) # options    
-    ) # selctize
-    
-    # obs: multiple = T & maxItems = 1, garantem que a celula fique vazia, caso o app falhe
-    # em tentar adivinhar o nome da especie
-  })
   output$selec_parcelas     <- renderUI({
     
     data <- rawData_()
@@ -297,7 +277,6 @@ shinyServer(function(input, output, session) {
     
     
   })
-  
   output$selec_ht           <- renderUI({
     
     data <- rawData_()
@@ -317,6 +296,7 @@ shinyServer(function(input, output, session) {
     
     
   })
+  
   output$selec_vcc          <- renderUI({
     
     data <- rawData_()
@@ -345,6 +325,25 @@ shinyServer(function(input, output, session) {
       "Caso o dado não possua uma coluna de volume, este pode ser calculado na aba 'Preparação' ", # nome que sera mostrado na UI
       choices = names(data), # como as opcoes serao atualizadas de acordo com o arquivo que o usuario insere, deixamos este campo em branco
       selected = VSC_names,     
+      multiple=T,
+      options = list(
+        maxItems = 1,
+        placeholder = 'selecione uma coluna abaixo'#,
+        #onInitialize = I('function() { this.setValue(""); }')
+      ) # options    
+    ) # selctize
+    
+    
+  })
+  output$selec_hd           <- renderUI({
+    
+    data <- rawData_()
+    
+    selectizeInput( # cria uma lista de opcoes em que o usuario pode clicar
+      "col.hd", # Id
+      NULL, # nome que sera mostrado na UI
+      choices = names(data), # como as opcoes serao atualizadas de acordo com o arquivo que o usuario insere, deixamos este campo em branco
+      selected = HD_names,     
       multiple=T,
       options = list(
         maxItems = 1,
@@ -408,65 +407,28 @@ shinyServer(function(input, output, session) {
     
   })
   
-  output$selec_est.vertical <- renderUI({
+  output$selec_idade        <- renderUI({
     
     data <- rawData_()
     
-    selectizeInput("col.est.vertical",
-                   NULL, # nome que sera mostrado na UI
-                   choices = names(data),
-                   # selected =  ,
-                   multiple = T,
-                   options = list(
-                     maxItems = 1,
-                     placeholder = 'Selecione uma coluna abaixo:'#,
-                     #    onInitialize = I('function() { this.setValue(""); }')
-                   ) # options    
-    )# selectize
+    selectizeInput( # cria uma lista de opcoes em que o usuario pode clicar
+      "col.idade", # Id
+      NULL, # nome que sera mostrado na UI
+      choices = names(data), # como as opcoes serao atualizadas de acordo com o arquivo que o usuario insere, deixamos este campo em branco
+      selected = idade_names,     
+      multiple=T,
+      options = list(
+        maxItems = 1,
+        placeholder = 'selecione uma coluna abaixo'#,
+        #onInitialize = I('function() { this.setValue(""); }')
+      ) # options    
+    ) # selctize
     
-  })
-  output$selec_est.interna  <- renderUI({
-    
-    data <- rawData_()
-    
-    selectizeInput("col.est.interna",
-                   NULL, # nome que sera mostrado na UI
-                   choices = names(data),
-                   # selected = ,
-                   multiple = T,
-                   options = list(
-                     maxItems = 1,
-                     placeholder = 'Selecione uma coluna abaixo:'#,
-                     #    onInitialize = I('function() { this.setValue(""); }')
-                   ) # options    
-    )# selectize
     
   })
   
   # Preparação ####
   # ui
-  output$selec_rotuloNI     <- renderUI({
-    
-    validate(need(input$col.especies != "","") )
-    
-    data <- rawData_()
-    
-    list(
-      
-      h3("Espécie não-identificada"),
-      
-      selectizeInput("rotutuloNI",
-                     "Selecione o(s) indice(s) referente(s) às espécies não identificadas:", # nome que sera mostrado na UI
-                     choices = levels(as.factor(data[,input$col.especies])),
-                     multiple = TRUE,
-                     options = list(
-                       placeholder = 'Selecione um ou mais rótulos abaixo',
-                       onInitialize = I('function() { this.setValue(""); }')
-                     ) )
-      
-    )
-    
-  })
   output$rm_data_var <- renderUI({
     
     data <- rawData_()
@@ -567,13 +529,38 @@ shinyServer(function(input, output, session) {
     )
     
   })
+  
+  # Estimar altura
+  output$ajust_ht <- renderUI({
+    
+    # precisa que o usuario nao tenha selecionado estrutura vertical E tenha selecionado altura
+    data <- rawData_()
+    req( any(is.na(data[[input$col.ht]])) )
+    
+    list(
+      
+      h3("Estimar altura das árvores não medidas"),
+      
+      h5("A altura será estimada utilizando um dos modelos hipsométricos abaixo:"),
+      
+      radioButtons("modelo_estvol",
+                   label = "Selecione o modelo para ser utilizado:",
+                   choices = c(
+                     "LN(HT) = b0 + b1 * 1/DAP + e",
+                     "LN(HT) = b0 + b1 * LN(HT) + b2 * LN(HD) + e"
+                     
+                   ) )      
+    
+      
+    )
+    
+  })
+ 
   # Calculo de volume 
   output$ui_estvol1 <- renderUI({
     
     # precisa que o usuario nao tenha selecionado o volume
     req(is.null(input$col.vcc) || input$col.vcc =="" )
-    
-    data <- rawData_()
     
     list(
       
@@ -639,24 +626,7 @@ shinyServer(function(input, output, session) {
     )
     
   })
-  # calcular estrutura vertical
-  output$checkbox_calc.est.vert <- renderUI({
-    
-    # precisa que o usuario nao tenha selecionado estrutura vertical E tenha selecionado altura
-    req((is.null(input$col.est.vertical) || input$col.est.vertical=="") &&  (!is.null(input$col.ht) || input$col.ht!="")   )
-    
-    list(
-      
-      h3("Calcular Estrutura interna"),
-      
-      h5("A estrutura interna será calculada utilizando a variável altura, segundo o método de Souza (2002)"),
-      
-      radioButtons("est.vert.calc",
-                   "Deseja classificar a estrutura interna utilizando a variável altura?",
-                   c("Sim", "Nao"), "Nao" )
-    )
-    
-  })
+
   # tabela
   # rawData sera o dado utilizado durante o resto do app
   # as alteracoes feitas em 'preparacao' serao salvas aqui
@@ -862,18 +832,16 @@ shinyServer(function(input, output, session) {
     #req(input$col.especies,input$col.parcelas, input$col.dap,input$col.ht,input$col.vcc, input$col.vsc,input$col.area.parcela,input$col.area.total, input$col.col.estrato,  input$col.est.vertical,input$col.est.interna)
     
     varnameslist <- list(
-      especies=input$col.especies,
       parcelas=input$col.parcelas,
       dap=input$col.dap,
       ht=input$col.ht,
+      hd=input$col.hd,
       vcc=input$col.vcc,
       vsc=input$col.vsc,
       area.parcela=input$col.area.parcela,
       area.total=input$col.area.total,
       estrato=input$col.estrato,
-      est.vertical=input$col.est.vertical,
-      est.interna=input$col.est.interna,
-      NI=input$rotutuloNI,
+      idade=input$col.idade,
       IC=input$int.classe,
       diam.min=input$diam.min
     )
@@ -1010,7 +978,7 @@ shinyServer(function(input, output, session) {
                                            dapmin = nm$diam.min, 
                                            especies = NA, 
                                            volume = nm$vcc,
-                                           rotulo.NI = nm$NI )
+                                           rotulo.NI = NA )
     
      lista
   })
@@ -1145,9 +1113,9 @@ shinyServer(function(input, output, session) {
                      area_parcela = nm$area.parcela,
                      groups       = grupos,
                      area_total   = nm$area.total,
-                     idade        = NA,
+                     idade        = nm$idade,
                      VSC          = nm$vsc,
-                     Hd           = NA)
+                     Hd           = nm$hd)
     
     
     
@@ -1157,6 +1125,8 @@ shinyServer(function(input, output, session) {
     names(x)[names(x)=="HT"] <- nm$ht
     names(x)[names(x)=="VCC"] <- nm$vcc
     names(x)[names(x)=="VSC"] <- nm$vsc
+    names(x)[names(x)=="HD"] <- nm$hd
+    names(x)[names(x)=="IDADE"] <- nm$idade
     x
     
   })
@@ -1209,7 +1179,7 @@ shinyServer(function(input, output, session) {
                  VCC            = nm$vcc,
                  area_parcela   = nm$area.parcela,
                  area_total     = nm$area.total, 
-                 idade          = NA,
+                 idade          = nm$idade,
                  grupos         = nm$estrato, 
                  alpha          = input$alpha_inv, 
                  Erro           = input$erro_inv, 
@@ -1275,7 +1245,7 @@ shinyServer(function(input, output, session) {
              area_parcela   = nm$area.parcela, 
              area_estrato   = nm$area.total, 
              grupos         = nm$estrato, 
-             idade          = NA, 
+             idade          = nm$idade, 
              alpha          = input$alpha_inv, 
              Erro           = input$erro_inv, 
              casas_decimais = input$cd_inv, 
@@ -1355,7 +1325,7 @@ shinyServer(function(input, output, session) {
                   VCC            = nm$vcc,
                   area_parcela   = nm$area.parcela,
                   area_total     = nm$area.total, 
-                  idade          = NA,
+                  idade          = nm$idade,
                   grupos         = nm$estrato, 
                   alpha          = input$alpha_inv, 
                   Erro           = input$erro_inv, 
