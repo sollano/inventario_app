@@ -1,20 +1,21 @@
 options(java.parameters = "-Xss2048k")
-library(DT)
+library(shiny)
+suppressPackageStartupMessages(library(DT))
 #library(plotly)
 library(formattable)
 library(readxl)
 #library(plyr)
 library(tibble)
 library(tidyr)
-library(dplyr)
+suppressPackageStartupMessages(library(dplyr))
 library(lazyeval)
 library(ggplot2)
 library(ggdendro)
 library(ggthemes)
-library(xlsx)
+suppressPackageStartupMessages(library(xlsx))
 library(rJava)
 library(xlsxjars)
-#library(rmarkdown)
+library(rmarkdown)
 
 # Data e functions
 
@@ -31,6 +32,9 @@ source("funs/classe_diametro.R"    , encoding="UTF-8")
 source("funs/htdapratio.R"         , encoding="UTF-8")
 source("funs/consistency.R"        , encoding="UTF-8")
 source("funs/xlsx.write.list.R"    , encoding="UTF-8")
+source("funs/lm_table.R"           , encoding="UTF-8")
+source("funs/inv.R"                , encoding="UTF-8")
+source("funs/hdjoin.R"             , encoding="UTF-8")
 
 # Funcao para testar se uma variavel e numerica
 # Sera utilizada dentro da funcao validate
@@ -61,7 +65,7 @@ est.interno_names <- c("luminosidade","light", "light_09")
 
 
 DAP_names <- c("DAP","Dap","dap", "dbh", "Dbh","DBH","DBH_11")
-HT_names <- c("HT_EST", "HT", "Ht", "ht","Htot","ALTURA","Altura","Altura_Total", "ALTURA_TOTAL")
+HT_names <- c("HT", "Ht", "ht","Htot","ALTURA","Altura","Altura_Total", "ALTURA_TOTAL")
 VCC_names <- c("VCC","Vcc", "vcc", "VOL", "Vol", "vol" ,"VOLUME")
 area_parcela_names <- c("trans.area","AREA_PARCELA","Area_Parcela","area_parcela","parc.area" ,"AREAPARCELA", "areaparcela", "transect.area", "Transect.Area", "TRANSECT.AREA","transect_area","Transect_Area","TRANSECT_AREA")
 area_total_names <- c("sub.area","AREA_TOTAL", "AREATOTAL", "area_total", "areatotal","AREA_TALHAO", "AREATALHAO", "area_talhao", "areatalhao","total.area","Total.Area","TOTAL.AREA","total_area","Total_Area","TOTAL_AREA", "area.total", "Area.total", "Area.Total", "AREA.TOTAL")
@@ -70,6 +74,7 @@ VSC_names <- c("VSC","Vsc", "vsc")
 HD_names <- c("HD", "Hd", "hd", "ALTURA_DOMINANTE", "ALT_DOM")
 grupos_names <- c(c("TALHAO", "PARCELA"), c("area.code", "transect"), c("codigo", "transecto"), "parcela", "PARCELA", "transect", "cod.parcela", "Cod.parcela", "COD.PARCELA")
 estratos_names <- c("TALHAO", "Talhao", "talhao","COD_TALHAO","Cod_Talhao","cod_talhao", "COD.TALHAO", "Cod.Talhao","cod.talhao", "area.code", "Area.Code","AREA.CODE", "area_code","Area_Code","AREA_CODE")
+obs_names <- c("OBS")
 
 # Server ####
 
@@ -214,7 +219,7 @@ shinyServer(function(input, output, session) {
   })
   
   # render table
-  output$rawdata <- renderDataTable({ # renderizamos uma DT::DataTable
+  output$rawdata <- DT::renderDataTable({ # renderizamos uma DT::DataTable
     
     validate(need(!is.null(rawData_()), "Please import a dataset"))
     
@@ -407,6 +412,25 @@ shinyServer(function(input, output, session) {
     
   })
   
+  output$selec_obs          <- renderUI({
+    
+    data <- rawData_()
+    
+    selectizeInput( # cria uma lista de opcoes em que o usuario pode clicar
+      "col.obs", # Id
+      NULL, # nome que sera mostrado na UI
+      choices = names(data), # como as opcoes serao atualizadas de acordo com o arquivo que o usuario insere, deixamos este campo em branco
+      selected = obs_names,     
+      multiple=T,
+      options = list(
+        maxItems = 1,
+        placeholder = 'selecione uma coluna abaixo'#,
+        #onInitialize = I('function() { this.setValue(""); }')
+      ) # options    
+    ) # selctize
+    
+    
+  })
   output$selec_idade        <- renderUI({
     
     data <- rawData_()
@@ -543,11 +567,11 @@ shinyServer(function(input, output, session) {
       
       h5("A altura será estimada utilizando um dos modelos hipsométricos abaixo:"),
       
-      radioButtons("modelo_estvol",
+      radioButtons("modelo_est_ht",
                    label = "Selecione o modelo para ser utilizado:",
                    choices = c(
                      "LN(HT) = b0 + b1 * 1/DAP + e",
-                     "LN(HT) = b0 + b1 * LN(HT) + b2 * LN(HD) + e"
+                     "LN(HT) = b0 + b1 * 1/DAP + b2 * LN(HD) + e"
                      
                    ) )      
     
@@ -677,6 +701,47 @@ shinyServer(function(input, output, session) {
     
     data[, input$col.rm_vars] <- NULL
     
+    
+    # Aqui caso o usuario selecione, zeros serao transformados em NA nas variaveis numericas
+    
+    if(input$zero_to_NA){
+      
+      #ex1["HT"][ ex1["HT"] == 0 ] <- NA
+      
+      # Converter zero em NA quando a variavel tiver o seu nome definido
+      if(nm$dap!=""){  data[nm$dap][ data[nm$dap] == 0 ] <- NA }
+      if(nm$ht!= ""){  data[nm$ht ][ data[nm$ht ] == 0 ] <- NA }
+   #   if(nm$hd!= ""){  data[nm$hd ][ data[nm$hd ] == 0 ] <- NA }
+  #    if(nm$vcc!=""){  data[nm$vcc][ data[nm$vcc] == 0 ] <- NA }
+   #   if(nm$vsc!=""){  data[nm$vsc][ data[nm$vsc] == 0 ] <- NA }
+    }
+    
+    # Estimar altura caso altura seja selecionada e possua NAs, ou seja, arvores nao medidas
+    # Esse se evita mensagens de erro quando as colunas nao forem selecionadas
+    if( is.null(input$col.ht) || input$col.ht=="" || is.na(input$col.ht) || is.null(input$col.hd) || input$col.hd=="" || is.na(input$col.hd) || is.na(input$col.dap) || input$col.dap=="" || is.null(input$col.dap) ||   is.null(input$modelo_est_ht) || input$modelo_est_ht=="" || is.na(input$modelo_est_ht) ){
+      
+      
+    }else if( nm$ht!="" && any(is.na(data[[nm$ht]])) ){
+      
+      if(input$modelo_est_ht ==  "LN(HT) = b0 + b1 * 1/DAP + e" ){
+        
+        modelo_ht <- paste( "log(", nm$ht, ") ~ inv(", nm$dap ,")"  )
+        
+      }else if(input$modelo_est_ht ==  "LN(HT) = b0 + b1 * 1/DAP + b2 * LN(HD) + e" ){
+        
+        modelo_ht <- paste( "log(", nm$ht, ") ~ inv(", nm$dap ,") + ", "log(", nm$hd ,")" )
+      }
+      
+      
+      data <- data %>%  
+        lm_table(modelo_ht,output = "est" ) %>% 
+        mutate( HT_EST = ifelse(is.na( .data[[nm$ht]] ), est, .data[[nm$ht]] ) ) %>% 
+        select(HT_EST, everything(), -est )
+      
+    }
+    
+    
+    
     # A seguir e feito o calculo do volume, caso o usuario nao insira uma variavel de volume e as variaveis necessarias para o calculo
     if( is.null(input$modelo_estvol) ||  is.null(input$col.dap)  || is.null(input$b0_estvol) || is.null(input$b1_estvol) || is.na(input$modelo_estvol) ||  is.na(input$col.dap)  || is.na(input$b0_estvol) || is.na(input$b1_estvol) || input$modelo_estvol =="" || input$col.dap ==""  || input$b0_estvol == "" || input$b1_estvol == ""  ){
       
@@ -714,17 +779,17 @@ shinyServer(function(input, output, session) {
       
       
       # modelos com b2 e ht precisam de mais uma condicao
-      if( is.null(input$modelo_estvol) ||  is.null(input$col.ht)  |  is.na(input$col.ht) || is.na(input$b2_estvol) || input$col.ht ==""  || input$b2_estvol == "" ){
+      if( is.null(input$modelo_estvol) ||  is.null(input$col.ht)  ||  is.na(input$col.ht) || is.null(nm$ht.est)  ||  is.na(nm$ht.est) || is.na(input$b2_estvol) || input$col.ht ==""  || input$b2_estvol == "" ){
         
       }else if(input$modelo_estvol == "LN(VFCC) = b0 + b1 * LN(DAP) + b2 * LN(HT) + e"){
-        data$VOL <- exp( input$b0_estvol + log(data[[input$col.dap]]) * input$b1_estvol + log(data[[input$col.ht]]) * input$b2_estvol )
+        data$VOL <- exp( input$b0_estvol + log(data[[input$col.dap]]) * input$b1_estvol + log(data[[nm$ht.est]]) * input$b2_estvol )
         data <- data %>% select(VOL, everything())
         
       }else  if(input$modelo_estvol == "VFCC = b0 + b1 * DAP + b2 * HT + e"){
-        data$VOL <- input$b0_estvol + data[[input$col.dap]] * input$b1_estvol + data[[input$col.ht]] * input$b2_estvol
+        data$VOL <- input$b0_estvol + data[[input$col.dap]] * input$b1_estvol + data[[nm$ht.est]] * input$b2_estvol
         data <- data %>% select(VOL, everything())
       }else if(input$modelo_estvol == "VFCC = b0 * DAP^b1 * HT^b2 + e"){
-        data$VOL <- input$b0_estvol * data[[input$col.dap]] ^ input$b1_estvol * data[[input$col.ht]] ^ input$b2_estvol
+        data$VOL <- input$b0_estvol * data[[input$col.dap]] ^ input$b1_estvol * data[[nm$ht.est]] ^ input$b2_estvol
         data <- data %>% select(VOL, everything())
       }
       
@@ -761,7 +826,6 @@ shinyServer(function(input, output, session) {
       data <- data[ -insconsist_rows ,  ]
     }
     
-    
     data
     
   })
@@ -773,7 +837,7 @@ shinyServer(function(input, output, session) {
     data <- round_df(rawData(), 4)
     
     
-    datatable(data,
+    DT::datatable(data,
               
               options = list(
                 initComplete = JS(
@@ -832,30 +896,41 @@ shinyServer(function(input, output, session) {
     #req(input$col.especies,input$col.parcelas, input$col.dap,input$col.ht,input$col.vcc, input$col.vsc,input$col.area.parcela,input$col.area.total, input$col.col.estrato,  input$col.est.vertical,input$col.est.interna)
     
     varnameslist <- list(
-      parcelas=input$col.parcelas,
-      dap=input$col.dap,
-      ht=input$col.ht,
-      hd=input$col.hd,
-      vcc=input$col.vcc,
-      vsc=input$col.vsc,
-      area.parcela=input$col.area.parcela,
-      area.total=input$col.area.total,
-      estrato=input$col.estrato,
-      idade=input$col.idade,
-      IC=input$int.classe,
-      diam.min=input$diam.min
+      parcelas     = input$col.parcelas,
+      dap          = input$col.dap,
+      ht           = input$col.ht,
+      ht.est       = input$col.ht,
+      hd           = input$col.hd,
+      vcc          = input$col.vcc,
+      vsc          = input$col.vsc,
+      area.parcela = input$col.area.parcela,
+      area.total   = input$col.area.total,
+      estrato      = input$col.estrato,
+      obs          = input$col.obs,
+      idade        = input$col.idade,
+      IC           = input$int.classe,
+      diam.min     = input$diam.min
     )
-    
+    # Se nao selecionar nome de variavel de area, a area sera o valor numerico inserido em preparacao
     if(is.null(input$num.area.parcela)|| is.na(input$num.area.parcela) ||input$num.area.parcela==""){}else{varnameslist$area.parcela <- input$num.area.parcela  }
     if(is.null(input$num.area.total) || is.na(input$num.area.total) ||input$num.area.total==""){}else{varnameslist$area.total <- input$num.area.total  }
     
+    # Se o usuario inserir os coeficientes de volume, a variavel criada (na parte de preparacao, ou seja, raw_data)
+    # sera nomeada VOL durante esse processo. Por isso e preciso definir este nome em varnameslist quando isso ocorrer
     if( !is.null(input$b0_estvol) && !is.na(input$b0_estvol) && !is.null(input$b1_estvol) && !is.na(input$b1_estvol)  ){
       varnameslist$vcc <- "VOL"
     }
     
-    if(!is.null(input$est.vert.calc) && !is.na(input$est.vert.calc) && input$est.vert.calc=="Sim"){
-      varnameslist$est.vertical <- "est.vert"
+    
+    # Caso existam NAs na coluna altura, ela sera estimada, entao o nome da altura utilizada devera ser
+    # HT_EST, que e o nome utilizado na aba preparacao na estimacao da altura.
+    data <- rawData_()
+    if(  ( input$col.ht!="" || is.na(input$col.ht) || is.null(input$col.ht)  )   && any(is.na(data[[input$col.ht]])) ){
+      
+      varnameslist$ht.est <- "HT_EST"
+      
     }
+    
     
     
     # Os nomes nao selecionados serao salvos como NULL na lista,

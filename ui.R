@@ -216,6 +216,14 @@ shinyUI(
                                 
                                 fluidRow(
                                   
+                                  column(4,
+                                         wellPanel(
+                                           h3("Observações"),
+                                           p("Selecione o nome da variável referente à observacao ou qualidade das arvores:"#, 
+                                             #style = "font-family: 'Source Sans Pro';"
+                                           ),
+                                           uiOutput("selec_obs")
+                                         )), # Coluna obs
                                   
                                   
                                   column(4,
@@ -257,6 +265,9 @@ shinyUI(
                                     
                                     h3("Diâmetro mínimo"),
                                     numericInput("diam.min", "Insira o diâmetro mínimo:", 5, 1, 100, 1),
+                                    
+                                    h3("Transformar zero em NA"),
+                                    radioButtons("zero_to_NA","Transformar zeros em variávies numéricas em NA? (recomendado)",c("Sim"=TRUE,"Nao"=FALSE), inline = TRUE),
                                     
                                     h3("Remover dados"),
                                     
