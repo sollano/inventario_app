@@ -72,6 +72,7 @@ area_total_names <- c("sub.area","AREA_TOTAL", "AREATOTAL", "area_total", "areat
 idade_names <- c("IDADE", "Idade","idade")
 VSC_names <- c("VSC","Vsc", "vsc")
 HD_names <- c("HD", "Hd", "hd", "ALTURA_DOMINANTE", "ALT_DOM")
+dom_names <- c("D","Dominante", "Dom", "dom", "dominante", "DOM")
 grupos_names <- c(c("TALHAO", "PARCELA"), c("area.code", "transect"), c("codigo", "transecto"), "parcela", "PARCELA", "transect", "cod.parcela", "Cod.parcela", "COD.PARCELA")
 estratos_names <- c("TALHAO", "Talhao", "talhao","COD_TALHAO","Cod_Talhao","cod_talhao", "COD.TALHAO", "Cod.Talhao","cod.talhao", "area.code", "Area.Code","AREA.CODE", "area_code","Area_Code","AREA_CODE")
 obs_names <- c("OBS")
@@ -557,9 +558,15 @@ shinyServer(function(input, output, session) {
   # Estimar altura
   output$ajust_ht <- renderUI({
     
-    # precisa que o usuario nao tenha selecionado estrutura vertical E tenha selecionado altura
+    # precisa que o usuario tenha NAs na coluna de altura
     data <- rawData_()
-    req( any(is.na(data[[input$col.ht]])) )
+    #req( any(is.na(data[[input$col.ht]])) )
+    
+    if(is.null(input$col.ht) || is.na(input$col.ht) || input$col.ht=="" ){
+      
+    }else if( !any(is.na(data[[input$col.ht]])) ) {
+      return()
+      }
     
     list(
       
@@ -580,6 +587,70 @@ shinyServer(function(input, output, session) {
     
   })
  
+  # Estimar altura dominante
+  output$est_hd1 <- renderUI({
+    
+    # precisa que o usuario nao tenha selecionado altura dominante
+    req(is.null(input$col.hd) || input$col.hd =="" )
+    
+    list(
+      
+      h3("Altura dominante"),
+      
+      h5("A altura dominante média será estimada utilizando a variável de observação. Caso esta não seja selecionada, o cálculo será feito utilizando a média das maiores árvores.")
+      
+    )
+    
+  })
+  output$est_hd2 <- renderUI({
+    
+    # precisa que o usuario nao tenha selecionado altura dominante e tenha seleciona obs
+    req( (is.null(input$col.hd) || input$col.hd =="") && (!is.null(input$col.obs) || input$col.obs !="")  )
+    
+    data <- rawData_()
+    
+    if( is.null(input$col.obs) || input$col.obs=="" ){
+      
+      opcoes <- NULL
+      
+    }else{
+      
+      data <- rawData_()
+      
+      opcoes <- levels(
+        as.factor(
+          data[,input$col.obs]))
+    }
+    
+      selectizeInput("cod.dom",
+                     label = "Selecione o código que define as árvores dominantes:",
+                     choices = opcoes,
+                     selected = dom_names,
+                     multiple = TRUE,
+                     options = list(
+                       maxItems = 1,
+                       placeholder = 'Selecione o(s) nivel(s) abaixo'#,
+                       #  onInitialize = I('function() { this.setValue(""); }')
+                     ) # options
+                     )
+      
+    
+  })
+  output$est_hd3 <- renderUI({
+    
+    # precisa que o usuario nao tenha selecionado altura dominante
+    req(is.null(input$col.hd) || input$col.hd =="" )
+    
+       radioButtons("est_hd",
+                   label = "Estimar altura dominante?",
+                   choices = c(
+                     "Sim"=TRUE,
+                     "Nao"=FALSE
+                     
+                   ) )
+
+  })
+  
   # Calculo de volume 
   output$ui_estvol1 <- renderUI({
     
@@ -711,14 +782,28 @@ shinyServer(function(input, output, session) {
       # Converter zero em NA quando a variavel tiver o seu nome definido
       if(nm$dap!=""){  data[nm$dap][ data[nm$dap] == 0 ] <- NA }
       if(nm$ht!= ""){  data[nm$ht ][ data[nm$ht ] == 0 ] <- NA }
-   #   if(nm$hd!= ""){  data[nm$hd ][ data[nm$hd ] == 0 ] <- NA }
-  #    if(nm$vcc!=""){  data[nm$vcc][ data[nm$vcc] == 0 ] <- NA }
-   #   if(nm$vsc!=""){  data[nm$vsc][ data[nm$vsc] == 0 ] <- NA }
+    }
+    
+    # Estimar HD
+    if(is.null(input$col.estrato ) || input$col.estrato =="" || is.na(input$col.estrato ) || is.null(input$col.ht ) || input$col.ht =="" || is.na(input$col.ht ) || is.na(input$col.dap) || input$col.dap=="" || is.null(input$col.dap) ){
+      
+    }else if( is.null(input$col.hd) || input$col.hd=="" || is.na(input$col.hd) ){
+      
+      print("iria calcular HD agora")
+      data <- hdjoin(
+        df     =  data,
+        grupos =  nm$estrato, 
+        HT     =  nm$ht, 
+        DAP    =  nm$dap,
+        OBS    =  nm$obs,
+        dom    =  nm$cod.dom )  %>% 
+       select(HD, everything() )
+      
     }
     
     # Estimar altura caso altura seja selecionada e possua NAs, ou seja, arvores nao medidas
     # Esse se evita mensagens de erro quando as colunas nao forem selecionadas
-    if( is.null(input$col.ht) || input$col.ht=="" || is.na(input$col.ht) || is.null(input$col.hd) || input$col.hd=="" || is.na(input$col.hd) || is.na(input$col.dap) || input$col.dap=="" || is.null(input$col.dap) ||   is.null(input$modelo_est_ht) || input$modelo_est_ht=="" || is.na(input$modelo_est_ht) ){
+    if( is.null(input$col.ht) || input$col.ht=="" || is.na(input$col.ht) || is.na(input$col.dap) || input$col.dap=="" || is.null(input$col.dap) ||   is.null(input$modelo_est_ht) || input$modelo_est_ht=="" || is.na(input$modelo_est_ht) ){
       
       
     }else if( nm$ht!="" && any(is.na(data[[nm$ht]])) ){
@@ -901,6 +986,7 @@ shinyServer(function(input, output, session) {
       ht           = input$col.ht,
       ht.est       = input$col.ht,
       hd           = input$col.hd,
+      cod.dom      = input$cod.dom,
       vcc          = input$col.vcc,
       vsc          = input$col.vsc,
       area.parcela = input$col.area.parcela,
@@ -925,12 +1011,20 @@ shinyServer(function(input, output, session) {
     # Caso existam NAs na coluna altura, ela sera estimada, entao o nome da altura utilizada devera ser
     # HT_EST, que e o nome utilizado na aba preparacao na estimacao da altura.
     data <- rawData_()
-    if(  ( input$col.ht!="" || is.na(input$col.ht) || is.null(input$col.ht)  )   && any(is.na(data[[input$col.ht]])) ){
+    if(  ( is.null(input$col.ht) || is.na(input$col.ht) || input$col.ht!="") ){
+     
+       varnameslist$ht.est <- "HT_EST"
+       
+    }else if(any(is.na(data[[input$col.ht]]))){
       
       varnameslist$ht.est <- "HT_EST"
       
     }
     
+    if( is.null(input$col.hd) || input$col.hd =="" ){
+      
+      varnameslist$hd <- "HD"
+    }
     
     
     # Os nomes nao selecionados serao salvos como NULL na lista,

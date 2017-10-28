@@ -1,9 +1,11 @@
 #' @export
 hdjoin <- function(df, grupos, HT, DAP, OBS, dom, names="HD"){
 
+  df[["HD"]] <- NULL
+  
  if(missing(OBS) || is.null(OBS) || is.na(OBS) || OBS=="" ){
    
-   if(is.null(grupos) || is.missing(grupos) || is.na(grupos) || grupos==""  ){
+   if(is.null(grupos) || missing(grupos) || is.na(grupos) || grupos==""  ){
      suppressMessages(   # remove mensagens do dplyr
        df %>% 
          select_(ht = HT) %>% 

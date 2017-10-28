@@ -1,20 +1,21 @@
 options(java.parameters = "-Xss2048k")
 library(shiny)
-library(DT)
+suppressPackageStartupMessages(library(DT))
 #library(plotly)
 library(formattable)
 library(readxl)
 #library(plyr)
+library(tibble)
 library(tidyr)
-library(dplyr)
+suppressPackageStartupMessages(library(dplyr))
 library(lazyeval)
 library(ggplot2)
 library(ggdendro)
 library(ggthemes)
-library(xlsx)
+suppressPackageStartupMessages(library(xlsx))
 library(rJava)
 library(xlsxjars)
-#library(rmarkdown)
+library(rmarkdown)
 
 shinyUI(
   # Intro, taglists e error messages colors ####
@@ -276,6 +277,9 @@ shinyUI(
                                     uiOutput("rm_vars"),
                                     uiOutput("selec_area_parcela_num"),
                                     uiOutput("selec_area_total_num"),
+                                    uiOutput("est_hd1"),
+                                    uiOutput("est_hd2"),
+                                    uiOutput("est_hd3"),
                                     uiOutput("ajust_ht"),
                                     uiOutput("ui_estvol1"),
                                     uiOutput("ui_estvol3"),
