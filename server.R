@@ -789,7 +789,6 @@ shinyServer(function(input, output, session) {
       
     }else if( is.null(input$col.hd) || input$col.hd=="" || is.na(input$col.hd) ){
       
-      print("iria calcular HD agora")
       data <- hdjoin(
         df     =  data,
         grupos =  nm$estrato, 
