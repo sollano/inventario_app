@@ -1884,14 +1884,14 @@ shinyServer(function(input, output, session) {
   })
   
   output$downloadData <- downloadHandler(
-    filename = function(){"tabelas_app.xlsx"},
+    filename = function(){"tabelas_app_inventario.xlsx"},
     
     content = function(file){xlsx.write.list(file, list_of_df_to_download() )}
     
   )
   
   output$downloadAllData <- downloadHandler(
-    filename = function(){"tabelas_app.xlsx"},
+    filename = function(){"tabelas_app_inventario.xlsx"},
     
     content = function(file){xlsx.write.list(file, list_of_df_all() )}
     
