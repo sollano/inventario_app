@@ -621,6 +621,22 @@ shinyServer(function(input, output, session) {
   })
 
   # Estimar altura
+  output$ajust_ht_title <- renderUI({
+    
+    # precisa que o usuario tenha NAs na coluna de altura
+    data <- rawData_()
+    #req( any(is.na(data[[input$col.ht]])) )
+    
+    if(is.null(input$col.ht) || is.na(input$col.ht) || input$col.ht=="" ){
+      
+    }else if( !any(is.na(data[[input$col.ht]])) ) {
+      return()
+    }
+    
+    h3("Resíduos em porcentagem para os modelos hipsométricos",style = "text-align: center;")
+    
+    
+  })
   output$ajust_ht <- renderUI({
     
     # precisa que o usuario tenha NAs na coluna de altura
@@ -637,7 +653,7 @@ shinyServer(function(input, output, session) {
       
       h3("Estimar altura das árvores não medidas"),
       
-      h5("A altura será estimada utilizando um dos modelos hipsométricos abaixo:"),
+      h5("A altura será estimada utilizando um dos modelos hipsométricos abaixo. Resíduos para todos os modelos disponíveis são demonstrados graficamente ao lado:"),
       
       radioButtons("modelo_est_ht",
                    label = "Selecione o modelo para ser utilizado:",
@@ -1054,8 +1070,10 @@ shinyServer(function(input, output, session) {
       estrato      = input$col.estrato,
       obs          = input$col.obs,
       idade        = input$col.idade,
-      IC           = input$int.classe,
-      diam.min     = input$diam.min
+      IC.dap       = input$int.classe.dap,
+      diam.min     = input$diam.min,
+      IC.ht        = input$int.classe.ht,
+      ht.min       = input$ht.min
     )
     # Se nao selecionar nome de variavel de area, a area sera o valor numerico inserido em preparacao
     if(is.null(input$num.area.parcela)|| is.na(input$num.area.parcela) ||input$num.area.parcela==""){}else{varnameslist$area.parcela <- input$num.area.parcela  }
@@ -1081,9 +1099,11 @@ shinyServer(function(input, output, session) {
       
     }
     
+    # A altura dominante tera seu nome definido para HD caso o usuario queira estima-la,
+    # e nao tenha selecionado nenhuma variavel para ser HD
     if( is.null(input$col.hd) || input$col.hd =="" ){
       
-      varnameslist$hd <- "HD"
+          if(is.null(input$est.hd)){}else if(input$est.hd){varnameslist$hd <- "HD"}
     }
     
     
@@ -1203,7 +1223,7 @@ shinyServer(function(input, output, session) {
                                            dap = nm$dap,
                                            parcela = nm$parcelas,
                                            area_parcela = nm$area.parcela, 
-                                           ic = nm$IC, 
+                                           ic = nm$IC.dap, 
                                            dapmin = nm$diam.min, 
                                            especies = NA, 
                                            volume = nm$vcc,
@@ -1316,6 +1336,72 @@ shinyServer(function(input, output, session) {
     
   })
   
+  dist_ht <- reactive({
+    
+    nm <- varnames()
+    dados <- rawData()
+    
+    validate(
+      need(dados, "Por favor faça o upload da base de dados"),
+      need(input$df == "Dados em nivel de arvore", "Base de dados incompativel" ),
+      need(nm$ht,"Por favor mapeie a coluna referente a 'altura'  "),
+      need(nm$parcelas,"Por favor mapeie a coluna referente a 'parcelas'  "),
+      need(nm$area.parcela,"Por favor mapeie a coluna ou insira um valor referente a 'area.parcela'  ") )
+
+    classe_diametro(df = dados, 
+                    dap = nm$ht, 
+                    parcela = nm$parcelas, 
+                    area_parcela = nm$area.parcela,
+                    ic = nm$IC.ht, 
+                    dapmin = nm$ht.min  ) %>% select(-G,-G_ha)
+    
+  }) 
+  dist_ht_graph <- reactive({
+    
+    g <- dist_ht()
+    
+    ggplot(g, aes(as.factor(CC),IndvHA)) +
+      geom_bar(stat = "identity",color="black")+
+      #   scale_y_continuous( expand=c(0,15) ) +
+      ggthemes::theme_igray(base_family = "serif") +
+      labs(x = "Centro de Classe de Altura (m)", y = "Nº de Individuos por hectare") + 
+      geom_text(aes(label = CC ), position = position_dodge(0.9), vjust = -0.3, size = 6 ) + 
+      theme(
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        axis.title   = element_text(size = 26,face="bold"), 
+        axis.text    = element_text(size = 22),
+        axis.text.x = element_blank(),
+        axis.line.x = element_line(color="black"),
+        axis.line.y = element_line(color="black"),
+        strip.text.x = element_text(size = 22)   )
+    
+    
+  })
+  
+  output$dist_ht_tabela <- DT::renderDataTable({
+    
+    g <- dist_ht()
+    datatable( g,
+               rownames = F,
+               options = list(searching = FALSE,
+                              paging=FALSE,
+                              ordering=FALSE,
+                              initComplete = JS(
+                                "function(settings, json) {",
+                                "$(this.api().table().header()).css({'background-color': '#00a90a', 'color': '#fff'});",
+                                "}")
+               )
+    )
+    
+    
+  })
+  output$dist_ht_plot <- renderPlot({
+    
+    dist_ht_graph()
+    
+  })
   
   obs_freq <- reactive({
     
@@ -1425,6 +1511,7 @@ shinyServer(function(input, output, session) {
     obs_graph_2()
     
   })
+  
 
   # totalizacao de parcelas ####
   
@@ -1714,8 +1801,9 @@ shinyServer(function(input, output, session) {
     checkboxGroupInput("dataset", h3("Escolha uma ou mais tabelas, e clique no botão abaixo:"), 
                        choices =  c(
                          "Dados inconsistentes"              ,
-                         "Dado utilizado / preparado"        ,
-                         "Distribuicao diametrica geral"     ,
+                         "Dado utilizado"                    ,
+                         "Distribuicao diametrica"           ,
+                         "Distribuicao de altura"            ,
                          "Totalizacao de parcelas"           ,
                          "Amostragem Casual Simples"         ,
                          "Amostragem Casual Estratificada 1" ,
@@ -1734,12 +1822,16 @@ shinyServer(function(input, output, session) {
       L[["Dados inconsistentes"]] <- try( consist_fun(), silent = T) 
     }
     
-    if("Dado utilizado / preparado" %in% input$dataset ) {
-      L[["Dado utilizado / preparado"]] <-  try(rawData(), silent = T)
+    if("Dado utilizado" %in% input$dataset ) {
+      L[["Dado utilizado"]] <-  try(rawData(), silent = T)
     }
     
-    if("Distribuicao diametrica geral" %in% input$dataset ) {
-      L[["Distribuicao diametrica geral"]] <-  try(dd_list()[["dd_geral"]], silent=T)
+    if("Distribuicao diametrica" %in% input$dataset ) {
+      L[["Distribuicao diametrica"]] <-  try(dd_list()[["dd_geral"]], silent=T)
+    }
+    
+    if("Distribuicao de altura" %in% input$dataset ) {
+      L[["Distribuicao de altura"]] <-  try(dist_ht(), silent=T)
     }
     
     if("Totalizacao de parcelas" %in% input$dataset ) {
@@ -1771,9 +1863,11 @@ shinyServer(function(input, output, session) {
     
     L[["Dados inconsistentes"]] <- try( consist_fun(), silent = T) 
     
-    L[["Dado utilizado / preparado"]] <-  try(rawData(), silent = T)
+    L[["Dado utilizado"]]       <-  try(rawData(), silent = T)
     
-    L[["Distribuicao diametrica geral"]] <-  try(dd_list()[["dd_geral"]], silent=T)
+    L[["Distribuicao diametrica"]] <-  try(dd_list()[["dd_geral"]], silent=T)
+    
+    L[["Distribuicao de altura"]] <-  try(dist_ht(), silent=T)
     
     L[["Totalizacao de parcelas"]] <- try(totData() , silent=T) 
     
@@ -1807,10 +1901,14 @@ shinyServer(function(input, output, session) {
   
   graphInput <- reactive({
     switch(input$graph_d,
-           "Indv. por ha por CC"  = dd_g1(),
-           "Vol. por ha por CC"   = dd_g2(),
-           "G por ha por CC"      = dd_g3()
-           )
+           "Indv. por ha por CC"                        = dd_g1(),
+           "Vol. por ha por CC"                         = dd_g2(),
+           "G por ha por CC"                            = dd_g3(),
+           "Indv. por ha por classe de ht"              = dist_ht_graph(),
+           "Frequencia para var. Qualidade"             = obs_graph_1(),
+           "Porcentagem para var. Qualidade"            = obs_graph_2(),
+           "Residuos em porcentagem para modelos de HT" = ht_graph()
+    )
   })
   
   output$graph_d_out <- renderPlot({

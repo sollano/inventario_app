@@ -51,7 +51,7 @@ shinyUI(
           
           
           
-          navbarPage("App Inventário de Nativas",
+          navbarPage("App Inventário Florestal",
                      
                      theme = "green_yeti2.css",
                      # theme = "green.css", # seleciona um tema contido na pasta www
@@ -260,12 +260,20 @@ shinyUI(
                                 fluidRow(
                                   
                                   sidebarPanel(
+                                    h3("Variaveis para graficos de classe de diametro"),
+                                    h4("Intervalo de classe"),
+                                    numericInput("int.classe.dap", "Insira o intervalo de classe:", 2, 1, 50, 0.5),
                                     
-                                    h3("Intervalo de classe"),
-                                    numericInput("int.classe", "Insira o intervalo de classe:", 2, 1, 50, 0.5),
-                                    
-                                    h3("Diâmetro mínimo"),
+                                    h4("Diâmetro mínimo"),
                                     numericInput("diam.min", "Insira o diâmetro mínimo:", 5, 1, 100, 1),
+                                    
+                                    h3("Variaveis para grafico de classe de altura"),
+                                    h4("Intervalo de classe"),
+                                    numericInput("int.classe.ht", "Insira o intervalo de classe:", 2, 1, 50, 0.5),
+                                    
+                                    h4("Altura mínima"),
+                                    numericInput("ht.min", "Insira o diâmetro mínimo:", 10, 1, 100, 1),
+                                    
                                     
                                     h3("Transformar zero em NA"),
                                     radioButtons("zero_to_NA","Transformar zeros em variávies numéricas em NA? (recomendado)",c("Sim"=TRUE,"Nao"=FALSE), inline = TRUE),
@@ -295,8 +303,13 @@ shinyUI(
                                              shiny::htmlOutput("avisos_prep"),
                                              DT::dataTableOutput("prep_table"),
                                              hr(),
-                                             tableOutput("teste"),
-                                             plotOutput("ht_plot")
+                                             plotOutput(""),
+                                             hr(),
+                                             uiOutput("ajust_ht_title"),
+                                             plotOutput("ht_plot"),
+                                             hr(),
+                                             tableOutput("teste")
+                                             
                                     ),
                                     tabPanel("Dados inconsistentes",
                                              uiOutput("consist_warning2"),
@@ -322,7 +335,7 @@ shinyUI(
                                                    
                                           fluidPage(
                                           #  h1("Distribuição diamétrica (DD)", style = "text-align: center;"),
-                                            h1("Distribuição diamétrica e gráficos", style = "text-align: center;"),
+                                            h1("Distribuições e gráficos", style = "text-align: center;"),
                                             br(),
                                             tabsetPanel(
                                               
@@ -331,8 +344,12 @@ shinyUI(
                                               tabPanel("Gráfico do volume por ha por classe diamétrica"      , plotOutput("dd_graph_vol" ,height = "550px")),
                                               tabPanel("Gráfico de G por ha por classe diamétrica"           , plotOutput("dd_graph_G"   ,height = "550px")),
                                               
+                                              tabPanel("Tabela da distribuição de Altura"                    , DT::dataTableOutput("dist_ht_tabela") ),
+                                              tabPanel("Gráfico dos indivíduos por ha por classe de altura"  , plotOutput("dist_ht_plot",height = "550px") ),
+                                              
+                                              
                                               tabPanel("Tabela de frequência para a variável Qualidade"      , DT::dataTableOutput("obs_tabela") ),
-                                              tabPanel("Gráfico de valores absolutos da variável Qualidade"  , plotOutput("obs_plot_1"   ,height = "550px")),
+                                              tabPanel("Gráfico de frequencia variável Qualidade"            , plotOutput("obs_plot_1"   ,height = "550px")),
                                               tabPanel("Gráfico da porcentagem da variável Qualidade"        , plotOutput("obs_plot_2"   ,height = "550px"))
                                             )
                                             
@@ -459,7 +476,10 @@ shinyUI(
                                                              "Indv. por ha por CC",
                                                              "Vol. por ha por CC",
                                                              "G por ha por CC",
-                                                             ""
+                                                             "Indv. por ha por classe de ht",
+                                                             "Frequencia para var. Qualidade",
+                                                             "Porcentagem para var. Qualidade",
+                                                             "Residuos em porcentagem para modelos de HT"
                                                              )),
                                                
                                                selectInput("graphformat",
