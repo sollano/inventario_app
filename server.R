@@ -614,9 +614,9 @@ shinyServer(function(input, output, session) {
                  label = "Estimar altura dominante?",
                  choices = c(
                    "Sim"=TRUE,
-                   "Nao"=FALSE
-                   
-                 ) )
+                   "Nao"=FALSE),
+                 inline=T
+                 )
     
   })
 
@@ -1605,7 +1605,7 @@ shinyServer(function(input, output, session) {
                  VCC            = nm$vcc,
                  area_parcela   = nm$area.parcela,
                  area_total     = nm$area.total, 
-                 idade          = nm$idade,
+           #      idade          = nm$idade,
                  grupos         = nm$estrato, 
                  alpha          = input$alpha_inv, 
                  Erro           = input$erro_inv, 
@@ -1650,7 +1650,7 @@ shinyServer(function(input, output, session) {
     
   })
   
-  # Amostragem ace ####
+  # Amostragem casual estratificada ####
   
   # funcao ace aplicada em invData
   list_ace <- reactive({
@@ -1671,7 +1671,7 @@ shinyServer(function(input, output, session) {
              area_parcela   = nm$area.parcela, 
              area_estrato   = nm$area.total, 
              grupos         = nm$estrato, 
-             idade          = nm$idade, 
+            # idade          = nm$idade, 
              alpha          = input$alpha_inv, 
              Erro           = input$erro_inv, 
              casas_decimais = input$cd_inv, 
@@ -1751,7 +1751,7 @@ shinyServer(function(input, output, session) {
                   VCC            = nm$vcc,
                   area_parcela   = nm$area.parcela,
                   area_total     = nm$area.total, 
-                  idade          = nm$idade,
+                 # idade          = nm$idade,
                   grupos         = nm$estrato, 
                   alpha          = input$alpha_inv, 
                   Erro           = input$erro_inv, 
