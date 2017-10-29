@@ -925,7 +925,7 @@ shinyServer(function(input, output, session) {
   })
   
   # Graficos de altura
-  output$ht_plot <- renderPlot({
+  ht_graph <- reactive({
     
     req(input$col.ht, input$col.dap, !is.null(rawData()) )
     
@@ -933,7 +933,7 @@ shinyServer(function(input, output, session) {
     nm <- varnames()
     
     if(is.null(input$col.ht) || is.na(input$col.ht) || input$col.ht=="" ){
-     
+      
       
     }else if( !any(is.na(data[[input$col.ht]])) ) {
       return()
@@ -965,6 +965,12 @@ shinyServer(function(input, output, session) {
       
     )
     
+    
+  })
+  output$ht_plot <- renderPlot({
+    
+    ht_graph()
+   
   })
   
   
@@ -1310,6 +1316,116 @@ shinyServer(function(input, output, session) {
     
   })
   
+  
+  obs_freq <- reactive({
+    
+    nm <- varnames()
+    data <- rawData()
+    
+    validate(
+      need(data, "Por favor faça o upload da base de dados"),
+      need(input$df == "Dados em nivel de arvore", "Base de dados incompativel" ),
+      need(nm$obs,"Por favor mapeie a coluna referente a 'observacao'  ")  )
+    
+    data %>% 
+      group_by_at(vars(nm$obs)) %>% 
+      summarise(`Frequencia absoluta`=n() ) %>% 
+      mutate(`Frequencia relativa` = round(`Frequencia absoluta` /sum(`Frequencia absoluta` ) * 100, 2) )
+    
+    
+  })
+  output$obs_tabela <- DT::renderDataTable({
+    
+    g <- obs_freq()
+    datatable( g,
+               rownames = F,
+               options = list(searching = FALSE,
+                              paging=FALSE,
+                              ordering=FALSE,
+                              initComplete = JS(
+                                "function(settings, json) {",
+                                "$(this.api().table().header()).css({'background-color': '#00a90a', 'color': '#fff'});",
+                                "}")
+               )
+    )
+    
+    
+  })
+  
+  obs_graph_1 <- reactive({
+    
+    nm <- varnames()
+    g <- rawData()
+    
+    validate(
+      need(g, "Por favor faça o upload da base de dados"),
+      need(input$df == "Dados em nivel de arvore", "Base de dados incompativel" ),
+      need(nm$obs,"Por favor mapeie a coluna referente a 'observacao'  ")  )
+    
+    
+    
+    ggplot(g,aes_string(nm$obs)) +
+      geom_bar( ) +
+      geom_text(aes( label = ..count.. ), 
+                stat= "count", vjust = -.5,family="serif",size=8 ) +
+      labs(y = "Contagem" ) +
+      ggthemes::theme_igray(base_family = "serif") +
+      ggplot2::theme(
+        panel.grid.major = ggplot2::element_blank(), 
+        panel.grid.minor = ggplot2::element_blank(), panel.border = ggplot2::element_blank(), 
+        axis.title = ggplot2::element_text(size = 26, face="bold"), 
+        axis.text = ggplot2::element_text(size = 22), 
+        axis.line.x = ggplot2::element_line(color = "black"), 
+        axis.line.y = ggplot2::element_line(color = "black"), 
+        strip.text.x = ggplot2::element_text(size = 22, face = "bold"),
+        legend.text = ggplot2::element_text(size=20), 
+        legend.title = ggplot2::element_text(size=20) )
+    
+    
+  })
+  output$obs_plot_1 <- renderPlot({
+    
+    obs_graph_1()
+    
+  })
+  obs_graph_2 <- reactive({
+    
+    nm <- varnames()
+    g <- rawData()
+
+      validate(
+      need(g, "Por favor faça o upload da base de dados"),
+      need(input$df == "Dados em nivel de arvore", "Base de dados incompativel" ),
+      need(nm$obs,"Por favor mapeie a coluna referente a 'observacao'  ")  )
+    
+
+    
+      ggplot(g,aes_string(nm$obs)) +
+      geom_bar(aes(y = (..count..)/sum(..count..) ) ) +
+      geom_text(aes( label = scales::percent( (..count..)/sum(..count..) ),
+                     y= (..count..)/sum(..count..) ), stat= "count", vjust = -.5,family="serif",size=8 ) +
+      labs(y = "Porcentagem" ) +
+      scale_y_continuous(labels = scales::percent) +
+      ggthemes::theme_igray(base_family = "serif") +
+      ggplot2::theme(
+        panel.grid.major = ggplot2::element_blank(), 
+        panel.grid.minor = ggplot2::element_blank(), panel.border = ggplot2::element_blank(), 
+        axis.title = ggplot2::element_text(size = 26, face="bold"), 
+        axis.text = ggplot2::element_text(size = 22), 
+        axis.line.x = ggplot2::element_line(color = "black"), 
+        axis.line.y = ggplot2::element_line(color = "black"), 
+        strip.text.x = ggplot2::element_text(size = 22, face = "bold"),
+        legend.text = ggplot2::element_text(size=20), 
+        legend.title = ggplot2::element_text(size=20) )
+    
+    
+  })
+  output$obs_plot_2 <- renderPlot({
+    
+    obs_graph_2()
+    
+  })
+
   # totalizacao de parcelas ####
   
   totData <- reactive({

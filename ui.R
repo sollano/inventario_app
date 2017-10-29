@@ -316,27 +316,31 @@ shinyUI(
                               
                               
                      ), # tabPanel filtrar dados
-                     # navbarMenu Quantificacao ####
-                     navbarMenu( "Quantificação",
-                                 # tabPanel DD ####
-                                 tabPanel("Distribuição diamétrica",
-                                          
+                     # tabPanel Distribuições e gráficos ####
+                                # tabPanel("Distribuição diamétrica",
+                                  tabPanel("Distribuições e gráficos",
+                                                   
                                           fluidPage(
-                                            h1("Distribuição diamétrica (DD)", style = "text-align: center;"),
+                                          #  h1("Distribuição diamétrica (DD)", style = "text-align: center;"),
+                                            h1("Distribuição diamétrica e gráficos", style = "text-align: center;"),
                                             br(),
                                             tabsetPanel(
                                               
-                                              tabPanel("Distribuição diamétrica Geral", DT::dataTableOutput("dd_geral_tab") ),
-                                              tabPanel("Gráfico dos indivíduos por ha por classe diamétrica", plotOutput("dd_graph_indv",height = "550px") ),
-                                              tabPanel("Gráfico do volume por ha por classe diamétrica", plotOutput("dd_graph_vol",height = "550px")),
-                                              tabPanel("Gráfico de G por ha por classe diamétrica", plotOutput("dd_graph_G",height = "550px")) 
+                                              tabPanel("Tabela da distribuição diamétrica"                   , DT::dataTableOutput("dd_geral_tab") ),
+                                              tabPanel("Gráfico dos indivíduos por ha por classe diamétrica" , plotOutput("dd_graph_indv",height = "550px") ),
+                                              tabPanel("Gráfico do volume por ha por classe diamétrica"      , plotOutput("dd_graph_vol" ,height = "550px")),
+                                              tabPanel("Gráfico de G por ha por classe diamétrica"           , plotOutput("dd_graph_G"   ,height = "550px")),
+                                              
+                                              tabPanel("Tabela de frequência para a variável Qualidade"      , DT::dataTableOutput("obs_tabela") ),
+                                              tabPanel("Gráfico de valores absolutos da variável Qualidade"  , plotOutput("obs_plot_1"   ,height = "550px")),
+                                              tabPanel("Gráfico da porcentagem da variável Qualidade"        , plotOutput("obs_plot_2"   ,height = "550px"))
                                             )
                                             
                                           )
                                           
                                  ), # tabPanel DD 
                                  
-                                 # tabPanel inventario florestal ####
+                     # tabPanel inventario florestal ####
                                  tabPanel("Inventário florestal",
                                           
                                           fluidPage(
@@ -344,7 +348,7 @@ shinyUI(
                                             h1("Inventário florestal", style = "text-align: center;"),
                                             br(),
                                             
-                                            # ####
+                        # ####
                                             fluidRow(
                                               column( 3,  sliderInput("erro_inv", 
                                                                       label = "Selecione o erro admitido (%):", 
@@ -388,18 +392,12 @@ shinyUI(
                                                 tabPanel("Amostragem Casual Estratificada",DT::dataTableOutput("ace1"),br(),DT::dataTableOutput("ace2") ), 
                                                 tabPanel("Amostragem Sistemática",DT::dataTableOutput("as") ) )
                                             )
-                                            # ####
+                        # ####
                                             
                                           )
-                                          
-                                          
-                                          
-                                          
-                                 )# TabPanel Inventario
+                                 ),# TabPanel Inventario
                                  
                                  
-                     ),  # navbarMenu Quantificacao end ####
-                     
                      # navbarMenu  Download ####
                      tabPanel("Download",
                               # Painel Download Tabelas ####
@@ -460,7 +458,8 @@ shinyUI(
                                                            choices = c(
                                                              "Indv. por ha por CC",
                                                              "Vol. por ha por CC",
-                                                             "G por ha por CC"
+                                                             "G por ha por CC",
+                                                             ""
                                                              )),
                                                
                                                selectInput("graphformat",
