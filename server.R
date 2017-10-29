@@ -1184,7 +1184,7 @@ shinyServer(function(input, output, session) {
     
   })
   
-  # Distribuicao diametrica ####
+  # Distribuicoes e graficos ####
   
   dd_list <- reactive({
     
