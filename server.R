@@ -928,8 +928,16 @@ shinyServer(function(input, output, session) {
   output$ht_plot <- renderPlot({
     
     req(input$col.ht, input$col.dap, !is.null(rawData()) )
+    
     data <- rawData()
     nm <- varnames()
+    
+    if(is.null(input$col.ht) || is.na(input$col.ht) || input$col.ht=="" ){
+     
+      
+    }else if( !any(is.na(data[[input$col.ht]])) ) {
+      return()
+    }
     
     data <- data %>%  filter( !is.na(.data[[nm$ht]]) )
     
