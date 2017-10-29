@@ -35,6 +35,7 @@ source("funs/xlsx.write.list.R"    , encoding="UTF-8")
 source("funs/lm_table.R"           , encoding="UTF-8")
 source("funs/inv.R"                , encoding="UTF-8")
 source("funs/hdjoin.R"             , encoding="UTF-8")
+source("funs/residuos_exp.R"       , encoding="UTF-8")
 
 # Funcao para testar se uma variavel e numerica
 # Sera utilizada dentro da funcao validate
@@ -554,38 +555,6 @@ shinyServer(function(input, output, session) {
     )
     
   })
-  
-  # Estimar altura
-  output$ajust_ht <- renderUI({
-    
-    # precisa que o usuario tenha NAs na coluna de altura
-    data <- rawData_()
-    #req( any(is.na(data[[input$col.ht]])) )
-    
-    if(is.null(input$col.ht) || is.na(input$col.ht) || input$col.ht=="" ){
-      
-    }else if( !any(is.na(data[[input$col.ht]])) ) {
-      return()
-      }
-    
-    list(
-      
-      h3("Estimar altura das árvores não medidas"),
-      
-      h5("A altura será estimada utilizando um dos modelos hipsométricos abaixo:"),
-      
-      radioButtons("modelo_est_ht",
-                   label = "Selecione o modelo para ser utilizado:",
-                   choices = c(
-                     "LN(HT) = b0 + b1 * 1/DAP + e",
-                     "LN(HT) = b0 + b1 * 1/DAP + b2 * LN(HD) + e"
-                     
-                   ) )      
-    
-      
-    )
-    
-  })
  
   # Estimar altura dominante
   output$est_hd1 <- renderUI({
@@ -622,18 +591,18 @@ shinyServer(function(input, output, session) {
           data[,input$col.obs]))
     }
     
-      selectizeInput("cod.dom",
-                     label = "Selecione o código que define as árvores dominantes:",
-                     choices = opcoes,
-                     selected = dom_names,
-                     multiple = TRUE,
-                     options = list(
-                       maxItems = 1,
-                       placeholder = 'Selecione o(s) nivel(s) abaixo'#,
-                       #  onInitialize = I('function() { this.setValue(""); }')
-                     ) # options
-                     )
-      
+    selectizeInput("cod.dom",
+                   label = "Selecione o código que define as árvores dominantes:",
+                   choices = opcoes,
+                   selected = dom_names,
+                   multiple = TRUE,
+                   options = list(
+                     maxItems = 1,
+                     placeholder = 'Selecione o(s) nivel(s) abaixo'#,
+                     #  onInitialize = I('function() { this.setValue(""); }')
+                   ) # options
+    )
+    
     
   })
   output$est_hd3 <- renderUI({
@@ -641,16 +610,49 @@ shinyServer(function(input, output, session) {
     # precisa que o usuario nao tenha selecionado altura dominante
     req(is.null(input$col.hd) || input$col.hd =="" )
     
-       radioButtons("est_hd",
-                   label = "Estimar altura dominante?",
-                   choices = c(
-                     "Sim"=TRUE,
-                     "Nao"=FALSE
-                     
-                   ) )
-
+    radioButtons("est.hd",
+                 label = "Estimar altura dominante?",
+                 choices = c(
+                   "Sim"=TRUE,
+                   "Nao"=FALSE
+                   
+                 ) )
+    
   })
-  
+
+  # Estimar altura
+  output$ajust_ht <- renderUI({
+    
+    # precisa que o usuario tenha NAs na coluna de altura
+    data <- rawData_()
+    #req( any(is.na(data[[input$col.ht]])) )
+    
+    if(is.null(input$col.ht) || is.na(input$col.ht) || input$col.ht=="" ){
+      
+    }else if( !any(is.na(data[[input$col.ht]])) ) {
+      return()
+      }
+    
+    list(
+      
+      h3("Estimar altura das árvores não medidas"),
+      
+      h5("A altura será estimada utilizando um dos modelos hipsométricos abaixo:"),
+      
+      radioButtons("modelo_est_ht",
+                   label = "Selecione o modelo para ser utilizado:",
+                   choices = c(
+                     "LN(HT) = b0 + b1 * 1/DAP + e",
+                     "LN(HT) = b0 + b1 * LN(DAP) + e",
+                     "LN(HT) = b0 + b1 * 1/DAP + b2 * LN(HD) + e"
+                     
+                   ) )      
+    
+      
+    )
+    
+  })
+ 
   # Calculo de volume 
   output$ui_estvol1 <- renderUI({
     
@@ -785,19 +787,23 @@ shinyServer(function(input, output, session) {
     }
     
     # Estimar HD
-    if(is.null(input$col.estrato ) || input$col.estrato =="" || is.na(input$col.estrato ) || is.null(input$col.ht ) || input$col.ht =="" || is.na(input$col.ht ) || is.na(input$col.dap) || input$col.dap=="" || is.null(input$col.dap) ){
+    if(is.null(input$est.hd) || is.null(input$col.estrato ) || input$col.estrato =="" || is.na(input$col.estrato ) || is.null(input$col.ht ) || input$col.ht =="" || is.na(input$col.ht ) || is.na(input$col.dap) || input$col.dap=="" || is.null(input$col.dap) ){
       
-    }else if( is.null(input$col.hd) || input$col.hd=="" || is.na(input$col.hd) ){
       
-      data <- hdjoin(
-        df     =  data,
-        grupos =  nm$estrato, 
-        HT     =  nm$ht, 
-        DAP    =  nm$dap,
-        OBS    =  nm$obs,
-        dom    =  nm$cod.dom )  %>% 
-       select(HD, everything() )
-      
+    }else if(is.null(input$col.hd) || input$col.hd=="" || is.na(input$col.hd) ){
+         
+         # esse if tem que ser separado do de cima, se nao da erro(sabe-se la por que)
+         if(input$est.hd){
+         
+                 data <- hdjoin(
+                   df     =  data,
+                   grupos =  nm$estrato, 
+                   HT     =  nm$ht, 
+                   DAP    =  nm$dap,
+                   OBS    =  nm$obs,
+                   dom    =  nm$cod.dom )  %>% 
+                 select(HD, everything() )
+         }
     }
     
     # Estimar altura caso altura seja selecionada e possua NAs, ou seja, arvores nao medidas
@@ -810,6 +816,10 @@ shinyServer(function(input, output, session) {
       if(input$modelo_est_ht ==  "LN(HT) = b0 + b1 * 1/DAP + e" ){
         
         modelo_ht <- paste( "log(", nm$ht, ") ~ inv(", nm$dap ,")"  )
+        
+      }else if(input$modelo_est_ht ==  "LN(HT) = b0 + b1 * LN(DAP) + e" ){
+        
+        modelo_ht <- paste( "log(", nm$ht, ") ~ log(", nm$dap ,")"  )
         
       }else if(input$modelo_est_ht ==  "LN(HT) = b0 + b1 * 1/DAP + b2 * LN(HD) + e" ){
         
@@ -913,6 +923,43 @@ shinyServer(function(input, output, session) {
     data
     
   })
+  
+  # Graficos de altura
+  output$ht_plot <- renderPlot({
+    
+    req(input$col.ht, input$col.dap, !is.null(rawData()) )
+    data <- rawData()
+    nm <- varnames()
+    
+    data <- data %>%  filter( !is.na(.data[[nm$ht]]) )
+    
+    # Tentar Ajustar os modelos utilizando try, e salvar em uma lista,
+    # junto com a altura observada
+    lista <- list(
+      data[!is.na(data[nm$ht]), nm$ht,drop=F],
+      "LN(HT) = b0 + b1 * 1/DAP + e"               = try(lm_table(data, paste( "log(", nm$ht, ") ~ inv(", nm$dap ,")"  )                       , output = "est" )[["est"]], silent = T),
+      "LN(HT) = b0 + b1 * LN(DAP) + e"             = try(lm_table(data, paste( "log(", nm$ht, ") ~ log(", nm$dap ,")"  )                       , output = "est" )[["est"]], silent = T),
+      "LN(HT) = b0 + b1 * 1/DAP + b2 * LN(HD) + e" = try(lm_table(data, paste( "log(", nm$ht, ") ~ inv(", nm$dap ,") + ", "log(", nm$hd ,")" ) , output = "est" )[["est"]], silent = T)
+    )
+    
+    # Criar um dataframe apenas com os modelos que ajustaram
+    data2 <- as.data.frame(do.call(cbind,lista[!sapply(lista, is, "try-error")]))
+    
+    # Criar os graficos
+    # suppressWarnings evita avisos quando um dos modelos nao for ajustado
+    suppressWarnings(
+      
+      residuos_exp(data2, 
+                   nm$ht, 
+                   "LN(HT) = b0 + b1 * 1/DAP + e", 
+                   "LN(HT) = b0 + b1 * LN(DAP) + e",
+                   "LN(HT) = b0 + b1 * 1/DAP + b2 * LN(HD) + e", ncol = 2 )
+      
+    )
+    
+  })
+  
+  
   # render
   output$prep_table <- DT::renderDataTable({
     

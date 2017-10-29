@@ -295,7 +295,8 @@ shinyUI(
                                              shiny::htmlOutput("avisos_prep"),
                                              DT::dataTableOutput("prep_table"),
                                              hr(),
-                                             tableOutput("teste")
+                                             tableOutput("teste"),
+                                             plotOutput("ht_plot")
                                     ),
                                     tabPanel("Dados inconsistentes",
                                              uiOutput("consist_warning2"),
