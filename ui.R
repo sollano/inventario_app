@@ -339,7 +339,7 @@ shinyUI(
                                             tabsetPanel(
                                               
                                               tabPanel("Tabela da distribuição diamétrica"                   , DT::dataTableOutput("dd_geral_tab") ),
-                                              tabPanel("Gráfico dos indivíduos por ha por classe diamétrica" , plotOutput("dd_graph_indv",height = "550px") ),
+                                              tabPanel("Gráfico do Nº de indivíduos por ha por classe diamétrica" , plotOutput("dd_graph_indv",height = "550px") ),
                                               tabPanel("Gráfico do volume por ha por classe diamétrica"      , plotOutput("dd_graph_vol" ,height = "550px")),
                                               tabPanel("Gráfico de G por ha por classe diamétrica"           , plotOutput("dd_graph_G"   ,height = "550px")),
                                               
