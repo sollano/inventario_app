@@ -1024,8 +1024,6 @@ shinyServer(function(input, output, session) {
     # e utilizado ! pois a condicao necessaria (que nao gera aviso) e que a variavel nao seja removida.
     # A cor da mensagem (laranja) e definada no argumento errorClass
     validate(
-      need(! nm$especies %in% input$col.rm_vars, 
-           "You just removed the 'especies' variable. This will prevent you from running most of the app's functions") ,
       need(! nm$parcelas %in% input$col.rm_vars, 
            "You just removed the 'parcelas' variable. This will prevent you from running most of the app's functions") ,
       need(! nm$dap %in% input$col.rm_vars, 
@@ -1042,10 +1040,7 @@ shinyServer(function(input, output, session) {
            "You just removed the 'area.total' variable. This will prevent you from running some of the app's functions"), 
       need(! nm$estrato %in% input$col.rm_vars, 
            "You just removed the 'estrato' variable. This will prevent you from running some of the app's functions"),
-      need(! nm$est.vertical %in% input$col.rm_vars, 
-           "You just removed the 'est.vertical' variable. This will prevent you from running some of the app's functions"),
-      need(! nm$est.interna %in% input$col.rm_vars, 
-           "You just removed the 'est.interna' variable. This will prevent you from running some of the app's functions"), errorClass = "AVISO")
+      errorClass = "AVISO")
     
     # A errorClass AVISO foi criada no comeco da UI
     
