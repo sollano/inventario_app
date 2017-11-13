@@ -1255,14 +1255,13 @@ shinyServer(function(input, output, session) {
       #   scale_y_continuous( expand=c(0,15) ) +
       ggthemes::theme_igray(base_family = "serif") +
       labs(x = "Centro de Classe de Diâmetro - CCD (cm)", y = "Nº de Individuos por hectare") + 
-      geom_text(aes(label = CC ), position = position_dodge(0.9), vjust = -0.3, size = 6 ) + 
+      geom_text(aes(label = round(IndvHA,1) ), position = position_dodge(0.9), vjust = -0.3, size = 6 ) + 
       theme(
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
         panel.border = element_blank(),
         axis.title   = element_text(size = 26,face="bold"), 
         axis.text    = element_text(size = 22),
-        axis.text.x = element_blank(),
         axis.line.x = element_line(color="black"),
         axis.line.y = element_line(color="black"),
         strip.text.x = element_text(size = 22)   )
@@ -1284,14 +1283,13 @@ shinyServer(function(input, output, session) {
       #  scale_y_continuous( expand=c(0,15) ) +
       labs(x = "Centro de Classe de Diâmetro - CCD (cm)", y = "Volume por hectare") + 
       ggthemes::theme_igray(base_family = "serif") +
-      geom_text(aes(label = CC ), position = position_dodge(0.9), vjust = -0.3, size = 6 ) + 
+      geom_text(aes(label = round(volume_ha,1) ), position = position_dodge(0.9), vjust = -0.3, size = 6 ) + 
       theme(
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
         panel.border = element_blank(),
         axis.title   = element_text(size = 26,face="bold"), 
         axis.text    = element_text(size = 22),
-        axis.text.x = element_blank(),
         axis.line.x = element_line(color="black"),
         axis.line.y = element_line(color="black"),
         strip.text.x = element_text(size = 22)   )
@@ -1311,14 +1309,13 @@ shinyServer(function(input, output, session) {
       # scale_y_continuous( expand=c(0,15) ) +
       labs(x = "Centro de Classe de Diâmetro - CCD (cm)", y = "Área Basal (G) por hectare") + 
       ggthemes::theme_igray(base_family = "serif") +
-      geom_text(aes(label = CC ), position = position_dodge(0.9), vjust = -0.3, size = 6 ) + 
+      geom_text(aes(label = round(G_ha,1) ), position = position_dodge(0.9), vjust = -0.3, size = 6 ) + 
       theme(
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
         panel.border = element_blank(),
         axis.title   = element_text(size = 26,face="bold"), 
         axis.text    = element_text(size = 22),
-        axis.text.x = element_blank(),
         axis.line.x = element_line(color="black"),
         axis.line.y = element_line(color="black"),
         strip.text.x = element_text(size = 22)   )
@@ -1359,14 +1356,13 @@ shinyServer(function(input, output, session) {
       #   scale_y_continuous( expand=c(0,15) ) +
       ggthemes::theme_igray(base_family = "serif") +
       labs(x = "Centro de Classe de Altura (m)", y = "Nº de Individuos por hectare") + 
-      geom_text(aes(label = CC ), position = position_dodge(0.9), vjust = -0.3, size = 6 ) + 
+      geom_text(aes(label = round(IndvHA,1) ), position = position_dodge(0.9), vjust = -0.3, size = 6 ) + 
       theme(
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
         panel.border = element_blank(),
         axis.title   = element_text(size = 26,face="bold"), 
         axis.text    = element_text(size = 22),
-        axis.text.x = element_blank(),
         axis.line.x = element_line(color="black"),
         axis.line.y = element_line(color="black"),
         strip.text.x = element_text(size = 22)   )
@@ -1447,7 +1443,7 @@ shinyServer(function(input, output, session) {
     ggplot(g,aes_string(nm$obs)) +
       geom_bar( ) +
       geom_text(aes( label = ..count.. ), 
-                stat= "count", vjust = -.5,family="serif",size=8 ) +
+                stat= "count", vjust = -.5,family="serif",size=7 ) +
       labs(y = "Contagem" ) +
       ggthemes::theme_igray(base_family = "serif") +
       ggplot2::theme(
@@ -1483,7 +1479,7 @@ shinyServer(function(input, output, session) {
       ggplot(g,aes_string(nm$obs)) +
       geom_bar(aes(y = (..count..)/sum(..count..) ) ) +
       geom_text(aes( label = scales::percent( (..count..)/sum(..count..) ),
-                     y= (..count..)/sum(..count..) ), stat= "count", vjust = -.5,family="serif",size=8 ) +
+                     y= (..count..)/sum(..count..) ), stat= "count", vjust = -.5,family="serif",size=7 ) +
       labs(y = "Porcentagem" ) +
       scale_y_continuous(labels = scales::percent) +
       ggthemes::theme_igray(base_family = "serif") +
