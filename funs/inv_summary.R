@@ -1,36 +1,64 @@
-#' @export
 inv_summary <- function(df,DAP, HT, VCC, area_parcela, groups, area_total,idade,VSC,Hd) {
+  suppressPackageStartupMessages(require(dplyr))
+  require(lazyeval)
   
-  if(missing(df)){stop("please insert data frame")}
-  if(missing(DAP)){stop("please insert diameter variable")}
-  if(missing(HT)){stop("please insert height variable")}
-  if(missing(VCC)){stop("please insert volume variable")}
-  if(missing(area_parcela)){stop("please insert sample area variable")}
+  if( missing(df)||is.null(df)||df==F)
+  {stop("please insert data frame", call.=F)}
   
-  if(missing(groups)||is.null(groups)||groups==F){groups<-NULL}else{df <-df[  apply(!is.na(df[groups ]) , MARGIN = 1, function(x) all(x) ), ] }
+  if(missing(DAP)||is.null(DAP)||DAP==F||DAP=="" || !is.numeric(df[[DAP]]))
+  {stop("please insert diameter variable", call.=F)}
+  
+  # if(missing(HT)||is.null(HT)||HT==F||HT=="" || !is.numeric(df[[HT]]))
+  # {stop("please insert height variable", call.=F)}
+  
+  if(missing(VCC)||is.null(VCC)||VCC==F||VCC=="" || !is.numeric(df[[VCC]]))
+  {stop("please insert volume variable", call.=F)}
+  
+  if(missing(area_parcela)||is.null(area_parcela)||area_parcela==F||area_parcela=="")
+  {stop("please insert sample area variable", call.=F)}
+  
+  if(missing(groups)||is.null(groups)||groups==F||groups==""){groups<-NULL}else{df <-df[  apply(!is.na(df[groups ]) , MARGIN = 1, function(x) all(x) ), ] }
+  
   
   # argumentos opcionais
-  if(missing(area_total) || area_total==FALSE || is.null(area_total) ){df$area_total<-NA; area_total <- "area_total"}
-  if(missing(idade)      || idade==FALSE      || is.null(idade)      ){df$idade<-NA;      idade <- "idade"}
-  if(missing(VSC)        || VSC==FALSE        || is.null(VSC)        ){df$VSC<-NA;        VSC <- "VSC"}
+  if(missing(area_total) || is.null(area_total) || is.na(area_total) || area_total==F || area_total==""   ){df$area_total<-NA; area_total <- "area_total"}
+  if(missing(idade)      || is.null(idade)      || is.na(idade)      || idade==F      || idade==""        ){df$idade<-NA;      idade <- "idade"}
+  if(missing(VSC)        || is.null(VSC)        || is.na(VSC)        || VSC==F        || VSC==""          ){df$VSC<-NA;        VSC <- "VSC"}
+  if(missing(HT)         || is.null(HT)         || is.na(HT)         || HT==F         || HT==""           ){df$HT<-NA; df$Hd<-NA; HT <- "HT";   Hd <- "Hd"}
   
   # argumentos de area podem ser numericos
   if(is.numeric(area_parcela)){df$area_parcela <- area_parcela; area_parcela <- "area_parcela"}
   if(is.numeric(area_total  )){df$area_total   <- area_total; area_total     <- "area_total"}
   
   
-  
-  if(missing(Hd) || Hd=="" || is.null(Hd) ){ # se a altura dominante nao for fornecida
+  if((missing(Hd)||is.null(Hd)|| is.na(Hd)||Hd==F||Hd=="")  &&  !all(is.na(df[[HT]]) )) { # calculo da altura dominante
     
-    # se ja existir uma variavel chamada "HD", deletar
     if(  "HD" %in% names(df) ){ df$HD <- NULL }
     
-    # estimar altura dominante
-    x <- hdjoin(df,groups, HT)
+    if(is.null(groups)){
+      x <-  suppressMessages(   # remove mensagens do dplyr
+        df %>% 
+          select_(ht = HT) %>% 
+          top_n(2) %>% # seleciona as duas maiores arvores
+          summarise(HD = mean(ht) ) %>% 
+          cbind(df) # como nao ha grupos, usamos cbind
+      )    }else{
+        x <-  suppressMessages(
+          
+          df %>% 
+            group_by_(.dots = groups) %>% 
+            select_(ht = HT) %>% 
+            top_n(2) %>% 
+            summarise(HD = mean(ht) ) %>% 
+            full_join(df) # como ha grupos, usamos join
+          
+        )
+      }
     
-    # caso contrario, renomear "Hd" para "HD"
-  } else{ x <- df %>% rename_(HD = Hd) }
-  # novo nome = nome antigo
+  } else{ 
+    x <- df %>% mutate_(HD = Hd) 
+  }
+  
   
   x %>% 
     group_by_(.dots = groups) %>% 
