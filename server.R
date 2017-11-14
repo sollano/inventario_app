@@ -1539,10 +1539,7 @@ shinyServer(function(input, output, session) {
     names(x)[names(x)=="AREA_PARCELA"] <- nm$area.parcela
     names(x)[names(x)=="DAP"] <- nm$dap
     names(x)[names(x)=="HT"] <- nm$ht
-    names(x)[names(x)=="VCC"] <- nm$vcc
-    names(x)[names(x)=="VSC"] <- nm$vsc
     names(x)[names(x)=="HD"] <- nm$hd
-    names(x)[names(x)=="IDADE"] <- nm$idade
     x
     
   })
@@ -1589,6 +1586,18 @@ shinyServer(function(input, output, session) {
                  inline = T)
     
   })
+  output$acs_as_warning <- renderUI({
+    
+    req(any( c(input$acs_estrato==T, input$as_estrato==T)   ),
+        input$tabset_inv %in% c("Amostragem casual simples", "Amostragem sistemática") )
+    validate(
+      need(!is.null(input$col.estrato) , # estrato nao e nulo? quando a resposta for nao a mensagem aparece
+           "Variável 'estrato' não definida. A amostragem será feita para todos os dados." ), errorClass = "AVISO")
+    
+    
+    
+  })
+  
   
   # funcao acs aplicada em invData
   tabacs <- reactive({
