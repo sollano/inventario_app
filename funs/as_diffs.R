@@ -1,25 +1,78 @@
-as_diffs <- function(df, VCC, area_parcela, area_total,  idade, grupos, alpha = 0.05, Erro = 10, casas_decimais=4, tidy=T ) {
+#' Amostragem Sistematica
+#'
+#'Funcao para o processamento de inventario florestal utilizando a amostragem sistematica.
+#'@details 
+#' Essa funcao permite o processamento de um inventario florestal utilizando a amostragem casual estratificada,
+#' para n talhoes, considerando a populcao finita ou infinita.
+#' E possivel executar varios inventarios de uma vez utilizando uma variavel categorica indicada no parametro \code{grupos}().
+#'
+#' @param df Data frame a ser utilizado.
+#' @param Yi Nome entre aspas da variavel volume, ou variavel a ser amostrada.
+#' @param area_parcela  Nome entre aspas da variavel area da unidade amostral utilizada, em metros quadrados. Pode tambem ser um valor numerico.
+#' @param area_total Nome entre aspas da variavel area total, em ha. Pode tambem ser um vetor contendo os valores das areas dos estratos.
+#' @param grupos Parametro opcional. Utilizado quando se deseja fazer mais de um inventario por vez.
+#' deve-se indicar o nome entre aspas da(s) variavel(is) fatoriais a serem consideradas. 
+#' Caso seja mais de uma, deve-se inserir um vetor contendo os nomes das variaveis.
+#' Por exemplo: para um inventario sistematica para cada codigo genetico, assumindo que o nome
+#' da variavel que designa os codigos geneticos seja CODGEN, utiliza-se: \code{"CODGEN"}.
+#' @param idade Nome entre aspas da variavel idade. Parametro opcional. Calcula a media da idade fornecida.
+#' @param alpha Valor da significancia a ser utilizada no calculo de t-student. Padrao: \code{0.05}.
+#' @param Erro Valor do Erro minimo admitido no inventario, em porcentagem. Padrao: \code{10}.
+#' @param casas_decimais Numero de casas decimais que seram utilizdas no resultado final. Padrao: \code{4}.
+#' @param tidy A tabela final deve ser tidy (organizada) ou nao? Padrao: \code{TRUE}.
+#' @return Dataframe contendo as informacoes sobre a amostragem.
+#' 
+#' @keywords Amostragem sistematica
+#' @references 
+#' CAMPOS, J. C. C.; LEITE, H. G. Mensuracao florestal: perguntas e respostas. 3a. ed. Vicosa: Editora UFV, 2013. 605 p.
+#' 
+#' SOARES, C. P. B.; NETO, F. D. P.; SOUZA, A. L. D. Dendrometria e Inventario Florestal. 2a. ed. Vicosa: UFV, 2012. 272 p.
+#' 
+#' @seealso outras funcoes de amostragem: 
+#'   \code{\link{ace}} para amostragem casual estratificada, e
+#'   \code{\link{as_diffs}} para amostragem sistematica.
+#' @export
+#' @examples
+#' library(forestr)
+#' data("ex2_mfr")
+#' data("ex5_mfr")
+#'
+#' # Inventaria-se uma area de forma sistematica;
+#' # primeiro tenta-se processar o inventario utilizando a amostragem casual simples:
+#' acs(ex5_mfr,  "VCC", "AREA_PARCELA", "AREA_TOTAL")
+#'
+#' # Gera-se um erro de 22%. Agora, processamos este inventario
+#' # utilizando o metodo das diferencas sucessivas:
+#' as_diffs(ex5_mfr,  "VCC", "AREA_PARCELA", "AREA_TOTAL")
+#'
+#' # Percebe-se uma diminuicao significativa no erro.
+#' 
+#' # Valores de area podem ser numericos
+#' as_diffs(ex5_mfr,  "VCC", 200, 18)
+#' 
+#' # um inventario sistematico para cada talhao:
+#' as_diffs(ex2_mfr,  "VCC", "AREA_PARCELA", "AREA_TALHAO",grupos = "TALHAO")
+#'
+#' @author Sollano Rabelo Braga \email{sollanorb@@gmail.com}
+
+as_diffs <- function(df, Yi, area_parcela, area_total,  idade, grupos, alpha = 0.05, Erro = 10, casas_decimais=4, tidy=T ) {
   
-  suppressPackageStartupMessages(require(dplyr))
-  require(tidyr)
-  require(lazyeval)
+  if(missing(grupos) || is.null(grupos) || grupos==F || grupos==""){grupos=NULL}
   
-  if(missing(grupos)||is.null(grupos)|| is.na(grupos) ||grupos==F||grupos==""){grupos<-NULL}
-  
-  if(missing(df)||is.null(df) || is.na(df) ||df==F||df=="")
+  if(missing(df)||is.null(df)||df==F||df=="")
   {stop("Escolha o data frame") }
   
-  if(missing(area_total)|| is.na(area_total) ||is.null(area_total)||area_total==F||area_total=="")
+  if(missing(area_total)||is.null(area_total)||area_total==F||area_total=="")
   {stop("Escolha a variavel Area total (ha) ") }
   
-  if(missing(area_parcela) || is.na(area_parcela) ||is.null(area_parcela)||area_parcela==F||area_parcela=="")
+  if(missing(area_parcela)||is.null(area_parcela)||area_parcela==F||area_parcela=="")
   {stop("Escolha a variavel Area da parcela (m2) ") }
   
-  if(missing(VCC) || is.na(VCC) ||is.null(VCC)||VCC==F||VCC=="")
+  if(missing(Yi)||is.null(Yi)||Yi==F||Yi=="")
   {stop("Escolha a variavel Volume (m3)") }
   
   # argumentos opcionais
-  if(missing(idade)|| is.na(idade)||is.null(idade)||idade==F||idade==""){df$idade<-NA; idade <- "idade"}
+  if(missing(idade)||is.null(idade)||idade==F||idade==""){df$idade<-NA; idade <- "idade"}
   
   # argumentos de area podem ser numericos
   if(is.numeric(area_parcela)){df$area_parcela <- area_parcela; area_parcela <- "area_parcela"}
@@ -32,15 +85,15 @@ as_diffs <- function(df, VCC, area_parcela, area_total,  idade, grupos, alpha = 
       .dots = 
         setNames( 
           list( 
-            interp(~ mean(idade,na.rm=T), idade = as.name(idade) ),
-            interp(~ n() ),
-            interp(~ mean(area_total,na.rm=T) / ( mean(area_parcela,na.rm=T)/10000 ), area_total = as.name(area_total), area_parcela = as.name(area_parcela)  ),
-            interp(~ sd(VCC,na.rm=T) / mean(VCC,na.rm=T) * 100, VCC = as.name(VCC) ),
+            lazyeval::interp(~ mean(idade), idade = as.name(idade) ),
+            lazyeval::interp(~ n() ),
+            lazyeval::interp(~ mean(area_total) / ( mean(area_parcela)/10000 ), area_total = as.name(area_total), area_parcela = as.name(area_parcela)  ),
+            lazyeval::interp(~ sd(Yi) / mean(Yi) * 100, Yi = as.name(Yi) ),
             ~ qt(alpha/2, df = n-1, lower.tail = FALSE),
             ~ qt(alpha/2, df = ceiling( t^2 * CV^2 / Erro^2) - 1, lower.tail = FALSE)  ,
             ~ ceiling( t_rec ^2 * CV^2 / Erro^2 ) ,
-            interp(~ mean(VCC, na.rm=T), VCC = as.name(VCC) ),
-            interp(~ sqrt( (sum(diff(VCC)^2,na.rm=T) / (2 * n * (n-1) ) ) * ((N-n)/N) ) , VCC = as.name(VCC), n = as.name("n"), N = as.name("N") ),
+            lazyeval::interp(~ mean(Yi, na.rm=T), Yi = as.name(Yi) ),
+            lazyeval::interp(~ sqrt( (sum(diff(Yi)^2) / (2 * n * (n-1) ) ) * ((N-n)/N) ) , Yi = as.name(Yi), n = as.name("n"), N = as.name("N") ),
             ~ Sy * t ,
             ~ Erroabs / Y * 100,
             ~ Y * N,
@@ -60,22 +113,22 @@ as_diffs <- function(df, VCC, area_parcela, area_total,  idade, grupos, alpha = 
   
   x <- x_ %>% 
     plyr::rename(c( "idade"        = "Idade (meses)"                  , 
-                    "n"            = "Número de Parcelas (n)"         ,
-                    "N"            = "Número de Parcelas cabíveis (N)", 
-                    "CV"           = "Coeficiente de Variância (CV)"  ,
+                    "n"            = "Numero de Parcelas (n)"         ,
+                    "N"            = "Numero de Parcelas cabiveis (N)", 
+                    "CV"           = "Coeficiente de Variancia (CV)"  ,
                     "t"            = "t-student"                      ,
                     "t_rec"        = "t-student recalculado"                  ,
-                    "n_recalc"     = "Número de amostras referente ao erro admitido",
-                    "Y"            = "Média geral (Y)"                ,
-                    "Sy"           = "Erro-Padrao da Média (Sy)"      ,
+                    "n_recalc"     = "Numero de amostras referente ao erro admitido",
+                    "Y"            = "Media geral (Y)"                ,
+                    "Sy"           = "Erro-Padrao da Media (Sy)"      ,
                     "Erroabs"      = "Erro Absoluto"                  ,
                     "Erroperc"     = "Erro Relativo (%)"              ,
-                    "Yhat"         = "Volume total estimado (Yhat)"   , 
+                    "Yhat"         = "Valor total estimado (Yhat)"    , 
                     "Erro_Total"   = "Erro Total"                     ,
-                    "IC_ha_Inf"    = "IC (m³/ha) Inferior"            ,
-                    "IC_ha_Sup"    = "IC (m³/ha) Superior"            ,
-                    "IC_Total_inf" = "IC Total (m³) inferior"         ,
-                    "IC_Total_Sup" = "IC Total (m³) Superior")        , 
+                    "IC_ha_Inf"    = "IC (m3/ha) Inferior"            ,
+                    "IC_ha_Sup"    = "IC (m3/ha) Superior"            ,
+                    "IC_Total_inf" = "IC Total (m3) inferior"         ,
+                    "IC_Total_Sup" = "IC Total (m3) Superior")        , 
                  warn_missing = F) # nao gera erro mesmo quando se renomeia variaveis inexistentes
   
   
@@ -101,9 +154,9 @@ as_diffs <- function(df, VCC, area_parcela, area_total,  idade, grupos, alpha = 
     vec3 <- grupos[grupos!=vec2]
     
     y <- x %>%
-      gather_("Variaveis","value", vec1, factor_key=T ) %>% 
+      tidyr::gather_("Variaveis","value", vec1, factor_key=T ) %>% 
       arrange_( grupos ) %>% 
-      spread_(vec2,"value",sep="")%>%
+      tidyr::spread_(vec2,"value",sep="")%>%
       group_by_(.dots=vec3)
     
     return(y)

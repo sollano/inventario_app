@@ -1577,6 +1577,19 @@ shinyServer(function(input, output, session) {
   
   # amostragem casual simples ####
   
+  # UI para rodar acs por estrato
+  output$acs_estrato_rb <- renderUI({
+    
+    req(input$tabset_inv=="Amostragem casual simples")
+    
+    radioButtons("acs_estrato", 
+                 "Calcular uma amostragem casual simples para cada estrato?",
+                 choices = c("Sim"=T,"Nao"=F),
+                 selected = F,
+                 inline = T)
+    
+  })
+  
   # funcao acs aplicada em invData
   tabacs <- reactive({
     
@@ -1589,14 +1602,21 @@ shinyServer(function(input, output, session) {
       need(nm$area.parcela,"Por favor mapeie a coluna ou insira um valor referente a 'area.parcela'  "),
       need(nm$area.total,"Por favor mapeie a coluna ou insira um valor referente a 'area.total'  ")
     )
-    
+
+    grupos_name <- NULL
+    # Fazer amostragem por estrato somente se o usuario marcar sim
+    if(is.null(input$acs_estrato)){
+      
+    }else if(input$acs_estrato){
+      grupos_name <- nm$estrato
+      }
     
     x <-     acs(df             = dados,
-                 VCC            = nm$vcc,
+                 Yi             = input$yi_inv,
                  area_parcela   = nm$area.parcela,
                  area_total     = nm$area.total, 
            #      idade          = nm$idade,
-                 grupos         = nm$estrato, 
+                 grupos         = grupos_name, 
                  alpha          = input$alpha_inv, 
                  Erro           = input$erro_inv, 
                  casas_decimais = input$cd_inv, 
@@ -1657,7 +1677,7 @@ shinyServer(function(input, output, session) {
     )
     
     x <- ace(df             = dados, 
-             VCC            = nm$vcc, 
+             Yi             = input$yi_inv,
              area_parcela   = nm$area.parcela, 
              area_estrato   = nm$area.total, 
              grupos         = nm$estrato, 
@@ -1722,6 +1742,19 @@ shinyServer(function(input, output, session) {
   
   # Amostragem sistematica ####
   
+  # UI para rodar as por estrato
+  output$as_estrato_rb <- renderUI({
+    
+    req(input$tabset_inv=="Amostragem sistemática")
+    
+    radioButtons("as_estrato", 
+                 "Calcular uma amostragem sistematica para cada estrato?",
+                 choices = c("Sim"=T,"Nao"=F),
+                 selected = F,
+                 inline = T)
+    
+  })
+  
   # funcao as aplicada em invData
   tabas <- reactive({
     
@@ -1735,14 +1768,22 @@ shinyServer(function(input, output, session) {
       need(nm$area.total,"Por favor mapeie a coluna ou insira um valor referente a 'area.total'  ")
     )
     
+    grupos_name <- NULL
+    # Fazer amostragem por estrato somente se o usuario marcar sim
+    if(is.null(input$as_estrato)){
+      
+    }else if(input$as_estrato){
+      grupos_name <- nm$estrato
+    }
+    
     dados <- invData()
     
     x <- as_diffs(df             = dados, 
-                  VCC            = nm$vcc,
+                  Yi             = input$yi_inv,
                   area_parcela   = nm$area.parcela,
                   area_total     = nm$area.total, 
                  # idade          = nm$idade,
-                  grupos         = nm$estrato, 
+                  grupos         = grupos_name, 
                   alpha          = input$alpha_inv, 
                   Erro           = input$erro_inv, 
                   casas_decimais = input$cd_inv, 

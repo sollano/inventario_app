@@ -1,6 +1,6 @@
 #' @export
 inv_summary <- function(df,DAP, HT, VCC, area_parcela, groups, area_total,idade,VSC,Hd) {
-
+  
   if(missing(df)){stop("please insert data frame")}
   if(missing(DAP)){stop("please insert diameter variable")}
   if(missing(HT)){stop("please insert height variable")}
@@ -30,7 +30,7 @@ inv_summary <- function(df,DAP, HT, VCC, area_parcela, groups, area_total,idade,
     
     # caso contrario, renomear "Hd" para "HD"
   } else{ x <- df %>% rename_(HD = Hd) }
-                      # novo nome = nome antigo
+  # novo nome = nome antigo
   
   x %>% 
     group_by_(.dots = groups) %>% 
@@ -45,12 +45,13 @@ inv_summary <- function(df,DAP, HT, VCC, area_parcela, groups, area_total,idade,
           ~ round(sqrt(mean(AS, na.rm=T) * 40000 / pi), 2)  ,
           lazyeval::interp(~round(mean(HT, na.rm=T), 2), HT = as.name(HT) ),
           ~ round(mean(HD), 2),
+          ~ round(n()* 10000/AREA_PARCELA, 2),
           ~ round(sum(AS, na.rm=T) * 10000/AREA_PARCELA, 4),
           lazyeval::interp(~round(sum(VCC, na.rm=T) * 10000/ AREA_PARCELA, 4 ), VCC = as.name(VCC), AREA_PARCELA = as.name("AREA_PARCELA") ),
           lazyeval::interp(~round(sum(VSC, na.rm=T) * 10000/ AREA_PARCELA, 4 ), VSC = as.name(VSC), AREA_PARCELA = as.name("AREA_PARCELA") )
           
         ), #list 
-        nm = c("IDADE","AREA_TOTAL","AREA_PARCELA", "DAP", "q", "HT", "HD","G", "VCC","VSC" ) 
+        nm = c("IDADE","AREA_TOTAL","AREA_PARCELA", "DAP", "q", "HT","HD","IndvHA","G_HA", "VCC_HA","VSC_HA" ) 
         )#setnames 
     ) %>% #sumarise 
     na_if(0) %>% # substitui 0 por NA
