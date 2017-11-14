@@ -1588,8 +1588,8 @@ shinyServer(function(input, output, session) {
   })
   output$acs_as_warning <- renderUI({
     
-    req(any( c(input$acs_estrato==T, input$as_estrato==T)   ),
-        input$tabset_inv %in% c("Amostragem casual simples", "Amostragem sistemática") )
+    req(any( c(input$acs_estrato==T, input$as_estrato==T)   ), # Precisa que o usuario tente calcular acs ou as por estrato
+        input$tabset_inv %in% c("Amostragem casual simples", "Amostragem sistemática") ) # precisa que a aba acs ou as seja selecionada
     validate(
       need(!is.null(input$col.estrato) , # estrato nao e nulo? quando a resposta for nao a mensagem aparece
            "Variável 'estrato' não definida. A amostragem será feita para todos os dados." ), errorClass = "AVISO")
