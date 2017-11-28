@@ -1,4 +1,4 @@
-options(java.parameters = "-Xss2048k")
+options(java.parameters = "-Xss2048k",shiny.maxRequestSize=25*1024^2)
 library(shiny)
 suppressPackageStartupMessages(library(DT))
 #library(plotly)
@@ -35,6 +35,7 @@ source("funs/lm_table.R"           , encoding="UTF-8")
 source("funs/inv.R"                , encoding="UTF-8")
 source("funs/hdjoin.R"             , encoding="UTF-8")
 source("funs/residuos_exp.R"       , encoding="UTF-8")
+source("funs/check_numeric.R"      , encoding="UTF-8")
 
 # Funcao para testar se uma variavel e numerica
 # Sera utilizada dentro da funcao validate
