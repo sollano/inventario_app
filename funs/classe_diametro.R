@@ -1,6 +1,6 @@
 #' @export
 
-classe_diametro <- function(df, dap, parcela, area_parcela, ic = 5, dapmin = 5, especies=NA, volume=NA, rotulo.NI="NI", cc_to_column=F, G_to_cc=F, cctc_ha=T){
+classe_diametro <- function(df, dap, parcela, area_parcela, ic = 5, dapmin = 5, especies=NA, volume=NA, rotulo.NI="NI", cc_to_column=F, G_to_cc=F, cctc_ha=T, keep_unused_classes=F){
   
   # se df nao for fornecido, for igual "", nulo, ou  nao for dataframe, parar
   if(  missing(df) || df == "" || is.null(df) || !is.data.frame(df) ){  
@@ -137,6 +137,15 @@ classe_diametro <- function(df, dap, parcela, area_parcela, ic = 5, dapmin = 5, 
     filter(CC >= dapmin) %>% # Remover classes menores que o dap minimo
     ungroup %>% 
     as.data.frame
+  
+  if(keep_unused_classes){
+    df_final <- df_final  %>% 
+      full_join( data.frame(
+        CC=seq( min(.$CC),max(.$CC), by=ic)), 
+        by=c( "CC" )
+      ) %>% 
+      arrange(CC)
+  }
   
   # Remover a variavel descartavel, caso tenha sido criada
   df_final$ESPECIESAA <- NULL

@@ -1221,7 +1221,8 @@ shinyServer(function(input, output, session) {
                                            dapmin = nm$diam.min, 
                                            especies = NA, 
                                            volume = nm$vcc,
-                                           rotulo.NI = NA )
+                                           rotulo.NI = NA,
+                                           keep_unused_classes = TRUE )
     
      lista
   })
