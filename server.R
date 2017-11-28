@@ -36,6 +36,7 @@ source("funs/inv.R"                , encoding="UTF-8")
 source("funs/hdjoin.R"             , encoding="UTF-8")
 source("funs/residuos_exp.R"       , encoding="UTF-8")
 source("funs/check_numeric.R"      , encoding="UTF-8")
+source("funs/notin.R"              , encoding="UTF-8")
 
 # Funcao para testar se uma variavel e numerica
 # Sera utilizada dentro da funcao validate
@@ -486,19 +487,27 @@ shinyServer(function(input, output, session) {
           data[,input$col.rm_data_var]))
     }
     
-    selectizeInput("level.rm_data_level",
-                   label = "Selecione o(s) nivel(s) que se deseja remover:",
-                   choices = opcoes,
-                   multiple = TRUE,
-                   options = list(
-                     placeholder = 'Selecione o(s) nivel(s) abaixo',
-                     onInitialize = I('function() { this.setValue(""); }')
-                   ) # options    
+    list(
+      
+      selectizeInput("level.rm_data_level",
+                     label = "Selecione o(s) nivel(s) que se deseja remover ou manter:",
+                     choices = opcoes,
+                     multiple = TRUE,
+                     options = list(
+                       placeholder = 'Selecione o(s) nivel(s) abaixo',
+                       onInitialize = I('function() { this.setValue(""); }')
+                     ) # options    
+      ),
+      
+      radioButtons("rm_or_keep",
+                   label = "Remover, ou manter dados referentes ao nível selecionado?",
+                   c("Remover"=FALSE, "Manter"=TRUE),
+                   selected = FALSE,
+                   inline = TRUE  )
+      
     )
-    
-    
-    
   })
+
   output$rm_vars <- renderUI({
     
     data <- rawData_()
@@ -760,13 +769,13 @@ shinyServer(function(input, output, session) {
     # need(is.numeric(data[[nm$ht]]), "ht column must be numeric"), errorClass = "WRONG")
     
     
-    # o primeiro if sera para remover as linhas
+    # o primeiro if sera para filtrar as linhas
     
     # se o usuario nao selecionar nada, retorna o dado normal 
     # (isso faz com o que o dado original seja exibido logo que se entra na aba de filtrar),
     # caso contrario ele filtra o dado conforme o usuario seleciona as variaveis
     
-    if( is.null(input$col.rm_data_var) || input$col.rm_data_var ==""){
+    if( is.null(input$col.rm_data_var) || input$col.rm_data_var =="" || is.null(input$rm_or_keep) || input$rm_or_keep == ""){
       
       # esse if acima so foi feito dessa forma pois tentar adicionar ! nas condicoes acima
       # nao funcionou, por algum motivo.
@@ -775,8 +784,16 @@ shinyServer(function(input, output, session) {
       
     }else{
       
-      # remove linhas caso um nivel seja selecionado
-      data <- data[!data[[input$col.rm_data_var]] %in% input$level.rm_data_level,]
+      
+      
+      if(input$rm_or_keep){ # mantem se for verdadeiro
+        boolean_vec <- data[[input$col.rm_data_var]]     %in%   input$level.rm_data_level
+      }else{                # remove se for falso
+        boolean_vec <- data[[input$col.rm_data_var]]   %notin%  input$level.rm_data_level
+      }
+      
+      
+      data <- data[boolean_vec,]
       
       # data <- data %>% filter( ! .data[[input$col.rm_data_var]] %in% input$level.rm_data_level )
       
