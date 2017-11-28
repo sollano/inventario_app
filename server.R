@@ -632,11 +632,18 @@ shinyServer(function(input, output, session) {
     data <- rawData_()
     #req( any(is.na(data[[input$col.ht]])) )
     
+
+    
+    
     if(is.null(input$col.ht) || is.na(input$col.ht) || input$col.ht=="" ){
       
-    }else if( !any(is.na(data[[input$col.ht]])) ) {
-      return()
-      }
+    }else if(nrow(data)>0 & input$col.ht!= ""){
+      data[input$col.ht ][ data[input$col.ht ] == 0 ] <- NA 
+          
+            if( !any(is.na(data[[input$col.ht]])) ) {
+              return()
+           }
+    } 
     
     list(
       
@@ -800,22 +807,33 @@ shinyServer(function(input, output, session) {
     }
     
     # Estimar HD
-    if(is.null(input$est.hd) || is.null(input$col.estrato ) || input$col.estrato =="" || is.na(input$col.estrato ) || is.null(input$col.ht ) || input$col.ht =="" || is.na(input$col.ht ) || is.na(input$col.dap) || input$col.dap=="" || is.null(input$col.dap) ){
+    if(is.null(input$est.hd) || is.null(input$col.parcelas ) || input$col.parcelas =="" || is.na(input$col.parcelas ) || is.null(input$col.ht ) || input$col.ht =="" || is.na(input$col.ht ) || is.na(input$col.dap) || input$col.dap=="" || is.null(input$col.dap) ){
       
       
     }else if(is.null(input$col.hd) || input$col.hd=="" || is.na(input$col.hd) ){
          
          # esse if tem que ser separado do de cima, se nao da erro(sabe-se la por que)
          if(input$est.hd){
-         
+             
+             # If para add estrato como grupo, caso seja inserido no dado
+           if(any(nm$estrato != "")){
+             group_hd <- c(nm$estrato, nm$parcelas)
+             
+           }else{
+             group_hd <- nm$parcelas
+             
+           }
+           
+             
                  data <- hdjoin(
                    df     =  data,
-                   grupos =  nm$estrato, 
+                   grupos =  group_hd, 
                    HT     =  nm$ht, 
                    DAP    =  nm$dap,
                    OBS    =  nm$obs,
                    dom    =  nm$cod.dom )  %>% 
                  select(HD, everything() )
+                 
          }
     }
     
@@ -1536,7 +1554,7 @@ shinyServer(function(input, output, session) {
     
     x <- inv_summary(df           = dados, 
                      DAP          = nm$dap, 
-                     HT           = nm$ht,
+                     HT           = nm$ht.est,
                      VCC          = nm$vcc,
                      area_parcela = nm$area.parcela,
                      groups       = grupos,

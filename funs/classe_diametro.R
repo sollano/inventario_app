@@ -3,7 +3,7 @@
 classe_diametro <- function(df, dap, parcela, area_parcela, ic = 5, dapmin = 5, especies=NA, volume=NA, rotulo.NI="NI", cc_to_column=F, G_to_cc=F, cctc_ha=T, keep_unused_classes=F){
   
   # se df nao for fornecido, for igual "", nulo, ou  nao for dataframe, parar
-  if(  missing(df) || df == "" || is.null(df) || !is.data.frame(df) ){  
+  if(  missing(df) || is.null(df) || !is.data.frame(df) ){  
     stop("df not set", call. = F) 
   }
   
