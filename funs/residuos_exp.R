@@ -1,11 +1,11 @@
 #' @export
 residuos_exp <- function (df, obs, ..., type = "scatterplot",point_size = 3,color = NULL, nrow = NULL,ncol = NULL, 
-                           lim_y = NULL, xlab = NULL, clab=NULL, font = "serif",legend_pos = "bottom",res_table = F){
+                          lim_y = NULL, xlab = NULL, clab=NULL, font = "serif",legend_pos = "bottom",res_table = F){
   DF <- as.data.frame(df)
   OBS <- obs 
   OBSgg <- paste("`",OBS,"`",sep="") #Adiciona "`" para o comeco do nome, para caso a variavel tenha caracteres especiais
   COLOR <- color
-  if(is.null(COLOR)){COLORgg <- NULL}else(COLORgg <- paste("`",COLOR,"`",sep="")) #Adiciona "`" para o comeco do nome, para caso a variavel tenha caracteres especiais
+  if(is.null(COLOR)||is.na(COLOR)||COLOR==""){COLOR <- NULL;COLORgg <- NULL}else(COLORgg <- paste("`",COLOR,"`",sep="")) #Adiciona "`" para o comeco do nome, para caso a variavel tenha caracteres especiais
   ARGS <- list(...)
   XLAB <- xlab
   if (is.null(XLAB)) {XLAB <- "Valor observado"  }
@@ -30,14 +30,14 @@ residuos_exp <- function (df, obs, ..., type = "scatterplot",point_size = 3,colo
       ARGS[[i]] <- NULL
       
     }else{
-    
-    lista[[i]] <- data.frame(ID = names(DF[ ARGS[[i]] ]), 
-                             DF[OBS],
-                             DF[COLOR],
-                             EST = DF[[ ARGS[[i]] ]],
-                             ERRO = ((DF[[ ARGS[[i]] ]] - DF[[OBS]])/DF[[OBS]]) * 100,
-                             check.names = F)
-    # check names=F garante que variaveis com nomes contendo caracteres especiais nao sejam renomeadas
+      
+      lista[[i]] <- data.frame(ID = names(DF[ ARGS[[i]] ]), 
+                               DF[OBS],
+                               DF[COLOR],
+                               EST = DF[[ ARGS[[i]] ]],
+                               ERRO = ((DF[[ ARGS[[i]] ]] - DF[[OBS]])/DF[[OBS]]) * 100,
+                               check.names = F)
+      # check names=F garante que variaveis com nomes contendo caracteres especiais nao sejam renomeadas
     }
   }
   # check names+F garante que variaveis com nomes contendo caracteres especiais nao sejam renomeadas
@@ -52,7 +52,7 @@ residuos_exp <- function (df, obs, ..., type = "scatterplot",point_size = 3,colo
   }
   
   # Se o usuario utilizar histograma, converter a cor pra fator
-  if(type == "histogram" | type == "histogram_curve" & !is.null(COLOR)){
+  if(is.null(COLOR) || is.na(COLOR) || COLOR==""){}else if(type == "histogram" | type == "histogram_curve"){
     
     df_graph[[COLOR]] <- as.factor(df_graph[[COLOR]])
   }
@@ -67,7 +67,7 @@ residuos_exp <- function (df, obs, ..., type = "scatterplot",point_size = 3,colo
   
   p <- ggplot2::ggplot(df_graph) + {
     if (type == "scatterplot")ggplot2::geom_point(ggplot2::aes_string(OBSgg, "ERRO", color=COLORgg), size = point_size, alpha = 0.9)
-    else if (type == "histogram" | type == "histogram_curve")  ggplot2::geom_histogram(ggplot2::aes_string(x = "ERRO", y = "..density..", fill=COLORgg), color = "gray50", binwidth = 1)
+    else if (type == "histogram" | type == "histogram_curve")  ggplot2::geom_histogram(ggplot2::aes_string(x = "ERRO", y = "..density..", fill=COLORgg), color = "gray50", binwidth = 3, position = "dodge")
     else if (type == "versus") ggplot2::geom_point(ggplot2::aes_string(OBSgg, "EST", color=COLORgg), size = point_size, alpha = 0.9)
   } + {
     if (type == "histogram_curve") ggplot2::geom_density(ggplot2::aes_string("ERRO"), size = 1, color = "gray10")
@@ -93,11 +93,11 @@ residuos_exp <- function (df, obs, ..., type = "scatterplot",point_size = 3,colo
       legend.position = legend_pos,
       panel.grid.major = ggplot2::element_blank(), 
       panel.grid.minor = ggplot2::element_blank(), panel.border = ggplot2::element_blank(), 
-      axis.title = ggplot2::element_text(size = 26, face="bold"), 
+      axis.title = ggplot2::element_text(size = 24, face="bold"), 
       axis.text = ggplot2::element_text(size = 22), 
       axis.line.x = ggplot2::element_line(color = "black"), 
       axis.line.y = ggplot2::element_line(color = "black"), 
-      strip.text.x = ggplot2::element_text(size = 15, face = "bold"),
+      strip.text.x = ggplot2::element_text(size = 18, face = "bold"),
       legend.text = ggplot2::element_text(size=20), 
       legend.title = ggplot2::element_text(size=20) ) + 
     ggplot2::guides(
