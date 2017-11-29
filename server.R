@@ -1071,9 +1071,8 @@ shinyServer(function(input, output, session) {
     # Precisa que a tab de vsc seja selecionada
     # Precisa ter b2 no modelo
     req(
-      is.null(input$col.vcc) || input$col.vcc ==""#,
-      #  input$est_ht_vol_tabset == "id_vsc", 
-      # grepl( "\\<b2\\>",input$modelo_estvsc)
+      is.null(input$col.vcc) || input$col.vcc =="",
+       grepl( "\\<b2\\>",input$modelo_estvsc)
     )
     
     list(
@@ -1231,9 +1230,8 @@ shinyServer(function(input, output, session) {
     # Precisa que a tab de vsc seja selecionada
     # Precisa ter b2 no modelo
     req(
-      is.null(input$col.vsc) || input$col.vsc ==""#,
-    #  input$est_ht_vol_tabset == "id_vsc", 
-     # grepl( "\\<b2\\>",input$modelo_estvsc)
+      is.null(input$col.vsc) || input$col.vsc =="",
+      grepl( "\\<b2\\>",input$modelo_estvsc)
     )
     
     list(
