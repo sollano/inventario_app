@@ -329,7 +329,11 @@ shinyUI(
                                 br(),
                                 
                                 fluidRow(
-                                  column(2,uiOutput("ui_ht_est" )),
+                                  column(2,uiOutput("ui_ht_est" ),
+                                         radioButtons("ajuste_p_estrato",
+                                         "Ajustar modelos por estrato?",
+                                         c("Sim"=TRUE,"Nao"=FALSE), selected = FALSE,inline = TRUE)
+                                         ),
                                   column(3,uiOutput("ui_estvcc1")),
                                   column(2,uiOutput("ui_estvcc3"),uiOutput("ui_estvcc4")),
                                   
@@ -341,7 +345,11 @@ shinyUI(
                                 
                                 tabsetPanel(
                                   tabPanel("Tabela de estimativas", DT::dataTableOutput("ArvData_table")),
-                                  tabPanel("Gráfico dos resíduos dos modelos hipsométricos",plotOutput("ht_plot" ,height = "550px"))
+                                  tabPanel("Gráfico dos resíduos dos modelos hipsométricos",
+                                           plotOutput("ht_scatter_plot" ,height = "550px"),
+                                           plotOutput("ht_hist_plot" ,height = "550px"),
+                                           plotOutput("ht_vs_plot" ,height = "550px")
+                                  )
                                 )
                                 )
                               

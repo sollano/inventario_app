@@ -1351,8 +1351,16 @@ shinyServer(function(input, output, session) {
       }
       
       
+      # Ajustar por estrato caso o usuário deseje
+      if(input$ajuste_p_estrato){
+        grupo <- nm$estrato
+      }else{
+        grupo <- ""
+      }
+      
+      
       dados <- dados %>%  
-        lm_table(modelo_ht,output = "est" ) %>% 
+        lm_table(modelo_ht, grupo, output = "est" ) %>% 
         mutate( HT_EST = ifelse(is.na( !!(rlang::sym(nm$ht)) ), est, !!(rlang::sym(nm$ht)) ) ) %>% 
         select(HT_EST, everything(), -est )
       
@@ -1493,7 +1501,7 @@ shinyServer(function(input, output, session) {
   })
   
   # Graficos de altura
-  ht_graph <- reactive({
+  ht_scatter <- reactive({
     
     nm <- varnames()
     dados <- rawData()
@@ -1515,14 +1523,29 @@ shinyServer(function(input, output, session) {
     
     dados <- dados %>%  filter( !is.na(.data[[nm$ht]]) )
     
+    # adicionar estrato como cor
+    if(input$ajuste_p_estrato){
+      grupo <- nm$estrato
+    }else{
+      grupo <- ""
+    }
+    print(input$ajuste_p_estrato)
     # Tentar Ajustar os modelos utilizando try, e salvar em uma lista,
     # junto com a altura observada
     lista <- list(
       dados[!is.na(dados[nm$ht]), nm$ht,drop=F],
-      "LN(HT) = b0 + b1 * 1/DAP + e"               = try(lm_table(dados, paste( "log(", nm$ht, ") ~ inv(", nm$dap ,")"  )                       , output = "est" )[["est"]], silent = T),
-      "LN(HT) = b0 + b1 * LN(DAP) + e"             = try(lm_table(dados, paste( "log(", nm$ht, ") ~ log(", nm$dap ,")"  )                       , output = "est" )[["est"]], silent = T),
-      "LN(HT) = b0 + b1 * 1/DAP + b2 * LN(HD) + e" = try(lm_table(dados, paste( "log(", nm$ht, ") ~ inv(", nm$dap ,") + ", "log(", nm$hd ,")" ) , output = "est" )[["est"]], silent = T)
+      "LN(HT) = b0 + b1 * 1/DAP + e"               = try(lm_table(dados, paste( "log(", nm$ht, ") ~ inv(", nm$dap ,")"  )                       ,.groups = grupo, output = "est" )[["est"]], silent = T),
+      "LN(HT) = b0 + b1 * LN(DAP) + e"             = try(lm_table(dados, paste( "log(", nm$ht, ") ~ log(", nm$dap ,")"  )                       ,.groups = grupo, output = "est" )[["est"]], silent = T),
+      "LN(HT) = b0 + b1 * 1/DAP + b2 * LN(HD) + e" = try(lm_table(dados, paste( "log(", nm$ht, ") ~ inv(", nm$dap ,") + ", "log(", nm$hd ,")" ) ,.groups = grupo, output = "est" )[["est"]], silent = T)
     )
+    
+    # adicionar grupos, para a lista, caso o usuário selecione o ajuste por grupos
+    if(input$ajuste_p_estrato){
+      lista[[nm$estrato]] <- dados[!is.na(dados[nm$ht]), nm$estrato,drop=F]
+    }else{
+      grupo <- ""
+    }
+    
     
     # Criar um dataframe apenas com os modelos que ajustaram
     dados2 <- as.data.frame(do.call(cbind,lista[!sapply(lista, is, "try-error")]))
@@ -1535,18 +1558,177 @@ shinyServer(function(input, output, session) {
                    nm$ht, 
                    "LN(HT) = b0 + b1 * 1/DAP + e", 
                    "LN(HT) = b0 + b1 * LN(DAP) + e",
-                   "LN(HT) = b0 + b1 * 1/DAP + b2 * LN(HD) + e", nrow = 1 )
+                   "LN(HT) = b0 + b1 * 1/DAP + b2 * LN(HD) + e", nrow = 1,
+                   type = "scatterplot",
+                   color = grupo[length(grupo)] )
       
     )
     
     
   })
-  output$ht_plot <- renderPlot({
+  output$ht_scatter_plot <- renderPlot({
     
-    ht_graph()
+    ht_scatter()
     
   })
   
+  ht_hist <- reactive({
+    
+    nm <- varnames()
+    dados <- rawData()
+    validate(
+      need(dados, "Por favor faça o upload da base de dados"),
+      need(nrow(dados)>0,"Base de dados vazia"),
+      need(input$df == "Dados em nivel de arvore", "Base de dados incompativel" ),
+      need(nm$dap,"Por favor mapeie a coluna referente a 'dap'  "),
+      need(nm$ht,"Por favor mapeie a coluna referente a 'ht'  ")#,
+      # need(input$modelo_est_ht,"Coluna mapeada à 'Altura' não possui alturas não medidas")
+    )
+    
+    if(is.null(input$col.ht) || is.na(input$col.ht) || input$col.ht=="" ){
+      
+      
+    }else if( !any(is.na(dados[[input$col.ht]])) ) {
+      return()
+    }
+    
+    dados <- dados %>%  filter( !is.na(.data[[nm$ht]]) )
+    
+    # adicionar estrato como cor
+    if(input$ajuste_p_estrato){
+      grupo <- nm$estrato
+    }else{
+      grupo <- ""
+    }
+    print(input$ajuste_p_estrato)
+    # Tentar Ajustar os modelos utilizando try, e salvar em uma lista,
+    # junto com a altura observada
+    lista <- list(
+      dados[!is.na(dados[nm$ht]), nm$ht,drop=F],
+      "LN(HT) = b0 + b1 * 1/DAP + e"               = try(lm_table(dados, paste( "log(", nm$ht, ") ~ inv(", nm$dap ,")"  )                       ,.groups = grupo, output = "est" )[["est"]], silent = T),
+      "LN(HT) = b0 + b1 * LN(DAP) + e"             = try(lm_table(dados, paste( "log(", nm$ht, ") ~ log(", nm$dap ,")"  )                       ,.groups = grupo, output = "est" )[["est"]], silent = T),
+      "LN(HT) = b0 + b1 * 1/DAP + b2 * LN(HD) + e" = try(lm_table(dados, paste( "log(", nm$ht, ") ~ inv(", nm$dap ,") + ", "log(", nm$hd ,")" ) ,.groups = grupo, output = "est" )[["est"]], silent = T)
+    )
+    
+    # adicionar grupos, para a lista, caso o usuário selecione o ajuste por grupos
+    if(input$ajuste_p_estrato){
+      lista[[nm$estrato]] <- dados[!is.na(dados[nm$ht]), nm$estrato,drop=F]
+    }else{
+      grupo <- ""
+    }
+    
+    
+    # Criar um dataframe apenas com os modelos que ajustaram
+    dados2 <- as.data.frame(do.call(cbind,lista[!sapply(lista, is, "try-error")]))
+    
+    # adicionar estrato como cor
+    if(input$ajuste_p_estrato){
+      grupo <- nm$estrato
+    }else{
+      grupo <- ""
+    }
+    
+    
+    # Criar os graficos
+    # suppressWarnings evita avisos quando um dos modelos nao for ajustado
+    suppressWarnings(
+      
+      residuos_exp(dados2, 
+                   nm$ht, 
+                   "LN(HT) = b0 + b1 * 1/DAP + e", 
+                   "LN(HT) = b0 + b1 * LN(DAP) + e",
+                   "LN(HT) = b0 + b1 * 1/DAP + b2 * LN(HD) + e", nrow = 1,
+                   type = "histogram_curve",
+                   color = grupo[length(grupo)] )
+      
+    )
+    
+    
+  })
+  output$ht_hist_plot <- renderPlot({
+    
+    ht_hist()
+    
+  })
+  
+  ht_vs <- reactive({
+ 
+    nm <- varnames()
+    dados <- rawData()
+    validate(
+      need(dados, "Por favor faça o upload da base de dados"),
+      need(nrow(dados)>0,"Base de dados vazia"),
+      need(input$df == "Dados em nivel de arvore", "Base de dados incompativel" ),
+      need(nm$dap,"Por favor mapeie a coluna referente a 'dap'  "),
+      need(nm$ht,"Por favor mapeie a coluna referente a 'ht'  ")#,
+      # need(input$modelo_est_ht,"Coluna mapeada à 'Altura' não possui alturas não medidas")
+    )
+    
+    if(is.null(input$col.ht) || is.na(input$col.ht) || input$col.ht=="" ){
+      
+      
+    }else if( !any(is.na(dados[[input$col.ht]])) ) {
+      return()
+    }
+    
+    dados <- dados %>%  filter( !is.na(.data[[nm$ht]]) )
+    
+    # adicionar estrato como cor
+    if(input$ajuste_p_estrato){
+      grupo <- nm$estrato
+    }else{
+      grupo <- ""
+    }
+    print(input$ajuste_p_estrato)
+    # Tentar Ajustar os modelos utilizando try, e salvar em uma lista,
+    # junto com a altura observada
+    lista <- list(
+      dados[!is.na(dados[nm$ht]), nm$ht,drop=F],
+      "LN(HT) = b0 + b1 * 1/DAP + e"               = try(lm_table(dados, paste( "log(", nm$ht, ") ~ inv(", nm$dap ,")"  )                       ,.groups = grupo, output = "est" )[["est"]], silent = T),
+      "LN(HT) = b0 + b1 * LN(DAP) + e"             = try(lm_table(dados, paste( "log(", nm$ht, ") ~ log(", nm$dap ,")"  )                       ,.groups = grupo, output = "est" )[["est"]], silent = T),
+      "LN(HT) = b0 + b1 * 1/DAP + b2 * LN(HD) + e" = try(lm_table(dados, paste( "log(", nm$ht, ") ~ inv(", nm$dap ,") + ", "log(", nm$hd ,")" ) ,.groups = grupo, output = "est" )[["est"]], silent = T)
+    )
+    
+    # adicionar grupos, para a lista, caso o usuário selecione o ajuste por grupos
+    if(input$ajuste_p_estrato){
+      lista[[nm$estrato]] <- dados[!is.na(dados[nm$ht]), nm$estrato,drop=F]
+    }else{
+      grupo <- ""
+    }
+    
+    
+    # Criar um dataframe apenas com os modelos que ajustaram
+    dados2 <- as.data.frame(do.call(cbind,lista[!sapply(lista, is, "try-error")]))
+    
+    # adicionar estrato como cor
+    if(input$ajuste_p_estrato){
+      grupo <- nm$estrato
+    }else{
+      grupo <- ""
+    }
+    
+    
+    # Criar os graficos
+    # suppressWarnings evita avisos quando um dos modelos nao for ajustado
+    suppressWarnings(
+      
+      residuos_exp(dados2, 
+                   nm$ht, 
+                   "LN(HT) = b0 + b1 * 1/DAP + e", 
+                   "LN(HT) = b0 + b1 * LN(DAP) + e",
+                   "LN(HT) = b0 + b1 * 1/DAP + b2 * LN(HD) + e", nrow = 1,
+                   type = "versus",
+                   color = grupo[length(grupo)] )
+      
+    )
+    
+    
+  })
+  output$ht_vs_plot <- renderPlot({
+    
+    ht_vs()
+    
+  })
   
   # Distribuicoes e graficos ####
   

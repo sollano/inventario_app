@@ -78,7 +78,7 @@
 #' 
 #' @author Sollano Rabelo Braga \email{sollanorb@@gmail.com}
 
-lm_table <- function(df, modelo, ..., output = "table", est.name = "est", keep_model = F){
+lm_table <- function(df, modelo, .groups, output = "table", est.name = "est", keep_model = F){
   
   # se output nao for tabele merge ou nest, a funcao para 
   if( ! output %in% c("table", "merge", "est","estimate","nest") ){stop("ouput argument must be 'table', 'merge' 'est', or 'nest' ")}
@@ -101,13 +101,12 @@ lm_table <- function(df, modelo, ..., output = "table", est.name = "est", keep_m
   # se grupos nao foram fornecidos e os dados nao possuem grupos, a funcao para
   #if(is.null( .groups) ){ .groups = groups(df) }
   #if(is.null( .groups) ){df$A <- "dummy"; .groups <- "A" }
-
-    # se ... nao for fornecido ou for igual "", gerar vetor vazio, para que a funcao nao pare
-  if(  missing(...) || gsub('"', "", deparse(substitute(...)))== "" ){ 
+  # se ... nao for fornecido ou for igual "", gerar vetor vazio, para que a funcao nao pare
+  if(  missing(.groups) || is.null(.groups) || is.na(.groups) || any(.groups == "") ){ 
     df$A <- "dummy"
     groups_vars <- "A"
   }else{
-    groups_vars <- vars(...)
+    groups_vars <- vars(.groups)
   }
   
   # converte modelo para formula
@@ -136,7 +135,8 @@ lm_table <- function(df, modelo, ..., output = "table", est.name = "est", keep_m
            Coefs  = purrr::map(Reg, tidy_   ),
            Qualid = purrr::map(Reg, glance_ ),
            Res = purrr::map(Reg, resid),
-           est = purrr::map2(Reg, data, predict) ) 
+           est = purrr::map2(Reg, data, predict) ) %>% 
+    ungroup
   
   x$A <- NULL 
   
