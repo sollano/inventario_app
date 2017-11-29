@@ -1524,12 +1524,13 @@ shinyServer(function(input, output, session) {
     dados <- dados %>%  filter( !is.na(.data[[nm$ht]]) )
     
     # adicionar estrato como cor
-    if(input$ajuste_p_estrato){
+    if(is.null(nm$estrato) || is.na(nm$estrato) || nm$estrato==""){
+      grupo <- ""
+    }else if(input$ajuste_p_estrato){
       grupo <- nm$estrato
     }else{
       grupo <- ""
     }
-    print(input$ajuste_p_estrato)
     # Tentar Ajustar os modelos utilizando try, e salvar em uma lista,
     # junto com a altura observada
     lista <- list(
@@ -1540,10 +1541,12 @@ shinyServer(function(input, output, session) {
     )
     
     # adicionar grupos, para a lista, caso o usuário selecione o ajuste por grupos
-    if(input$ajuste_p_estrato){
+    if(is.null(nm$estrato) || is.na(nm$estrato) || nm$estrato==""){
+     
+    }else if(input$ajuste_p_estrato){
       lista[[nm$estrato]] <- dados[!is.na(dados[nm$ht]), nm$estrato,drop=F]
     }else{
-      grupo <- ""
+     
     }
     
     
@@ -1595,12 +1598,13 @@ shinyServer(function(input, output, session) {
     dados <- dados %>%  filter( !is.na(.data[[nm$ht]]) )
     
     # adicionar estrato como cor
-    if(input$ajuste_p_estrato){
+    if(is.null(nm$estrato) || is.na(nm$estrato) || nm$estrato==""){
+      grupo <- ""
+    }else if(input$ajuste_p_estrato){
       grupo <- nm$estrato
     }else{
       grupo <- ""
     }
-    print(input$ajuste_p_estrato)
     # Tentar Ajustar os modelos utilizando try, e salvar em uma lista,
     # junto com a altura observada
     lista <- list(
@@ -1611,23 +1615,15 @@ shinyServer(function(input, output, session) {
     )
     
     # adicionar grupos, para a lista, caso o usuário selecione o ajuste por grupos
-    if(input$ajuste_p_estrato){
+    if(is.null(nm$estrato) || is.na(nm$estrato) || nm$estrato==""){
+      
+    }else if(input$ajuste_p_estrato){
       lista[[nm$estrato]] <- dados[!is.na(dados[nm$ht]), nm$estrato,drop=F]
-    }else{
-      grupo <- ""
     }
     
     
     # Criar um dataframe apenas com os modelos que ajustaram
     dados2 <- as.data.frame(do.call(cbind,lista[!sapply(lista, is, "try-error")]))
-    
-    # adicionar estrato como cor
-    if(input$ajuste_p_estrato){
-      grupo <- nm$estrato
-    }else{
-      grupo <- ""
-    }
-    
     
     # Criar os graficos
     # suppressWarnings evita avisos quando um dos modelos nao for ajustado
@@ -1674,12 +1670,14 @@ shinyServer(function(input, output, session) {
     dados <- dados %>%  filter( !is.na(.data[[nm$ht]]) )
     
     # adicionar estrato como cor
-    if(input$ajuste_p_estrato){
+    if(is.null(nm$estrato) || is.na(nm$estrato) || nm$estrato==""){
+      grupo <- ""
+    }else if(input$ajuste_p_estrato){
       grupo <- nm$estrato
     }else{
       grupo <- ""
     }
-    print(input$ajuste_p_estrato)
+    
     # Tentar Ajustar os modelos utilizando try, e salvar em uma lista,
     # junto com a altura observada
     lista <- list(
@@ -1690,23 +1688,15 @@ shinyServer(function(input, output, session) {
     )
     
     # adicionar grupos, para a lista, caso o usuário selecione o ajuste por grupos
-    if(input$ajuste_p_estrato){
+    if(is.null(nm$estrato) || is.na(nm$estrato) || nm$estrato==""){
+      
+    }else if(input$ajuste_p_estrato){
       lista[[nm$estrato]] <- dados[!is.na(dados[nm$ht]), nm$estrato,drop=F]
-    }else{
-      grupo <- ""
     }
     
     
     # Criar um dataframe apenas com os modelos que ajustaram
     dados2 <- as.data.frame(do.call(cbind,lista[!sapply(lista, is, "try-error")]))
-    
-    # adicionar estrato como cor
-    if(input$ajuste_p_estrato){
-      grupo <- nm$estrato
-    }else{
-      grupo <- ""
-    }
-    
     
     # Criar os graficos
     # suppressWarnings evita avisos quando um dos modelos nao for ajustado

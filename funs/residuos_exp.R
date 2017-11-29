@@ -5,6 +5,7 @@ residuos_exp <- function (df, obs, ..., type = "scatterplot",point_size = 3,colo
   OBS <- obs 
   OBSgg <- paste("`",OBS,"`",sep="") #Adiciona "`" para o comeco do nome, para caso a variavel tenha caracteres especiais
   COLOR <- color
+  
   if(is.null(COLOR)||is.na(COLOR)||COLOR==""){COLOR <- NULL;COLORgg <- NULL}else(COLORgg <- paste("`",COLOR,"`",sep="")) #Adiciona "`" para o comeco do nome, para caso a variavel tenha caracteres especiais
   ARGS <- list(...)
   XLAB <- xlab
