@@ -343,6 +343,8 @@ shinyUI(
                                   
                                 ),
                                 
+                                fluidRow(column(6,uiOutput("aviso_ajuste"))),
+                                
                                 tabsetPanel(
                                   tabPanel("Tabela de estimativas", DT::dataTableOutput("ArvData_table")),
                                   tabPanel("Gráfico dos resíduos dos modelos hipsométricos",
@@ -521,7 +523,9 @@ shinyUI(
                                                              "Indv. por ha por classe de ht",
                                                              "Frequencia para var. Qualidade",
                                                              "Porcentagem para var. Qualidade",
-                                                             "Residuos em porcentagem para modelos de HT"
+                                                             "Dispersao dos residuos em porcentagem para HT",
+                                                             "Histograma dos residuos em porcentagem para HT",
+                                                             "HT vs HT estimada"
                                                              )),
                                                
                                                selectInput("graphformat",
