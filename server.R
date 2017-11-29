@@ -1002,7 +1002,18 @@ shinyServer(function(input, output, session) {
     )
     
   })
-
+  output$aviso_ajuste <- renderUI({
+    
+    req( input$ajuste_p_estrato==TRUE )
+    
+    validate(
+      need(!is.null(input$col.estrato),
+           "Nenhum estrato selecionado. O ajuste será feito para todos os dados"),
+      errorClass = "AVISO"
+    )
+    
+  })
+  
 
   
   
@@ -2373,13 +2384,14 @@ shinyServer(function(input, output, session) {
     checkboxGroupInput("dataset", h3("Escolha uma ou mais tabelas, e clique no botão abaixo:"), 
                        choices =  c(
                          "Dados inconsistentes"              ,
-                         "Dado utilizado"                    ,
+                         "Dado preparado"                    ,
+                         "Dado volume por arvore"            ,
                          "Distribuicao diametrica"           ,
                          "Distribuicao de altura"            ,
                          "Totalizacao de parcelas"           ,
                          "Amostragem Casual Simples"         ,
-                         "Amostragem Casual Estratificada 1" ,
-                         "Amostragem Casual Estratificada 2" ,
+                         "Amostragem Casual Estrat 1" ,
+                         "Amostragem Casual Estrat 2" ,
                          "Amostragem Sistematica"            
                        ), inline = T )
     
@@ -2394,8 +2406,12 @@ shinyServer(function(input, output, session) {
       L[["Dados inconsistentes"]] <- try( consist_fun(), silent = T) 
     }
     
-    if("Dado utilizado" %in% input$dataset ) {
-      L[["Dado utilizado"]] <-  try(rawData(), silent = T)
+    if("Dado preparado" %in% input$dataset ) {
+      L[["Dado preparado"]] <-  try(rawData(), silent = T)
+    }
+    
+    if("Dado volume por arvore" %in% input$dataset ) {
+      L[["Dado volume por arvore"]] <-  try(ArvData(), silent = T)
     }
     
     if("Distribuicao diametrica" %in% input$dataset ) {
@@ -2414,12 +2430,12 @@ shinyServer(function(input, output, session) {
       L[["Amostragem Casual Simples"]] <- try(tabacs() , silent=T)
     }
     
-    if("Amostragem Casual Estratificada 1" %in% input$dataset ) {
-      L[["Amostragem Casual Estratificada 1"]] <- try(list_ace()[[1]], silent = T)
+    if("Amostragem Casual Estrat 1" %in% input$dataset ) {
+      L[["Amostragem Casual Estrat 1"]] <- try(list_ace()[[1]], silent = T)
     }
     
-    if("Amostragem Casual Estratificada 2" %in% input$dataset ) {
-      L[["Amostragem Casual Estratificada 2"]] <- try(list_ace()[[2]] , silent=T)
+    if("Amostragem Casual Estrat 2" %in% input$dataset ) {
+      L[["Amostragem Casual Estrat 2"]] <- try(list_ace()[[2]] , silent=T)
     }
     
     if("Amostragem Sistematica" %in% input$dataset ) {
@@ -2435,7 +2451,9 @@ shinyServer(function(input, output, session) {
     
     L[["Dados inconsistentes"]] <- try( consist_fun(), silent = T) 
     
-    L[["Dado utilizado"]]       <-  try(rawData(), silent = T)
+    L[["Dado preparado"]]       <-  try(rawData(), silent = T)
+    
+    L[["Dado volume por arvore"]] <-  try(ArvData(), silent = T)
     
     L[["Distribuicao diametrica"]] <-  try(dd_list()[["dd_geral"]], silent=T)
     
@@ -2445,9 +2463,9 @@ shinyServer(function(input, output, session) {
     
     L[["Amostragem Casual Simples"]] <- try(tabacs() , silent=T)
     
-    L[["Amostragem Casual Estratificada 1"]] <- try(list_ace()[[1]], silent = T)
+    L[["Amostragem Casual Estrat 1"]] <- try(list_ace()[[1]], silent = T)
     
-    L[["Amostragem Casual Estratificada 2"]] <- try(list_ace()[[2]] , silent=T)
+    L[["Amostragem Casual Estrat 2"]] <- try(list_ace()[[2]] , silent=T)
     
     L[["Amostragem Sistematica"]] <- try( tabas() , silent=T)
     
@@ -2473,13 +2491,16 @@ shinyServer(function(input, output, session) {
   
   graphInput <- reactive({
     switch(input$graph_d,
-           "Indv. por ha por CC"                        = dd_g1(),
-           "Vol. por ha por CC"                         = dd_g2(),
-           "G por ha por CC"                            = dd_g3(),
-           "Indv. por ha por classe de ht"              = dist_ht_graph(),
-           "Frequencia para var. Qualidade"             = obs_graph_1(),
-           "Porcentagem para var. Qualidade"            = obs_graph_2(),
-           "Residuos em porcentagem para modelos de HT" = ht_graph()
+           "Indv. por ha por CC"                            = dd_g1(),
+           "Vol. por ha por CC"                             = dd_g2(),
+           "G por ha por CC"                                = dd_g3(),
+           "Indv. por ha por classe de ht"                  = dist_ht_graph(),
+           "Frequencia para var. Qualidade"                 = obs_graph_1(),
+           "Porcentagem para var. Qualidade"                = obs_graph_2(),
+           "Dispersao dos residuos em porcentagem para HT"  = ht_scatter(),
+           "Histograma dos residuos em porcentagem para HT" = ht_hist(),
+           "HT vs HT estimada"                              = ht_vs()
+           
     )
   })
   
