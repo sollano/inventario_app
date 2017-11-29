@@ -609,133 +609,7 @@ shinyServer(function(input, output, session) {
     
   })
 
-  # Estimar altura
-  output$ajust_ht_title <- renderUI({
-    
-    # precisa que o usuario tenha NAs na coluna de altura
-    data <- rawData_()
-    #req( any(is.na(data[[input$col.ht]])) )
-    
-    if(is.null(input$col.ht) || is.na(input$col.ht) || input$col.ht=="" ){
-      
-    }else if( !any(is.na(data[[input$col.ht]])) ) {
-      return()
-    }
-    
-    h3("Resíduos em porcentagem para os modelos hipsométricos",style = "text-align: center;")
-    
-    
-  })
-  output$ajust_ht <- renderUI({
-    
-    # precisa que o usuario tenha NAs na coluna de altura
-    data <- rawData_()
-    #req( any(is.na(data[[input$col.ht]])) )
-    
-
-    
-    
-    if(is.null(input$col.ht) || is.na(input$col.ht) || input$col.ht=="" ){
-      
-    }else if(nrow(data)>0 & input$col.ht!= ""){
-      data[input$col.ht ][ data[input$col.ht ] == 0 ] <- NA 
-          
-            if( !any(is.na(data[[input$col.ht]])) ) {
-              return()
-           }
-    } 
-    
-    list(
-      
-      h3("Estimar altura das árvores não medidas"),
-      
-      h5("A altura será estimada utilizando um dos modelos hipsométricos abaixo. Resíduos para todos os modelos disponíveis são demonstrados graficamente ao lado:"),
-      
-      radioButtons("modelo_est_ht",
-                   label = "Selecione o modelo para ser utilizado:",
-                   choices = c(
-                     "LN(HT) = b0 + b1 * 1/DAP + e",
-                     "LN(HT) = b0 + b1 * LN(DAP) + e",
-                     "LN(HT) = b0 + b1 * 1/DAP + b2 * LN(HD) + e"
-                     
-                   ) )      
-    
-      
-    )
-    
-  })
  
-  # Calculo de volume 
-  output$ui_estvol1 <- renderUI({
-    
-    # precisa que o usuario nao tenha selecionado o volume
-    req(is.null(input$col.vcc) || input$col.vcc =="" )
-    
-    list(
-      
-      h3("Estimaçao de Volume"),
-      
-      radioButtons("modelo_estvol",
-                   label = "Selecione o modelo para ser utilizado:",
-                   choices = c(
-                     "LN(VFCC) = b0 + b1 * LN(DAP) + b2 * LN(HT) + e",
-                     "VFCC = b0 + b1 * DAP + b2 * HT + e",
-                     "VFCC = b0 * DAP^b1 * HT^b2 + e",
-                     "LN(VFCC) = b0 + b1 * 1/DAP + e",
-                     "VFCC = b0 + b1 * DAP + e", 
-                     "VFCC = b0 + b1 * DAP² + e", 
-                     "VFCC = b0 + b1 * DAP + b2 * DAP² + e",
-                     "VFCC = b0 + b1 * LN(DAP) + e"
-                   ) )      )
-    
-    
-    
-  })
-  output$ui_estvol3 <- renderUI({
-    
-    # precisa que o usuario nao tenha selecionado o volume
-    req(is.null(input$col.vcc) || input$col.vcc =="" )
-    
-    list(
-      
-      numericInput( # cria uma lista de opcoes em que o usuario pode clicar
-        'b0_estvol', # Id
-        "Insira o valor para o b0:", # nome que sera mostrado na UI
-        value = NULL, 
-        step = 0.0001
-      ),
-      
-      numericInput( # cria uma lista de opcoes em que o usuario pode clicar
-        'b1_estvol', # Id
-        "Insira o valor para o b1:", # nome que sera mostrado na UI
-        value = NULL, 
-        step = 0.0001
-      )
-      
-      
-    )
-    
-  })
-  output$ui_estvol4 <- renderUI({
-    
-    # precisa que o usuario nao tenha selecionado o volume
-    req(is.null(input$col.vcc) || input$col.vcc =="" )
-    # Precisa ter b2 no modelo
-    req( grepl( "\\<b2\\>",input$modelo_estvol) ) 
-    
-    list(
-      
-      numericInput( # cria uma lista de opcoes em que o usuario pode clicar
-        'b2_estvol', # Id
-        "Insira o valor para o b2:", # nome que sera mostrado na UI
-        value = "", 
-        step = 0.0001
-      )
-      
-    )
-    
-  })
-
   # tabela
   # rawData sera o dado utilizado durante o resto do app
   # as alteracoes feitas em 'preparacao' serao salvas aqui
@@ -837,98 +711,7 @@ shinyServer(function(input, output, session) {
          }
     }
     
-    # Estimar altura caso altura seja selecionada e possua NAs, ou seja, arvores nao medidas
-    # Esse se evita mensagens de erro quando as colunas nao forem selecionadas
-    if( is.null(input$col.ht) || input$col.ht=="" || is.na(input$col.ht) || is.na(input$col.dap) || input$col.dap=="" || is.null(input$col.dap) ||   is.null(input$modelo_est_ht) || input$modelo_est_ht=="" || is.na(input$modelo_est_ht) ){
-      
-      
-    }else if( nm$ht!="" && any(is.na(data[[nm$ht]])) ){
-      
-      if(input$modelo_est_ht ==  "LN(HT) = b0 + b1 * 1/DAP + e" ){
-        
-        modelo_ht <- paste( "log(", nm$ht, ") ~ inv(", nm$dap ,")"  )
-        
-      }else if(input$modelo_est_ht ==  "LN(HT) = b0 + b1 * LN(DAP) + e" ){
-        
-        modelo_ht <- paste( "log(", nm$ht, ") ~ log(", nm$dap ,")"  )
-        
-      }else if(input$modelo_est_ht ==  "LN(HT) = b0 + b1 * 1/DAP + b2 * LN(HD) + e" ){
-        
-        modelo_ht <- paste( "log(", nm$ht, ") ~ inv(", nm$dap ,") + ", "log(", nm$hd ,")" )
-      }
-      
-      
-      data <- data %>%  
-        lm_table(modelo_ht,output = "est" ) %>% 
-        mutate( HT_EST = ifelse(is.na( .data[[nm$ht]] ), est, .data[[nm$ht]] ) ) %>% 
-        select(HT_EST, everything(), -est )
-      
-    }
-    
-    
-    
-    # A seguir e feito o calculo do volume, caso o usuario nao insira uma variavel de volume e as variaveis necessarias para o calculo
-    if( is.null(input$modelo_estvol) ||  is.null(input$col.dap)  || is.null(input$b0_estvol) || is.null(input$b1_estvol) || is.na(input$modelo_estvol) ||  is.na(input$col.dap)  || is.na(input$b0_estvol) || is.na(input$b1_estvol) || input$modelo_estvol =="" || input$col.dap ==""  || input$b0_estvol == "" || input$b1_estvol == ""  ){
-      
-      # esse if acima so foi feito dessa forma pois tentar adicionar ! nas condicoes acima
-      # nao funcionou, por algum motivo.
-      # portanto foi utilizado um if vazio com a condicao oposta a desejada,
-      # e o resultado esperado dentro do else.
-    }else{
-      
-      if(input$modelo_estvol == "LN(VFCC) = b0 + b1 * 1/DAP + e"){
-        data$VOL <- exp( input$b0_estvol + 1/data[[input$col.dap]] * input$b1_estvol )
-        data <- data %>% select(VOL, everything())
-      }
-      
-      if(input$modelo_estvol == "VFCC = b0 + b1 * DAP + e"){
-        data$VOL <- input$b0_estvol + data[[input$col.dap]] * input$b1_estvol
-        data <- data %>% select(VOL, everything())
-      }
-      
-      if(input$modelo_estvol == "VFCC = b0 + b1 * DAP² + e"){
-        data$VOL <- input$b0_estvol + data[[input$col.dap]]^2 * input$b1_estvol
-        data <- data %>% select(VOL, everything())
-      }
-      
-      if(input$modelo_estvol == "VFCC = b0 + b1 * DAP + b2 * DAP² + e"){
-        data$VOL <- input$b0_estvol + data[[input$col.dap]] * input$b1_estvol + data[[input$col.dap]]^2 * input$b2_estvol
-        data <- data %>% select(VOL, everything())
-      }
-      
-      if(input$modelo_estvol == "VFCC = b0 + b1 * LN(DAP) + e"){
-        data$VOL <- input$b0_estvol + log(data[[input$col.dap]]) * input$b1_estvol
-        data <- data %>% select(VOL, everything())
-        
-      }
-      
-      
-      # modelos com b2 e ht precisam de mais uma condicao
-      if( is.null(input$modelo_estvol) ||  is.null(input$col.ht)  ||  is.na(input$col.ht) || is.null(nm$ht.est)  ||  is.na(nm$ht.est) || is.na(input$b2_estvol) || input$col.ht ==""  || input$b2_estvol == "" ){
-        
-      }else if(input$modelo_estvol == "LN(VFCC) = b0 + b1 * LN(DAP) + b2 * LN(HT) + e"){
-        data$VOL <- exp( input$b0_estvol + log(data[[input$col.dap]]) * input$b1_estvol + log(data[[nm$ht.est]]) * input$b2_estvol )
-        data <- data %>% select(VOL, everything())
-        
-      }else  if(input$modelo_estvol == "VFCC = b0 + b1 * DAP + b2 * HT + e"){
-        data$VOL <- input$b0_estvol + data[[input$col.dap]] * input$b1_estvol + data[[nm$ht.est]] * input$b2_estvol
-        data <- data %>% select(VOL, everything())
-      }else if(input$modelo_estvol == "VFCC = b0 * DAP^b1 * HT^b2 + e"){
-        data$VOL <- input$b0_estvol * data[[input$col.dap]] ^ input$b1_estvol * data[[nm$ht.est]] ^ input$b2_estvol
-        data <- data %>% select(VOL, everything())
-      }
-      
-      
-    }
-    
-    # A seguir e feito o calculo da estrutura vertical, caso o usuario nao tenha inserido uma variavel referente a mesma, e selecione que desja calcular
-    if(!is.null(input$est.vert.calc) && !is.na(input$est.vert.calc) && input$est.vert.calc=="Sim"){
-      
-      data <- estrat_vert_souza(data, input$col.ht)
-      
-    }
-    
-    
+
     # O if a seguir sera para remover linhas inconsistentes selecionadas pelo usuario
     
     # se o usuario nao selecionar nada, nada acontece
@@ -953,55 +736,6 @@ shinyServer(function(input, output, session) {
     
     data
     
-  })
-  
-  # Graficos de altura
-  ht_graph <- reactive({
-    
-    req(input$col.ht, input$col.dap, !is.null(rawData()) )
-    
-    data <- rawData()
-    nm <- varnames()
-    
-    if(is.null(input$col.ht) || is.na(input$col.ht) || input$col.ht=="" ){
-      
-      
-    }else if( !any(is.na(data[[input$col.ht]])) ) {
-      return()
-    }
-    
-    data <- data %>%  filter( !is.na(.data[[nm$ht]]) )
-    
-    # Tentar Ajustar os modelos utilizando try, e salvar em uma lista,
-    # junto com a altura observada
-    lista <- list(
-      data[!is.na(data[nm$ht]), nm$ht,drop=F],
-      "LN(HT) = b0 + b1 * 1/DAP + e"               = try(lm_table(data, paste( "log(", nm$ht, ") ~ inv(", nm$dap ,")"  )                       , output = "est" )[["est"]], silent = T),
-      "LN(HT) = b0 + b1 * LN(DAP) + e"             = try(lm_table(data, paste( "log(", nm$ht, ") ~ log(", nm$dap ,")"  )                       , output = "est" )[["est"]], silent = T),
-      "LN(HT) = b0 + b1 * 1/DAP + b2 * LN(HD) + e" = try(lm_table(data, paste( "log(", nm$ht, ") ~ inv(", nm$dap ,") + ", "log(", nm$hd ,")" ) , output = "est" )[["est"]], silent = T)
-    )
-    
-    # Criar um dataframe apenas com os modelos que ajustaram
-    data2 <- as.data.frame(do.call(cbind,lista[!sapply(lista, is, "try-error")]))
-    
-    # Criar os graficos
-    # suppressWarnings evita avisos quando um dos modelos nao for ajustado
-    suppressWarnings(
-      
-      residuos_exp(data2, 
-                   nm$ht, 
-                   "LN(HT) = b0 + b1 * 1/DAP + e", 
-                   "LN(HT) = b0 + b1 * LN(DAP) + e",
-                   "LN(HT) = b0 + b1 * 1/DAP + b2 * LN(HD) + e", ncol = 2 )
-      
-    )
-    
-    
-  })
-  output$ht_plot <- renderPlot({
-    
-    ht_graph()
-   
   })
   
   
@@ -1097,11 +831,14 @@ shinyServer(function(input, output, session) {
     if(is.null(input$num.area.total) || is.na(input$num.area.total) ||input$num.area.total==""){}else{varnameslist$area.total <- input$num.area.total  }
     
     # Se o usuario inserir os coeficientes de volume, a variavel criada (na parte de preparacao, ou seja, raw_data)
-    # sera nomeada VOL durante esse processo. Por isso e preciso definir este nome em varnameslist quando isso ocorrer
-    if( !is.null(input$b0_estvol) && !is.na(input$b0_estvol) && !is.null(input$b1_estvol) && !is.na(input$b1_estvol)  ){
-      varnameslist$vcc <- "VOL"
+    # sera nomeada VCC (e vsc, no caso de sem casca) durante esse processo. Por isso e preciso definir este nome em varnameslist quando isso ocorrer
+    if( !is.null(input$b0_estvcc) && !is.na(input$b0_estvcc) && !is.null(input$b1_estvcc) && !is.na(input$b1_estvcc)  ){
+      varnameslist$vcc <- "VCC"
     }
     
+    if( !is.null(input$b0_estvsc) && !is.na(input$b0_estvsc) && !is.null(input$b1_estvsc) && !is.na(input$b1_estvsc)  ){
+      varnameslist$vsc <- "VSC"
+    }
     
     # Caso existam NAs na coluna altura, ela sera estimada, entao o nome da altura utilizada devera ser
     # HT_EST, que e o nome utilizado na aba preparacao na estimacao da altura.
@@ -1221,12 +958,604 @@ shinyServer(function(input, output, session) {
     
   })
   
+  
+  # Estimativas de altura e volume ####
+  
+  # Estimar altura
+  output$ui_ht_est <- renderUI({
+    
+    # Precisa que a tab de ht_est seja selecionada
+   # req(input$est_ht_vol_tabset == "id_ht_est")
+    
+    data <- rawData_()
+    # Precisa que o usuário tenha definido ht
+    # precisa que o usuario tenha NAs na coluna de altura
+    req(input$col.ht, any(is.na(data[[input$col.ht]])))
+
+    
+    
+    
+    
+    if(is.null(input$col.ht) || is.na(input$col.ht) || input$col.ht=="" ){
+      
+    }else if(nrow(data)>0 & input$col.ht!= ""){
+      data[input$col.ht ][ data[input$col.ht ] == 0 ] <- NA 
+      
+      if( !any(is.na(data[[input$col.ht]])) ) {
+        return()
+      }
+    } 
+    
+    list(
+      
+      h3("Estimar altura das árvores não medidas"),
+      radioButtons("modelo_est_ht",
+                   label = "Selecione o modelo hipsométrico abaixo:",
+                   choices = c(
+                     "LN(HT) = b0 + b1 * 1/DAP + e",
+                     "LN(HT) = b0 + b1 * LN(DAP) + e",
+                     "LN(HT) = b0 + b1 * 1/DAP + b2 * LN(HD) + e"
+                     
+                   ) )      
+      
+      
+    )
+    
+  })
+
+
+  
+  
+  # Calculo de volume com casca 
+  output$ui_estvcc1 <- renderUI({
+    
+    # Precisa que a tab de vcc seja selecionada
+    # precisa que o usuario nao tenha selecionado o volume
+    req(
+      #input$est_ht_vol_tabset == "id_vcc", 
+      is.null(input$col.vcc) || input$col.vcc =="" )
+    
+    list(
+      
+      h3("Estimaçao do volume com casca"),
+      
+      radioButtons("modelo_estvcc",
+                   label = "Selecione o modelo para ser utilizado:",
+                   choices = c(
+                     "LN(VFCC) = b0 + b1 * LN(DAP) + b2 * LN(HT) + e",
+                     "VFCC = b0 + b1 * DAP + b2 * HT + e",
+                     "VFCC = b0 * DAP^b1 * HT^b2 + e",
+                     "LN(VFCC) = b0 + b1 * 1/DAP + e",
+                     "VFCC = b0 + b1 * DAP + e", 
+                     "VFCC = b0 + b1 * DAP² + e", 
+                     "VFCC = b0 + b1 * DAP + b2 * DAP² + e",
+                     "VFCC = b0 + b1 * LN(DAP) + e"
+                   ),
+                   inline=F
+      )      )
+    
+    
+    
+  })
+  output$ui_estvcc3 <- renderUI({
+    
+    # Precisa que a tab de vcc seja selecionada
+    # precisa que o usuario nao tenha selecionado o volume
+    req(
+    #  input$est_ht_vol_tabset == "id_vcc",
+      is.null(input$col.vcc) || input$col.vcc =="" )
+    
+    list(
+      
+      numericInput( # cria uma lista de opcoes em que o usuario pode clicar
+        'b0_estvcc', # Id
+        "Insira o valor para o b0:", # nome que sera mostrado na UI
+        value = NULL, 
+        step = 0.0001
+      ),
+      
+      numericInput( # cria uma lista de opcoes em que o usuario pode clicar
+        'b1_estvcc', # Id
+        "Insira o valor para o b1:", # nome que sera mostrado na UI
+        value = NULL, 
+        step = 0.0001
+      )
+      
+      
+    )
+    
+  })
+  output$ui_estvcc4 <- renderUI({
+    
+    # precisa que o usuario nao tenha selecionado o volume
+    # Precisa que a tab de vsc seja selecionada
+    # Precisa ter b2 no modelo
+    req(
+      is.null(input$col.vcc) || input$col.vcc ==""#,
+      #  input$est_ht_vol_tabset == "id_vsc", 
+      # grepl( "\\<b2\\>",input$modelo_estvsc)
+    )
+    
+    list(
+      
+      numericInput( # cria uma lista de opcoes em que o usuario pode clicar
+        'b2_estvcc', # Id
+        "Insira o valor para o b2:", # nome que sera mostrado na UI
+        value = "", 
+        step = 0.0001
+      )
+      
+    )
+    
+  })
+  data_vcc_est <- reactive({
+    
+    nm <- varnames()
+    dados <- data_ht_est()
+    
+    validate(
+      need(dados                                        , "Por favor faça o upload da base de dados"),
+      need(nrow(dados)>0                                ,"Base de dados vazia"),
+      need(input$df == "Dados em nivel de arvore"       , "Base de dados incompativel" ),
+      need(input$modelo_estvcc                          , ""),
+      need(is.null(input$col.vcc) || input$col.vcc =="" , "Coluna referente à 'VCC' já mapeada"),
+      need(input$col.dap                                , "Por favor mapeie referente à dap"),
+      need(input$b0_estvcc                              , "Por favor insira um valor para b0"),
+      need(input$b1_estvcc                              , "Por favor insira um valor para b1")
+      
+    )
+    
+    if(input$modelo_estvcc == "LN(VFCC) = b0 + b1 * 1/DAP + e"){
+      dados$VCC <- exp( input$b0_estvcc + 1/dados[[input$col.dap]] * input$b1_estvcc )
+      dados <- dados %>% select(VCC, everything())
+    }
+    
+    if(input$modelo_estvcc == "VFCC = b0 + b1 * DAP + e"){
+      dados$VCC <- input$b0_estvcc + dados[[input$col.dap]] * input$b1_estvcc
+      dados <- dados %>% select(VCC, everything())
+    }
+    
+    if(input$modelo_estvcc == "VFCC = b0 + b1 * DAP² + e"){
+      dados$VCC <- input$b0_estvcc + dados[[input$col.dap]]^2 * input$b1_estvcc
+      dados <- dados %>% select(VCC, everything())
+    }
+    
+    if(input$modelo_estvcc == "VFCC = b0 + b1 * DAP + b2 * DAP² + e"){
+      dados$VCC <- input$b0_estvcc + dados[[input$col.dap]] * input$b1_estvcc + dados[[input$col.dap]]^2 * input$b2_estvcc
+      dados <- dados %>% select(VCC, everything())
+    }
+    
+    if(input$modelo_estvcc == "VFCC = b0 + b1 * LN(DAP) + e"){
+      dados$VCC <- input$b0_estvcc + log(dados[[input$col.dap]]) * input$b1_estvcc
+      dados <- dados %>% select(VCC, everything())
+      
+    }
+    
+    # modelos com b2 e ht precisam de mais uma condicao
+    if( is.null(input$modelo_estvcc) ||  is.null(input$col.ht)  ||  is.na(input$col.ht) || is.null(nm$ht.est)  ||  is.na(nm$ht.est) || is.na(input$b2_estvcc) || input$col.ht ==""  || input$b2_estvcc == "" ){
+      
+    }else if(input$modelo_estvcc == "LN(VFCC) = b0 + b1 * LN(DAP) + b2 * LN(HT) + e"){
+      dados$VCC <- exp( input$b0_estvcc + log(dados[[input$col.dap]]) * input$b1_estvcc + log(dados[[nm$ht.est]]) * input$b2_estvcc )
+      dados <- dados %>% select(VCC, everything())
+      
+    }else  if(input$modelo_estvcc == "VFCC = b0 + b1 * DAP + b2 * HT + e"){
+      dados$VCC <- input$b0_estvcc + dados[[input$col.dap]] * input$b1_estvcc + dados[[nm$ht.est]] * input$b2_estvcc
+      dados <- dados %>% select(VCC, everything())
+    }else if(input$modelo_estvcc == "VFCC = b0 * DAP^b1 * HT^b2 + e"){
+      dados$VCC <- input$b0_estvcc * dados[[input$col.dap]] ^ input$b1_estvcc * dados[[nm$ht.est]] ^ input$b2_estvcc
+      dados <- dados %>% select(VCC, everything())
+    }
+    
+    dados
+    
+  })
+  output$data_vcc_est_table <- DT::renderDataTable({
+    
+    data <- round_df(data_vcc_est(), 4)
+    
+    
+    DT::datatable(data,
+                  
+                  options = list(
+                    initComplete = JS(
+                      "function(settings, json) {",
+                      "$(this.api().table().header()).css({'background-color': '#00a90a', 'color': '#fff'});",
+                      "}")
+                  )
+    )
+    
+  })
+  
+  # Calculo de volume sem casca 
+  output$ui_estvsc1 <- renderUI({
+    
+    # Precisa que a tab de vsc seja selecionada
+    # precisa que o usuario nao tenha selecionado o volume
+    req(
+      #input$est_ht_vol_tabset == "id_vsc",
+      is.null(input$col.vsc) || input$col.vsc =="" )
+    
+    list(
+      
+      h3("Estimaçao do volume sem casca"),
+      
+      radioButtons("modelo_estvsc",
+                   label = "Selecione o modelo para ser utilizado:",
+                   choices = c(
+                     "LN(VFSC) = b0 + b1 * LN(DAP) + b2 * LN(HT) + e",
+                     "VFSC = b0 + b1 * DAP + b2 * HT + e",
+                     "VFSC = b0 * DAP^b1 * HT^b2 + e",
+                     "LN(VFSC) = b0 + b1 * 1/DAP + e",
+                     "VFSC = b0 + b1 * DAP + e", 
+                     "VFSC = b0 + b1 * DAP² + e", 
+                     "VFSC = b0 + b1 * DAP + b2 * DAP² + e",
+                     "VFSC = b0 + b1 * LN(DAP) + e"
+                   ),
+                   inline=F
+      )      )
+    
+    
+    
+  })
+  output$ui_estvsc3 <- renderUI({
+    
+    # Precisa que a tab de vsc seja selecionada
+    # precisa que o usuario nao tenha selecionado o volume
+    req(
+     # input$est_ht_vol_tabset == "id_vsc", 
+      is.null(input$col.vsc) || input$col.vsc =="" )
+    
+    list(
+      
+      numericInput( # cria uma lista de opcoes em que o usuario pode clicar
+        'b0_estvsc', # Id
+        "Insira o valor para o b0:", # nome que sera mostrado na UI
+        value = NULL, 
+        step = 0.0001
+      ),
+      
+      numericInput( # cria uma lista de opcoes em que o usuario pode clicar
+        'b1_estvsc', # Id
+        "Insira o valor para o b1:", # nome que sera mostrado na UI
+        value = NULL, 
+        step = 0.0001
+      )
+      
+      
+    )
+    
+  })
+  output$ui_estvsc4 <- renderUI({
+    
+    # precisa que o usuario nao tenha selecionado o volume
+    # Precisa que a tab de vsc seja selecionada
+    # Precisa ter b2 no modelo
+    req(
+      is.null(input$col.vsc) || input$col.vsc ==""#,
+    #  input$est_ht_vol_tabset == "id_vsc", 
+     # grepl( "\\<b2\\>",input$modelo_estvsc)
+    )
+    
+    list(
+      
+      numericInput( # cria uma lista de opcoes em que o usuario pode clicar
+        'b2_estvsc', # Id
+        "Insira o valor para o b2:", # nome que sera mostrado na UI
+        value = "", 
+        step = 0.0001
+      )
+      
+    )
+    
+  })
+  data_vsc_est <- reactive({
+    
+    nm <- varnames()
+    dados <- data_vcc_est()
+    
+    validate(
+      need(dados                                        , "Por favor faça o upload da base de dados"),
+      need(nrow(dados)>0                                ,"Base de dados vazia"),
+      need(input$df == "Dados em nivel de arvore"       , "Base de dados incompativel" ),
+      need(input$modelo_estvsc                          , ""),
+      need(is.null(input$col.vsc) || input$col.vsc =="" , "Coluna referente à 'VSC' já mapeada"),
+      need(input$col.dap                                , "Por favor mapeie referente à dap"),
+      need(input$b0_estvsc                              , "Por favor insira um valor para b0"),
+      need(input$b1_estvsc                              , "Por favor insira um valor para b1")
+      
+    )
+    
+    if(input$modelo_estvsc == "LN(VFSC) = b0 + b1 * 1/DAP + e"){
+      dados$VSC <- exp( input$b0_estvsc + 1/dados[[input$col.dap]] * input$b1_estvsc )
+      dados <- dados %>% select(VSC, everything())
+    }
+    
+    if(input$modelo_estvsc == "VFSC = b0 + b1 * DAP + e"){
+      dados$VSC <- input$b0_estvsc + dados[[input$col.dap]] * input$b1_estvsc
+      dados <- dados %>% select(VSC, everything())
+    }
+    
+    if(input$modelo_estvsc == "VFSC = b0 + b1 * DAP² + e"){
+      dados$VSC <- input$b0_estvsc + dados[[input$col.dap]]^2 * input$b1_estvsc
+      dados <- dados %>% select(VSC, everything())
+    }
+    
+    if(input$modelo_estvsc == "VFSC = b0 + b1 * DAP + b2 * DAP² + e"){
+      dados$VSC <- input$b0_estvsc + dados[[input$col.dap]] * input$b1_estvsc + dados[[input$col.dap]]^2 * input$b2_estvsc
+      dados <- dados %>% select(VSC, everything())
+    }
+    
+    if(input$modelo_estvsc == "VFSC = b0 + b1 * LN(DAP) + e"){
+      dados$VSC <- input$b0_estvsc + log(dados[[input$col.dap]]) * input$b1_estvsc
+      dados <- dados %>% select(VSC, everything())
+      
+    }
+    
+    # modelos com b2 e ht precisam de mais uma condicao
+    if( is.null(input$modelo_estvsc) ||  is.null(input$col.ht)  ||  is.na(input$col.ht) || is.null(nm$ht.est)  ||  is.na(nm$ht.est) || is.na(input$b2_estvsc) || input$col.ht ==""  || input$b2_estvsc == "" ){
+      
+    }else if(input$modelo_estvsc == "LN(VFSC) = b0 + b1 * LN(DAP) + b2 * LN(HT) + e"){
+      dados$VSC <- exp( input$b0_estvsc + log(dados[[input$col.dap]]) * input$b1_estvsc + log(dados[[nm$ht.est]]) * input$b2_estvsc )
+      dados <- dados %>% select(VSC, everything())
+      
+    }else  if(input$modelo_estvsc == "VFSC = b0 + b1 * DAP + b2 * HT + e"){
+      dados$VSC <- input$b0_estvsc + dados[[input$col.dap]] * input$b1_estvsc + dados[[nm$ht.est]] * input$b2_estvsc
+      dados <- dados %>% select(VSC, everything())
+    }else if(input$modelo_estvsc == "VFSC = b0 * DAP^b1 * HT^b2 + e"){
+      dados$VSC <- input$b0_estvsc * dados[[input$col.dap]] ^ input$b1_estvsc * dados[[nm$ht.est]] ^ input$b2_estvsc
+      dados <- dados %>% select(VSC, everything())
+    }
+    
+    dados
+    
+  })
+  output$data_vsc_est_table <- DT::renderDataTable({
+    
+    data <- round_df(data_vsc_est(), 4)
+    
+    
+    DT::datatable(data,
+                  
+                  options = list(
+                    initComplete = JS(
+                      "function(settings, json) {",
+                      "$(this.api().table().header()).css({'background-color': '#00a90a', 'color': '#fff'});",
+                      "}")
+                  )
+    )
+    
+  })
+ 
+  # Tabela com estimativas 
+  ArvData <- reactive({
+    
+    dados <- rawData()
+    nm <- varnames()
+    
+    # Estimar altura caso altura seja selecionada e possua NAs, ou seja, arvores nao medidas
+    # Esse se evita mensagens de erro quando as colunas nao forem selecionadas
+    if( is.null(input$col.ht) || input$col.ht=="" || is.na(input$col.ht) || is.na(input$col.dap) || input$col.dap=="" || is.null(input$col.dap) ||   is.null(input$modelo_est_ht) || input$modelo_est_ht=="" || is.na(input$modelo_est_ht) ){
+      
+      
+    }else if( nm$ht!="" && any(is.na(dados[[nm$ht]])) ){
+      
+      if(input$modelo_est_ht ==  "LN(HT) = b0 + b1 * 1/DAP + e" ){
+        
+        modelo_ht <- paste( "log(", nm$ht, ") ~ inv(", nm$dap ,")"  )
+        
+      }else if(input$modelo_est_ht ==  "LN(HT) = b0 + b1 * LN(DAP) + e" ){
+        
+        modelo_ht <- paste( "log(", nm$ht, ") ~ log(", nm$dap ,")"  )
+        
+      }else if(input$modelo_est_ht ==  "LN(HT) = b0 + b1 * 1/DAP + b2 * LN(HD) + e" ){
+        
+        modelo_ht <- paste( "log(", nm$ht, ") ~ inv(", nm$dap ,") + ", "log(", nm$hd ,")" )
+      }
+      
+      
+      dados <- dados %>%  
+        lm_table(modelo_ht,output = "est" ) %>% 
+        mutate( HT_EST = ifelse(is.na( !!(rlang::sym(nm$ht)) ), est, !!(rlang::sym(nm$ht)) ) ) %>% 
+        select(HT_EST, everything(), -est )
+      
+    }
+    
+    
+    # A seguir e feito o calculo do vccume com casca, caso o usuario nao insira uma variavel de vccume e as variaveis necessarias para o calculo
+    if( is.null(input$modelo_estvcc) ||  is.null(input$col.dap)  || is.null(input$b0_estvcc) || is.null(input$b1_estvcc) || is.na(input$modelo_estvcc) ||  is.na(input$col.dap)  || is.na(input$b0_estvcc) || is.na(input$b1_estvcc) || input$modelo_estvcc =="" || input$col.dap ==""  || input$b0_estvcc == "" || input$b1_estvcc == ""  ){
+      
+      # esse if acima so foi feito dessa forma pois tentar adicionar ! nas condicoes acima
+      # nao funcionou, por algum motivo.
+      # portanto foi utilizado um if vazio com a condicao oposta a desejada,
+      # e o resultado esperado dentro do else.
+    }else{
+      
+      if(input$modelo_estvcc == "LN(VFCC) = b0 + b1 * 1/DAP + e"){
+        dados$VCC <- exp( input$b0_estvcc + 1/dados[[input$col.dap]] * input$b1_estvcc )
+        dados <- dados %>% select(VCC, everything())
+      }
+      
+      if(input$modelo_estvcc == "VFCC = b0 + b1 * DAP + e"){
+        dados$VCC <- input$b0_estvcc + dados[[input$col.dap]] * input$b1_estvcc
+        dados <- dados %>% select(VCC, everything())
+      }
+      
+      if(input$modelo_estvcc == "VFCC = b0 + b1 * DAP² + e"){
+        dados$VCC <- input$b0_estvcc + dados[[input$col.dap]]^2 * input$b1_estvcc
+        dados <- dados %>% select(VCC, everything())
+      }
+      
+      if(input$modelo_estvcc == "VFCC = b0 + b1 * DAP + b2 * DAP² + e"){
+        dados$VCC <- input$b0_estvcc + dados[[input$col.dap]] * input$b1_estvcc + dados[[input$col.dap]]^2 * input$b2_estvcc
+        dados <- dados %>% select(VCC, everything())
+      }
+      
+      if(input$modelo_estvcc == "VFCC = b0 + b1 * LN(DAP) + e"){
+        dados$VCC <- input$b0_estvcc + log(dados[[input$col.dap]]) * input$b1_estvcc
+        dados <- dados %>% select(VCC, everything())
+        
+      }
+      
+      
+      # modelos com b2 e ht precisam de mais uma condicao
+      if( is.null(input$modelo_estvcc) ||  is.null(input$col.ht)  ||  is.na(input$col.ht) || is.null(nm$ht.est)  ||  is.na(nm$ht.est) || is.na(input$b2_estvcc) || input$col.ht ==""  || input$b2_estvcc == "" ){
+        
+      }else if(input$modelo_estvcc == "LN(VFCC) = b0 + b1 * LN(DAP) + b2 * LN(HT) + e"){
+        dados$VCC <- exp( input$b0_estvcc + log(dados[[input$col.dap]]) * input$b1_estvcc + log(dados[[nm$ht.est]]) * input$b2_estvcc )
+        dados <- dados %>% select(VCC, everything())
+        
+      }else  if(input$modelo_estvcc == "VFCC = b0 + b1 * DAP + b2 * HT + e"){
+        dados$VCC <- input$b0_estvcc + dados[[input$col.dap]] * input$b1_estvcc + dados[[nm$ht.est]] * input$b2_estvcc
+        dados <- dados %>% select(VCC, everything())
+      }else if(input$modelo_estvcc == "VFCC = b0 * DAP^b1 * HT^b2 + e"){
+        dados$VCC <- input$b0_estvcc * dados[[input$col.dap]] ^ input$b1_estvcc * dados[[nm$ht.est]] ^ input$b2_estvcc
+        dados <- dados %>% select(VCC, everything())
+      }
+      
+      
+    }
+    
+    
+    # Volume sem casca ##
+    
+    # A seguir e feito o calculo do vscume com casca, caso o usuario nao insira uma variavel de vscume e as variaveis necessarias para o calculo
+    if( is.null(input$modelo_estvsc) ||  is.null(input$col.dap)  || is.null(input$b0_estvsc) || is.null(input$b1_estvsc) || is.na(input$modelo_estvsc) ||  is.na(input$col.dap)  || is.na(input$b0_estvsc) || is.na(input$b1_estvsc) || input$modelo_estvsc =="" || input$col.dap ==""  || input$b0_estvsc == "" || input$b1_estvsc == ""  ){
+      
+      # esse if acima so foi feito dessa forma pois tentar adicionar ! nas condicoes acima
+      # nao funcionou, por algum motivo.
+      # portanto foi utilizado um if vazio com a condicao oposta a desejada,
+      # e o resultado esperado dentro do else.
+    }else{
+      
+      if(input$modelo_estvsc == "LN(VFSC) = b0 + b1 * 1/DAP + e"){
+        dados$VSC <- exp( input$b0_estvsc + 1/dados[[input$col.dap]] * input$b1_estvsc )
+        dados <- dados %>% select(VSC, everything())
+      }
+      
+      if(input$modelo_estvsc == "VFSC = b0 + b1 * DAP + e"){
+        dados$VSC <- input$b0_estvsc + dados[[input$col.dap]] * input$b1_estvsc
+        dados <- dados %>% select(VSC, everything())
+      }
+      
+      if(input$modelo_estvsc == "VFSC = b0 + b1 * DAP² + e"){
+        dados$VSC <- input$b0_estvsc + dados[[input$col.dap]]^2 * input$b1_estvsc
+        dados <- dados %>% select(VSC, everything())
+      }
+      
+      if(input$modelo_estvsc == "VFSC = b0 + b1 * DAP + b2 * DAP² + e"){
+        dados$VSC <- input$b0_estvsc + dados[[input$col.dap]] * input$b1_estvsc + dados[[input$col.dap]]^2 * input$b2_estvsc
+        dados <- dados %>% select(VSC, everything())
+      }
+      
+      if(input$modelo_estvsc == "VFSC = b0 + b1 * LN(DAP) + e"){
+        dados$VSC <- input$b0_estvsc + log(dados[[input$col.dap]]) * input$b1_estvsc
+        dados <- dados %>% select(VSC, everything())
+        
+      }
+      
+      
+      # modelos com b2 e ht precisam de mais uma condicao
+      if( is.null(input$modelo_estvsc) ||  is.null(input$col.ht)  ||  is.na(input$col.ht) || is.null(nm$ht.est)  ||  is.na(nm$ht.est) || is.na(input$b2_estvsc) || input$col.ht ==""  || input$b2_estvsc == "" ){
+        
+      }else if(input$modelo_estvsc == "LN(VFSC) = b0 + b1 * LN(DAP) + b2 * LN(HT) + e"){
+        dados$VSC <- exp( input$b0_estvsc + log(dados[[input$col.dap]]) * input$b1_estvsc + log(dados[[nm$ht.est]]) * input$b2_estvsc )
+        dados <- dados %>% select(VSC, everything())
+        
+      }else  if(input$modelo_estvsc == "VFSC = b0 + b1 * DAP + b2 * HT + e"){
+        dados$VSC <- input$b0_estvsc + dados[[input$col.dap]] * input$b1_estvsc + dados[[nm$ht.est]] * input$b2_estvsc
+        dados <- dados %>% select(VSC, everything())
+      }else if(input$modelo_estvsc == "VFSC = b0 * DAP^b1 * HT^b2 + e"){
+        dados$VSC <- input$b0_estvsc * dados[[input$col.dap]] ^ input$b1_estvsc * dados[[nm$ht.est]] ^ input$b2_estvsc
+        dados <- dados %>% select(VSC, everything())
+      }
+      
+      
+    }
+    
+    
+    
+    dados
+    
+  })
+  output$ArvData_table <- DT::renderDataTable({
+    
+    data <- round_df(ArvData(), 4)
+    
+    
+    DT::datatable(data,
+                  
+                  options = list(
+                    initComplete = JS(
+                      "function(settings, json) {",
+                      "$(this.api().table().header()).css({'background-color': '#00a90a', 'color': '#fff'});",
+                      "}")
+                  )
+    )
+    
+  })
+  
+  # Graficos de altura
+  ht_graph <- reactive({
+    
+    nm <- varnames()
+    dados <- rawData()
+    validate(
+      need(dados, "Por favor faça o upload da base de dados"),
+      need(nrow(dados)>0,"Base de dados vazia"),
+      need(input$df == "Dados em nivel de arvore", "Base de dados incompativel" ),
+      need(nm$dap,"Por favor mapeie a coluna referente a 'dap'  "),
+      need(nm$ht,"Por favor mapeie a coluna referente a 'ht'  ")#,
+     # need(input$modelo_est_ht,"Coluna mapeada à 'Altura' não possui alturas não medidas")
+           )
+    
+    if(is.null(input$col.ht) || is.na(input$col.ht) || input$col.ht=="" ){
+      
+      
+    }else if( !any(is.na(dados[[input$col.ht]])) ) {
+      return()
+    }
+    
+    dados <- dados %>%  filter( !is.na(.data[[nm$ht]]) )
+    
+    # Tentar Ajustar os modelos utilizando try, e salvar em uma lista,
+    # junto com a altura observada
+    lista <- list(
+      dados[!is.na(dados[nm$ht]), nm$ht,drop=F],
+      "LN(HT) = b0 + b1 * 1/DAP + e"               = try(lm_table(dados, paste( "log(", nm$ht, ") ~ inv(", nm$dap ,")"  )                       , output = "est" )[["est"]], silent = T),
+      "LN(HT) = b0 + b1 * LN(DAP) + e"             = try(lm_table(dados, paste( "log(", nm$ht, ") ~ log(", nm$dap ,")"  )                       , output = "est" )[["est"]], silent = T),
+      "LN(HT) = b0 + b1 * 1/DAP + b2 * LN(HD) + e" = try(lm_table(dados, paste( "log(", nm$ht, ") ~ inv(", nm$dap ,") + ", "log(", nm$hd ,")" ) , output = "est" )[["est"]], silent = T)
+    )
+    
+    # Criar um dataframe apenas com os modelos que ajustaram
+    dados2 <- as.data.frame(do.call(cbind,lista[!sapply(lista, is, "try-error")]))
+    
+    # Criar os graficos
+    # suppressWarnings evita avisos quando um dos modelos nao for ajustado
+    suppressWarnings(
+      
+      residuos_exp(dados2, 
+                   nm$ht, 
+                   "LN(HT) = b0 + b1 * 1/DAP + e", 
+                   "LN(HT) = b0 + b1 * LN(DAP) + e",
+                   "LN(HT) = b0 + b1 * 1/DAP + b2 * LN(HD) + e", nrow = 1 )
+      
+    )
+    
+    
+  })
+  output$ht_plot <- renderPlot({
+    
+    ht_graph()
+    
+  })
+  
+  
   # Distribuicoes e graficos ####
   
   dd_list <- reactive({
     
     nm <- varnames()
-    dados <- rawData()
+    dados <- ArvData()
     
     validate(
       need(dados, "Por favor faça o upload da base de dados"),
@@ -1537,7 +1866,7 @@ shinyServer(function(input, output, session) {
   totData <- reactive({
     
     nm <- varnames()
-    dados <- rawData()
+    dados <- ArvData()
     validate(
       need(dados, "Por favor faça o upload da base de dados"),
       need(nrow(dados)>0,"Base de dados vazia"),

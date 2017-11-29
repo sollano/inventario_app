@@ -287,10 +287,6 @@ shinyUI(
                                     uiOutput("est_hd1"),
                                     uiOutput("est_hd2"),
                                     uiOutput("est_hd3"),
-                                    uiOutput("ajust_ht"),
-                                    uiOutput("ui_estvol1"),
-                                    uiOutput("ui_estvol3"),
-                                    uiOutput("ui_estvol4"),
                                     uiOutput("consist_warning1")
                                     
                                     
@@ -301,11 +297,6 @@ shinyUI(
                                     tabPanel("Dado pos preparação",
                                              shiny::htmlOutput("avisos_prep"),
                                              DT::dataTableOutput("prep_table"),
-                                             hr(),
-                                             plotOutput(""),
-                                             hr(),
-                                             uiOutput("ajust_ht_title"),
-                                             plotOutput("ht_plot"),
                                              hr(),
                                              tableOutput("teste")
                                              
@@ -328,6 +319,36 @@ shinyUI(
                               
                               
                      ), # tabPanel filtrar dados
+                     # tabPanel Estimativas de altura e volume ####
+                     
+                     tabPanel("Estimativas de altura e volume",
+                              
+                              fluidPage(
+                                
+                                h1("Estimativas de altura e volume", style = "text-align: center;"),
+                                br(),
+                                
+                                fluidRow(
+                                  column(2,uiOutput("ui_ht_est" )),
+                                  column(3,uiOutput("ui_estvcc1")),
+                                  column(2,uiOutput("ui_estvcc3"),uiOutput("ui_estvcc4")),
+                                  
+                                  column(3,uiOutput("ui_estvsc1")),
+                                  column(2,uiOutput("ui_estvsc3"),uiOutput("ui_estvsc4"))
+                                  
+                                  
+                                ),
+                                
+                                tabsetPanel(
+                                  tabPanel("Tabela de estimativas", DT::dataTableOutput("ArvData_table")),
+                                  tabPanel("Gráfico dos resíduos dos modelos hipsométricos",plotOutput("ht_plot" ,height = "550px"))
+                                )
+                                )
+                              
+                       
+                     ), # Estimativas de altura e volume end
+                     
+                     
                      # tabPanel Distribuições e gráficos ####
                                 # tabPanel("Distribuição diamétrica",
                                   tabPanel("Distribuições e gráficos",
