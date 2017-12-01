@@ -580,7 +580,7 @@ shinyServer(function(input, output, session) {
   output$est_hd1 <- renderUI({
 
     # precisa que o usuario nao tenha selecionado altura dominante
-    req( input$col.hd )
+    req( is.null(input$col.hd ) )
     
     list(
       
@@ -594,7 +594,7 @@ shinyServer(function(input, output, session) {
   output$est_hd2 <- renderUI({
     
     # precisa que o usuario nao tenha selecionado altura dominante e tenha seleciona obs
-    req( input$col.hd, input$col.obs  )
+    req( is.null(input$col.hd), input$col.obs  )
     
     data <- rawData_()
     
@@ -628,7 +628,7 @@ shinyServer(function(input, output, session) {
   output$est_hd3 <- renderUI({
     
     # precisa que o usuario nao tenha selecionado altura dominante
-    req( input$col.hd )
+    req( is.null(input$col.hd) )
     
     radioButtons("est.hd",
                  label = "Estimar altura dominante?",
@@ -888,21 +888,30 @@ shinyServer(function(input, output, session) {
     # Caso existam NAs na coluna altura, ela sera estimada, entao o nome da altura utilizada devera ser
     # HT_EST, que e o nome utilizado na aba preparacao na estimacao da altura.
     data <- rawData_()
-    if(  ( is.null(input$col.ht) || is.na(input$col.ht) || input$col.ht!="") ){
-     
+    
+    # Transformar zero em NA para conferir NAs abaixo
+    data[data==0] <- NA
+    
+    if(  ( is.null(input$col.ht) || is.na(input$col.ht) ) ){
 
-    }else if(any(is.na(data[[input$col.ht]]))){
+    }else if(any(is.na(data[[input$col.ht]])) ){
       
       varnameslist$ht.est <- "HT_EST"
       
-    }else if( is.null(input$col.hd) || input$col.hd =="" ){
       
-      # A altura dominante tera seu nome definido para HD caso o usuario tenha inserido um nome para ht,
+    }
+    
+
+  if(is.null(input$est.hd) || is.na(input$est.hd) ){
+    
+  }else if( input$est.hd==TRUE  && is.null(input$col.hd) ){
+    
+      # A altura dominante tera seu nome definido para HD caso o usuario
       # queira estimar HD,
       # e nao tenha selecionado nenhuma variavel para ser HD
-      
-          if(is.null(input$est.hd)){}else if(input$est.hd){varnameslist$hd <- "HD"}
-    }
+     varnameslist$hd <- "HD"  
+     
+   }
     
     
     # se cao for selecionado, definir o nome de DAP para DAP, pois este sera calculado
@@ -1078,7 +1087,7 @@ shinyServer(function(input, output, session) {
     # Precisa que a tab de ht_est seja selecionada
    # req(input$est_ht_vol_tabset == "id_ht_est")
     
-    data <- rawData_()
+    data <- rawData()
     # Precisa que o usuário tenha definido ht
     # precisa que o usuario tenha NAs na coluna de altura
     req(input$col.ht, any(is.na(data[[input$col.ht]])))
@@ -1090,8 +1099,7 @@ shinyServer(function(input, output, session) {
     if(is.null(input$col.ht) || is.na(input$col.ht) || input$col.ht=="" ){
       
     }else if(nrow(data)>0 & input$col.ht!= ""){
-      data[input$col.ht ][ data[input$col.ht ] == 0 ] <- NA 
-      
+
       if( !any(is.na(data[[input$col.ht]])) ) {
         return()
       }
