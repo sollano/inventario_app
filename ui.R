@@ -559,7 +559,7 @@ shinyUI(
                                                
                                                h3("Download de graficos"),
                                                
-                                               selectInput("graph_d", "Escolha uma grafico:", 
+                                               selectInput("graph_d", "Escolha um grafico:", 
                                                            choices = c(
                                                              "Indv. por ha por CC",
                                                              "Vol. por ha por CC",
