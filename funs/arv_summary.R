@@ -32,8 +32,8 @@ arv_summary <- function(df, arvore, dap, .groups, area_parcela, area_total, ht, 
   }
   
   # Variaveis opcionais
-  if(missing(area_parcela) || is.null(area_parcela) || is.na(area_parcela) || area_parcela==F || area_parcela==""   ){df$area_parcela_calc<-NA; area_parcela_calc <- "area_parcela_calc"}
-  if(missing(area_total) || is.null(area_total) || is.na(area_total) || area_total==F || area_total==""   ){df$area_total_calc<-NA; area_total_calc <- "area_total_calc"}
+  if(missing(area_parcela) || is.null(area_parcela) || is.na(area_parcela) || area_parcela==F || area_parcela==""   ){df$area_parcela_calc<-NA; area_parcela_calc <- "area_parcela_calc"}else{area_parcela_calc <- area_parcela}
+  if(missing(area_total) || is.null(area_total) || is.na(area_total) || area_total==F || area_total==""   ){df$area_total_calc<-NA; area_total_calc <- "area_total_calc"}else{area_total_calc <- area_total}
   
   if(missing(vcc)  || is.null(vcc)  || is.na(vcc) || vcc==F|| vcc=="" || is.null(df[[vcc]])  ){df$vcc_calc<-NA; vcc_calc <- "vcc_calc"}else(vcc_calc <- vcc)
   if(missing(vsc)  || is.null(vsc)  || is.na(vsc) || vsc==F|| vsc=="" || is.null(df[[vsc]])  ){df$vsc_calc<-NA; vsc_calc <- "vsc_calc"}else(vsc_calc <- vsc)
