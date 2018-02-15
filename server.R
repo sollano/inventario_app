@@ -1391,7 +1391,7 @@ shinyServer(function(input, output, session) {
     }
 
     # Modelos com b1, DAP e HT
-    if( is.null(input$modelo_estvcc) ||  is.null(nm$dap)  || is.null(input$b0_estvcc) || is.null(input$b1_estvcc) ||  is.null(input$col.ht) ||  is.null(input$col.ht) || is.na(input$modelo_estvcc) ||  is.na(nm$dap)  || is.na(input$b0_estvcc) || is.na(input$b1_estvcc) ||  is.na(input$col.ht) || is.na(nm$ht.est) || input$modelo_estvcc =="" || nm$dap =="" || input$b0_estvcc == "" || input$b1_estvcc == ""  ){
+    if( is.null(input$modelo_estvcc) ||  is.null(nm$dap)  || is.null(input$b0_estvcc) || is.null(input$b1_estvcc) ||  is.null(input$col.ht) ||  is.null(nm$ht.est) || is.na(input$modelo_estvcc) ||  is.na(nm$dap)  || is.na(input$b0_estvcc) || is.na(input$b1_estvcc) ||  is.na(input$col.ht) || is.na(nm$ht.est) || input$modelo_estvcc =="" || nm$dap =="" || input$b0_estvcc == "" || input$b1_estvcc == ""  ){
       
     }else{
       
@@ -1469,7 +1469,7 @@ shinyServer(function(input, output, session) {
     }
     
     # Modelos com b1, DAP e HT
-    if( is.null(input$modelo_estvsc) ||  is.null(nm$dap)  || is.null(input$b0_estvsc) || is.null(input$b1_estvsc) ||  is.null(input$col.ht) ||  is.null(input$col.ht) || is.na(input$modelo_estvsc) ||  is.na(nm$dap)  || is.na(input$b0_estvsc) || is.na(input$b1_estvsc) ||  is.na(input$col.ht) || is.na(nm$ht.est) || input$modelo_estvsc =="" || nm$dap =="" || input$b0_estvsc == "" || input$b1_estvsc == ""  ){
+    if( is.null(input$modelo_estvsc) ||  is.null(nm$dap)  || is.null(input$b0_estvsc) || is.null(input$b1_estvsc) ||  is.null(input$col.ht) ||  is.null(nm$ht.est) || is.na(input$modelo_estvsc) ||  is.na(nm$dap)  || is.na(input$b0_estvsc) || is.na(input$b1_estvsc) ||  is.na(input$col.ht) || is.na(nm$ht.est) || input$modelo_estvsc =="" || nm$dap =="" || input$b0_estvsc == "" || input$b1_estvsc == ""  ){
       
     }else{
       
