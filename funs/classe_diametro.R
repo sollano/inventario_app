@@ -44,8 +44,8 @@ classe_diametro <- function(df, dap, parcela, area_parcela, ic = 5, dapmin = 5, 
     stop("'dap' must be a character containing a variable name", call.=F)
   }else if(length(dap)!=1){
     stop("Length of 'dap' must be 1", call.=F)
-  }else if(forestr::check_names(df, dap)==F){
-    stop(forestr::check_names(df, dap, boolean=F), call.=F)
+  }else if(check_names(df, dap)==F){
+    stop(check_names(df, dap, boolean=F), call.=F)
   }
   
   
@@ -59,8 +59,8 @@ classe_diametro <- function(df, dap, parcela, area_parcela, ic = 5, dapmin = 5, 
     stop("'volume' must be a character containing a variable name", call.=F)
   }else if(length(volume)!=1){
     stop("Length of 'volume' must be 1", call.=F)
-  }else if(forestr::check_names(df, volume)==F){
-    stop(forestr::check_names(df, volume, boolean=F), call.=F)
+  }else if(check_names(df, volume)==F){
+    stop(check_names(df, volume, boolean=F), call.=F)
   }else{
     volume_sym <- rlang::sym(volume)
     
@@ -74,9 +74,9 @@ classe_diametro <- function(df, dap, parcela, area_parcela, ic = 5, dapmin = 5, 
     stop("especies must be a character", call. = F)
   }else if(! length(especies)%in% 1:10){ 
     stop("Length of 'especies' must be between 1 and 10", call.=F)
-  }else if(forestr::check_names(df,especies)==F){
+  }else if(check_names(df,especies)==F){
     # Parar se algum nome nao existir, e avisar qual nome nao existe
-    stop(forestr::check_names(df,especies, boolean=F), call.=F) 
+    stop(check_names(df,especies, boolean=F), call.=F) 
     # se os grupos forem fornecidos e forem nomes dos dados
     # Transformar o objeto em simbolo, para que dplyr entenda
     # e procure o nome das variaveis dentro dos objetos
@@ -104,8 +104,8 @@ classe_diametro <- function(df, dap, parcela, area_parcela, ic = 5, dapmin = 5, 
     stop("'parcela' must be a character containing a variable name or a numeric value", call.=F)
   }else if(length(parcela)!=1){
     stop("Length of 'parcela' must be 1", call.=F)
-  }else if(forestr::check_names(df, parcela)==F){
-    stop(forestr::check_names(df, parcela, boolean = F), call.=F)
+  }else if(check_names(df, parcela)==F){
+    stop(check_names(df, parcela, boolean = F), call.=F)
   }else{
     parcela_sym <- rlang::sym(parcela)
     npar <- df %>% 
@@ -128,8 +128,8 @@ classe_diametro <- function(df, dap, parcela, area_parcela, ic = 5, dapmin = 5, 
     stop("'area_parcela' must be a character containing a variable name or a numeric value", call.=F)
   }else if(length(area_parcela)!=1){
     stop("Length of 'area_parcela' must be 1", call.=F)
-  }else if(forestr::check_names(df, area_parcela)==F){
-    stop(forestr::check_names(df, area_parcela, boolean = F), call.=F)
+  }else if(check_names(df, area_parcela)==F){
+    stop(check_names(df, area_parcela, boolean = F), call.=F)
   }else{
     area_parcela_sym <- rlang::sym(area_parcela)
     
@@ -203,7 +203,7 @@ classe_diametro <- function(df, dap, parcela, area_parcela, ic = 5, dapmin = 5, 
       tidyr::spread(CC,G_f, fill = 0) %>% 
       dplyr::mutate(Total=rowSums(.[, sapply(., is.numeric)]) ) %>% 
       as.data.frame %>% 
-      forestr::round_df(4)
+      round_df(4)
     df_final[df_final==0] <- ""
     
   }else if(cc_to_column==T && (!missing(especies)||!is.null(especies)||!is.na(especies)||especies!=F||especies!="") && (missing(volume) || is.null(volume) || is.na(volume)) ){
@@ -215,7 +215,7 @@ classe_diametro <- function(df, dap, parcela, area_parcela, ic = 5, dapmin = 5, 
       tidyr::spread(CC,NI, fill = 0 ) %>% 
       dplyr::mutate(Total = rowSums(.[  ,  sapply(., is.numeric)  ]  ) ) %>% 
       as.data.frame %>% 
-      forestr::round_df(4)
+      round_df(4)
     
     df_final[df_final==0] <- ""
     # Se o usuario quiser o centro de classe na coluna e tiver fornecido volume,
@@ -229,7 +229,7 @@ classe_diametro <- function(df, dap, parcela, area_parcela, ic = 5, dapmin = 5, 
       tidyr::spread(CC,VOL, fill = 0) %>% 
       dplyr::mutate(Total=rowSums(.[, sapply(., is.numeric)]) ) %>% 
       as.data.frame %>% 
-      forestr::round_df(4)
+      round_df(4)
     df_final[df_final==0] <- ""
     
   }else if(cc_to_column==T && (missing(especies)||is.null(especies)||is.na(especies)||especies==F||especies=="") ){
@@ -287,8 +287,8 @@ classe_diametro <- function(df, dap, parcela, area_parcela, ic = 5, dapmin = 5, 
     stop("'dap' must be a character containing a variable name", call.=F)
   }else if(length(dap)!=1){
     stop("Length of 'dap' must be 1", call.=F)
-  }else if(forestr::check_names(df, dap)==F){
-    stop(forestr::check_names(df, dap, boolean=F), call.=F)
+  }else if(check_names(df, dap)==F){
+    stop(check_names(df, dap, boolean=F), call.=F)
   }
   
   
@@ -302,8 +302,8 @@ classe_diametro <- function(df, dap, parcela, area_parcela, ic = 5, dapmin = 5, 
     stop("'volume' must be a character containing a variable name", call.=F)
   }else if(length(volume)!=1){
     stop("Length of 'volume' must be 1", call.=F)
-  }else if(forestr::check_names(df, volume)==F){
-    stop(forestr::check_names(df, volume, boolean=F), call.=F)
+  }else if(check_names(df, volume)==F){
+    stop(check_names(df, volume, boolean=F), call.=F)
   }else{
     volume_sym <- rlang::sym(volume)
     
@@ -317,9 +317,9 @@ classe_diametro <- function(df, dap, parcela, area_parcela, ic = 5, dapmin = 5, 
     stop("especies must be a character", call. = F)
   }else if(! length(especies)%in% 1:10){ 
     stop("Length of 'especies' must be between 1 and 10", call.=F)
-  }else if(forestr::check_names(df,especies)==F){
+  }else if(check_names(df,especies)==F){
     # Parar se algum nome nao existir, e avisar qual nome nao existe
-    stop(forestr::check_names(df,especies, boolean=F), call.=F) 
+    stop(check_names(df,especies, boolean=F), call.=F) 
     # se os grupos forem fornecidos e forem nomes dos dados
     # Transformar o objeto em simbolo, para que dplyr entenda
     # e procure o nome das variaveis dentro dos objetos
@@ -347,8 +347,8 @@ classe_diametro <- function(df, dap, parcela, area_parcela, ic = 5, dapmin = 5, 
     stop("'parcela' must be a character containing a variable name or a numeric value", call.=F)
   }else if(length(parcela)!=1){
     stop("Length of 'parcela' must be 1", call.=F)
-  }else if(forestr::check_names(df, parcela)==F){
-    stop(forestr::check_names(df, parcela, boolean = F), call.=F)
+  }else if(check_names(df, parcela)==F){
+    stop(check_names(df, parcela, boolean = F), call.=F)
   }else{
     parcela_sym <- rlang::sym(parcela)
     npar <- df %>% 
@@ -371,8 +371,8 @@ classe_diametro <- function(df, dap, parcela, area_parcela, ic = 5, dapmin = 5, 
     stop("'area_parcela' must be a character containing a variable name or a numeric value", call.=F)
   }else if(length(area_parcela)!=1){
     stop("Length of 'area_parcela' must be 1", call.=F)
-  }else if(forestr::check_names(df, area_parcela)==F){
-    stop(forestr::check_names(df, area_parcela, boolean = F), call.=F)
+  }else if(check_names(df, area_parcela)==F){
+    stop(check_names(df, area_parcela, boolean = F), call.=F)
   }else{
     area_parcela_sym <- rlang::sym(area_parcela)
     
@@ -446,7 +446,7 @@ classe_diametro <- function(df, dap, parcela, area_parcela, ic = 5, dapmin = 5, 
       tidyr::spread(CC,G_f, fill = 0) %>% 
       dplyr::mutate(Total=rowSums(.[, sapply(., is.numeric)]) ) %>% 
       as.data.frame %>% 
-      forestr::round_df(4)
+      round_df(4)
     df_final[df_final==0] <- ""
     
   }else if(cc_to_column==T && (!missing(especies)||!is.null(especies)||!is.na(especies)||especies!=F||especies!="") && (missing(volume) || is.null(volume) || is.na(volume)) ){
@@ -458,7 +458,7 @@ classe_diametro <- function(df, dap, parcela, area_parcela, ic = 5, dapmin = 5, 
       tidyr::spread(CC,NI, fill = 0 ) %>% 
       dplyr::mutate(Total = rowSums(.[  ,  sapply(., is.numeric)  ]  ) ) %>% 
       as.data.frame %>% 
-      forestr::round_df(4)
+      round_df(4)
     
     df_final[df_final==0] <- ""
     # Se o usuario quiser o centro de classe na coluna e tiver fornecido volume,
@@ -472,7 +472,7 @@ classe_diametro <- function(df, dap, parcela, area_parcela, ic = 5, dapmin = 5, 
       tidyr::spread(CC,VOL, fill = 0) %>% 
       dplyr::mutate(Total=rowSums(.[, sapply(., is.numeric)]) ) %>% 
       as.data.frame %>% 
-      forestr::round_df(4)
+      round_df(4)
     df_final[df_final==0] <- ""
     
   }else if(cc_to_column==T && (missing(especies)||is.null(especies)||is.na(especies)||especies==F||especies=="") ){

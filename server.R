@@ -22,6 +22,7 @@ ex_fuste <- read.csv2("examples/nivel_fuste/Inventory_exemplo_fuste.csv",fileEnc
 ex_arvore <- read.csv2("examples/nivel_arvore/ex1.csv")
 ex_parcela <- read.csv2("examples/nivel_parcela/ex_livro_dendro_ACE_def.csv")
 
+source("funs/check_names.R", encoding="UTF-8")
 source("funs/acs.R"        , encoding="UTF-8")
 source("funs/ace.R"        , encoding="UTF-8")
 source("funs/as_diffs.R"   , encoding="UTF-8")

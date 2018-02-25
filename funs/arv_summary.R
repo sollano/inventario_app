@@ -22,8 +22,8 @@ arv_summary <- function(df, arvore, dap, .groups, area_parcela, area_total, ht, 
     stop("'arvore' must be a character containing a variable name", call.=F)
   }else if(length(arvore)!=1){
     stop("Length of 'arvore' must be 1", call.=F)
-  }else if(forestr::check_names(df, arvore)==F){
-    stop(forestr::check_names(df, arvore, boolean=F), call.=F)
+  }else if(check_names(df, arvore)==F){
+    stop(check_names(df, arvore, boolean=F), call.=F)
   }
   
   # se dap nao for fornecido nao for character, ou nao for um nome de variavel,ou nao for de tamanho 1, parar
@@ -33,8 +33,8 @@ arv_summary <- function(df, arvore, dap, .groups, area_parcela, area_total, ht, 
     stop("'dap' must be a character containing a variable name", call.=F)
   }else if(length(dap)!=1){
     stop("Length of 'dap' must be 1", call.=F)
-  }else if(forestr::check_names(df, dap)==F){
-    stop(forestr::check_names(df, dap, boolean=F), call.=F)
+  }else if(check_names(df, dap)==F){
+    stop(check_names(df, dap, boolean=F), call.=F)
   }
   
   # Se .groups nao for fornecido, criar objeto que dplyr::group_by ignora, sem causar erro
@@ -45,9 +45,9 @@ arv_summary <- function(df, arvore, dap, .groups, area_parcela, area_total, ht, 
     stop(".groups must be a character", call. = F)
   }else if(! length(.groups)%in% 1:10){
     stop("Length of '.groups' must be between 1 and 10", call.=F)
-  }else if(forestr::check_names(df,.groups)==F){
+  }else if(check_names(df,.groups)==F){
     # Parar se algum nome nao existir, e avisar qual nome nao existe
-    stop(forestr::check_names(df,.groups, boolean=F), call.=F)
+    stop(check_names(df,.groups, boolean=F), call.=F)
     # se os grupos forem fornecidos e forem nomes dos dados
     # Transformar o objeto em simbolo, para que dplyr entenda
     # e procure o nome das variaveis dentro dos objetos
@@ -67,8 +67,8 @@ arv_summary <- function(df, arvore, dap, .groups, area_parcela, area_total, ht, 
     stop("'area_parcela' must be a character containing a variable name or a numeric value", call.=F)
   }else if(length(area_parcela)!=1){
     stop("Length of 'area_parcela' must be 1", call.=F)
-  }else if(forestr::check_names(df, area_parcela)==F){
-    stop(forestr::check_names(df, area_parcela, boolean = F), call.=F)
+  }else if(check_names(df, area_parcela)==F){
+    stop(check_names(df, area_parcela, boolean = F), call.=F)
   }
   
   # se area_total nao for fornecido, nao for numerico nem character, ou nao existir no dataframe,ou nao for de tamanho 1, criar variavel vazia
@@ -83,8 +83,8 @@ arv_summary <- function(df, arvore, dap, .groups, area_parcela, area_total, ht, 
     stop("'area_total' must be a character containing a variable name or a numeric value", call.=F)
   }else if(length(area_total)!=1){
     stop("Length of 'area_total' must be 1", call.=F)
-  }else if(forestr::check_names(df, area_total)==F){
-    stop(forestr::check_names(df, area_total, boolean = F), call.=F)
+  }else if(check_names(df, area_total)==F){
+    stop(check_names(df, area_total, boolean = F), call.=F)
   }
   
   # se ht nao for fornecido, for igual "", nulo ou NA, criar variavel vazia 
@@ -96,8 +96,8 @@ arv_summary <- function(df, arvore, dap, .groups, area_parcela, area_total, ht, 
     stop("'ht' must be a character containing a variable name", call.=F)
   }else if(length(ht)!=1){
     stop("Length of 'ht' must be 1", call.=F)
-  }else if(forestr::check_names(df, ht)==F){
-    stop(forestr::check_names(df, ht, boolean=F), call.=F)
+  }else if(check_names(df, ht)==F){
+    stop(check_names(df, ht, boolean=F), call.=F)
   }
   
   # se vcc nao for fornecido, for igual "", nulo ou NA, criar variavel vazia 
@@ -109,8 +109,8 @@ arv_summary <- function(df, arvore, dap, .groups, area_parcela, area_total, ht, 
     stop("'vcc' must be a character containing a variable name", call.=F)
   }else if(length(vcc)!=1){
     stop("Length of 'vcc' must be 1", call.=F)
-  }else if(forestr::check_names(df, vcc)==F){
-    stop(forestr::check_names(df, vcc, boolean=F), call.=F)
+  }else if(check_names(df, vcc)==F){
+    stop(check_names(df, vcc, boolean=F), call.=F)
   }
   
   # se vsc nao for fornecido, for igual "", nulo ou NA, criar variavel vazia 
@@ -122,8 +122,8 @@ arv_summary <- function(df, arvore, dap, .groups, area_parcela, area_total, ht, 
     stop("'vsc' must be a character containing a variable name", call.=F)
   }else if(length(vsc)!=1){
     stop("Length of 'vsc' must be 1", call.=F)
-  }else if(forestr::check_names(df, vsc)==F){
-    stop(forestr::check_names(df, vsc, boolean=F), call.=F)
+  }else if(check_names(df, vsc)==F){
+    stop(check_names(df, vsc, boolean=F), call.=F)
   }
   
   dap_name <- dap
