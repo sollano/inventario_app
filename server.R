@@ -738,12 +738,12 @@ shinyServer(function(input, output, session) {
            
              
                  data <- hdjoin(
-                   df     =  data,
-                   grupos =  group_hd, 
-                   HT     =  nm$ht, 
-                   DAP    =  nm$dap,
-                   OBS    =  nm$obs,
-                   dom    =  nm$cod.dom )  %>% 
+                   df      =  data,
+                   .groups =  group_hd, 
+                   HT      =  nm$ht, 
+                   DAP     =  nm$dap,
+                   OBS     =  nm$obs,
+                   dom     =  nm$cod.dom )  %>% 
                  select(HD, everything() )
                  
          }
@@ -1033,7 +1033,7 @@ shinyServer(function(input, output, session) {
       need(input$df == "Dados em nivel de fuste", "Base de dados incompativel" ),
       need(nm$arvore,"Por favor mapeie a coluna referente a 'Árvore'  "),
       need(nm$dap,"Por favor mapeie a coluna referente a 'CAP' ou 'DAP'  ") )
-    
+    print(nm$area.parcela)
     arv_summary(
       df           = dados,
       arvore       = nm$arvore,
@@ -2081,7 +2081,7 @@ shinyServer(function(input, output, session) {
                      HT           = nm$ht.est,
                      VCC          = nm$vcc,
                      area_parcela = nm$area.parcela,
-                     groups       = grupos,
+                     .groups      = grupos,
                      area_total   = nm$area.total,
                      idade        = nm$idade,
                      VSC          = nm$vsc,
@@ -2181,9 +2181,9 @@ shinyServer(function(input, output, session) {
                  area_parcela   = nm$area.parcela,
                  area_total     = nm$area.total, 
            #      idade          = nm$idade,
-                 grupos         = grupos_name, 
+                 .groups         = grupos_name, 
                  alpha          = input$alpha_inv, 
-                 Erro           = input$erro_inv, 
+                 erro           = input$erro_inv, 
                  casas_decimais = input$cd_inv, 
                  pop            = input$pop_inv, 
                  tidy           = TRUE)
@@ -2246,10 +2246,10 @@ shinyServer(function(input, output, session) {
              Yi             = input$yi_inv,
              area_parcela   = nm$area.parcela, 
              area_estrato   = nm$area.total, 
-             grupos         = nm$estrato, 
+             .groups         = nm$estrato, 
             # idade          = nm$idade, 
              alpha          = input$alpha_inv, 
-             Erro           = input$erro_inv, 
+             erro           = input$erro_inv, 
              casas_decimais = input$cd_inv, 
              pop            = input$pop_inv, 
              tidy           = TRUE)
@@ -2350,9 +2350,9 @@ shinyServer(function(input, output, session) {
                   area_parcela   = nm$area.parcela,
                   area_total     = nm$area.total, 
                  # idade          = nm$idade,
-                  grupos         = grupos_name, 
+                  .groups         = grupos_name, 
                   alpha          = input$alpha_inv, 
-                  Erro           = input$erro_inv, 
+                  erro           = input$erro_inv, 
                   casas_decimais = input$cd_inv, 
                   tidy           = TRUE )
     

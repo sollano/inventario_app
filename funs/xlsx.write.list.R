@@ -9,12 +9,12 @@ xlsx.write.list <- function (file, df_list){
   # return(objnames[[2]])
   
   
-  wb <- createWorkbook()
+  wb <- xlsx::createWorkbook()
   for(i in 1:nobjects){
     
 
-    try(    addDataFrame(as.data.frame(df_list_filter[[i]]), sheet = createSheet(wb, objnames[i]), row.names=FALSE) , silent = T)    
+    try(    xlsx::addDataFrame(as.data.frame(df_list_filter[[i]]), sheet = xlsx::createSheet(wb, objnames[i]), row.names=FALSE) , silent = T)    
   }
   
-  saveWorkbook(wb, file)
+  xlsx::saveWorkbook(wb, file)
 }
