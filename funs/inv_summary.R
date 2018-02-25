@@ -140,7 +140,7 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
   
   # ####
   
-  if(missing(Hd) || Hd=="" || is.null(Hd) ){ # se a altura dominante nao for fornecida
+  if(missing(Hd) || Hd=="" || is.null(Hd) || is.na(Hd) ){ # se a altura dominante nao for fornecida
     
     # se ja existir uma variavel chamada "HD", deletar
     if(  "HD" %in% names(df) ){ df$HD <- NULL }
