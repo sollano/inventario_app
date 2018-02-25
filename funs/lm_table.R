@@ -122,9 +122,9 @@ lm_table <- function(df, modelo, .groups, output = "table", est.name = "est", ke
     stop(".groups must be a character", call. = F)
   }else if(! length(.groups)%in% 1:10){
     stop("Length of '.groups' must be between 1 and 10", call.=F)
-  }else if(forestr::check_names(df,.groups)==F){
+  }else if(check_names(df,.groups)==F){
     # Parar se algum nome nao existir, e avisar qual nome nao existe
-    stop(forestr::check_names(df,.groups, boolean=F), call.=F)
+    stop(check_names(df,.groups, boolean=F), call.=F)
     # se os grupos forem fornecidos e forem nomes dos dados
     # Transformar o objeto em simbolo, para que dplyr entenda
     # e procure o nome das variaveis dentro dos objetos

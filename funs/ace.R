@@ -80,8 +80,8 @@ ace <- function(df, Yi, area_parcela, area_estrato, .groups, idade, alpha = 0.05
     stop("'Yi' must be a character containing a variable name", call.=F)
   }else if(length(Yi)!=1){
     stop("Length of 'Yi' must be 1", call.=F)
-  }else if(forestr::check_names(df, Yi)==F){
-    stop(forestr::check_names(df, Yi, boolean=F), call.=F)
+  }else if(check_names(df, Yi)==F){
+    stop(check_names(df, Yi, boolean=F), call.=F)
   }
   
   # se area_parcela nao for fornecido, nao for numerico nem character, ou nao existir no dataframe,ou nao for de tamanho 1, parar
@@ -96,8 +96,8 @@ ace <- function(df, Yi, area_parcela, area_estrato, .groups, idade, alpha = 0.05
     stop("'area_parcela' must be a character containing a variable name or a numeric value", call.=F)
   }else if(length(area_parcela)!=1){
     stop("Length of 'area_parcela' must be 1", call.=F)
-  }else if(forestr::check_names(df, area_parcela)==F){
-    stop(forestr::check_names(df, area_parcela, boolean = F), call.=F)
+  }else if(check_names(df, area_parcela)==F){
+    stop(check_names(df, area_parcela, boolean = F), call.=F)
   }
   
   # se area_estrato nao for fornecido, nao for numerico nem character, ou nao existir no dataframe,ou nao for de tamanho 1, parar
@@ -131,8 +131,8 @@ ace <- function(df, Yi, area_parcela, area_estrato, .groups, idade, alpha = 0.05
     stop("'area_estrato' must be a character containing a variable name or a numeric value", call.=F)
   }else if(length(area_estrato)!=1){
     stop("Length of 'area_estrato' must be 1", call.=F)
-  }else if(forestr::check_names(df, area_estrato)==F){
-    stop(forestr::check_names(df, area_estrato, boolean = F), call.=F)
+  }else if(check_names(df, area_estrato)==F){
+    stop(check_names(df, area_estrato, boolean = F), call.=F)
   }
   
   # se idade nao for fornecido, for igual "", nulo ou NA, criar variavel vazia 
@@ -144,8 +144,8 @@ ace <- function(df, Yi, area_parcela, area_estrato, .groups, idade, alpha = 0.05
     stop("'idade' must be a character containing a variable name", call.=F)
   }else if(length(idade)!=1){
     stop("Length of 'idade' must be 1", call.=F)
-  }else if(forestr::check_names(df, idade)==F){
-    stop(forestr::check_names(df, idade, boolean=F), call.=F)
+  }else if(check_names(df, idade)==F){
+    stop(check_names(df, idade, boolean=F), call.=F)
   }
   
   # Se .groups nao for fornecido, criar objeto que dplyr::group_by ignora, sem causar erro
@@ -156,9 +156,9 @@ ace <- function(df, Yi, area_parcela, area_estrato, .groups, idade, alpha = 0.05
     stop(".groups must be a character", call.=F)
   }else if(! length(.groups)%in% 1:10){
     stop("Length of '.groups' must be between 1 and 10", call.=F)
-  }else if(forestr::check_names(df,.groups)==F ){
+  }else if(check_names(df,.groups)==F ){
     # Parar se algum nome nao existir, e avisar qual nome nao existe
-    stop(forestr::check_names(df,.groups, boolean=F), call.=F)
+    stop(check_names(df,.groups, boolean=F), call.=F)
     # se os grupos forem fornecidos e forem nomes dos dados
     # Transformar o objeto em simbolo, para que dplyr entenda
     # e procure o nome das variaveis dentro dos objetos
@@ -295,7 +295,7 @@ ace <- function(df, Yi, area_parcela, area_estrato, .groups, idade, alpha = 0.05
         "n_otimo" = "numero otimo de amostras (n otimo)", 
         "Yhatj" = "Valor total por estrato (Yhatj)"  ),
       warn_missing = F) %>% 
-    forestr::round_df(casas_decimais)  
+    round_df(casas_decimais)  
   
   
   y_ <- x_ %>%
@@ -315,7 +315,7 @@ ace <- function(df, Yi, area_parcela, area_estrato, .groups, idade, alpha = 0.05
                      IC_ha_Sup    = Y + Erroabs, # Intervalo de confianca por ha superior
                      IC_Total_inf = Yhat - Erro_Total, # Intervalo de confianca total inferior
                      IC_Total_Sup = Yhat + Erro_Total    ) %>% # Intervalo de confianca total superior)
-    forestr::round_df(casas_decimais)  
+    round_df(casas_decimais)  
   
   
   y <- y_ %>% 
@@ -333,7 +333,7 @@ ace <- function(df, Yi, area_parcela, area_estrato, .groups, idade, alpha = 0.05
         "IC_Total_Sup" = "IC Total (m3) Superior"),
       warn_missing = F)
   
-  x_ <- forestr::round_df(x_, casas_decimais)  
+  x_ <- round_df(x_, casas_decimais)  
   
   
   if(tidy==F){

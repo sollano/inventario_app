@@ -21,8 +21,8 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
     stop("'DAP' must be a character containing a variable name", call.=F)
   }else if(length(DAP)!=1){
     stop("Length of 'DAP' must be 1", call.=F)
-  }else if(forestr::check_names(df, DAP)==F){
-    stop(forestr::check_names(df, DAP, boolean=F), call.=F)
+  }else if(check_names(df, DAP)==F){
+    stop(check_names(df, DAP, boolean=F), call.=F)
   }
   
   # se HT nao for fornecido nao for character, ou nao for um nome de variavel,ou nao for de tamanho 1, parar
@@ -32,8 +32,8 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
     stop("'HT' must be a character containing a variable name", call.=F)
   }else if(length(HT)!=1){
     stop("Length of 'HT' must be 1", call.=F)
-  }else if(forestr::check_names(df, HT)==F){
-    stop(forestr::check_names(df, HT, boolean=F), call.=F)
+  }else if(check_names(df, HT)==F){
+    stop(check_names(df, HT, boolean=F), call.=F)
   }
   
   # se VCC nao for fornecido nao for character, ou nao for um nome de variavel,ou nao for de tamanho 1, parar
@@ -43,8 +43,8 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
     stop("'VCC' must be a character containing a variable name", call.=F)
   }else if(length(VCC)!=1){
     stop("Length of 'VCC' must be 1", call.=F)
-  }else if(forestr::check_names(df, VCC)==F){
-    stop(forestr::check_names(df, VCC, boolean=F), call.=F)
+  }else if(check_names(df, VCC)==F){
+    stop(check_names(df, VCC, boolean=F), call.=F)
   }
   
   # se area_parcela nao for fornecido, nao for numerico nem character, ou nao existir no dataframe,ou nao for de tamanho 1, parar
@@ -57,8 +57,8 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
     stop("'area_parcela' must be a character containing a variable name or a numeric value", call.=F)
   }else if(length(area_parcela)!=1){
     stop("Length of 'area_parcela' must be 1", call.=F)
-  }else if(forestr::check_names(df, area_parcela)==F){
-    stop(forestr::check_names(df, area_parcela, boolean = F), call.=F)
+  }else if(check_names(df, area_parcela)==F){
+    stop(check_names(df, area_parcela, boolean = F), call.=F)
   }
   
   # se area_total nao for fornecido, nao for numerico nem character, ou nao existir no dataframe,ou nao for de tamanho 1, criar variavel vazia
@@ -73,8 +73,8 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
     stop("'area_total' must be a character containing a variable name or a numeric value", call.=F)
   }else if(length(area_total)!=1){
     stop("Length of 'area_total' must be 1", call.=F)
-  }else if(forestr::check_names(df, area_total)==F){
-    stop(forestr::check_names(df, area_total, boolean = F), call.=F)
+  }else if(check_names(df, area_total)==F){
+    stop(check_names(df, area_total, boolean = F), call.=F)
   }
   
   # se idade nao for fornecido, for igual "", nulo ou NA, criar variavel vazia 
@@ -86,8 +86,8 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
     stop("'idade' must be a character containing a variable name", call.=F)
   }else if(length(idade)!=1){
     stop("Length of 'idade' must be 1", call.=F)
-  }else if(forestr::check_names(df, idade)==F){
-    stop(forestr::check_names(df, idade, boolean=F), call.=F)
+  }else if(check_names(df, idade)==F){
+    stop(check_names(df, idade, boolean=F), call.=F)
   }
   
   # se VSC nao for fornecido, for igual "", nulo ou NA, criar variavel vazia 
@@ -99,8 +99,8 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
     stop("'VSC' must be a character containing a variable name", call.=F)
   }else if(length(VSC)!=1){
     stop("Length of 'VSC' must be 1", call.=F)
-  }else if(forestr::check_names(df, VSC)==F){
-    stop(forestr::check_names(df, VSC, boolean=F), call.=F)
+  }else if(check_names(df, VSC)==F){
+    stop(check_names(df, VSC, boolean=F), call.=F)
   }
   
   # Se .groups nao for fornecido, criar objeto que dplyr::group_by ignora, sem causar erro
@@ -111,9 +111,9 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
     stop(".groups must be a character", call. = F)
   }else if(! length(.groups)%in% 1:10){
     stop("Length of '.groups' must be between 1 and 10", call.=F)
-  }else if(forestr::check_names(df,.groups)==F ){
+  }else if(check_names(df,.groups)==F ){
     # Parar se algum nome nao existir, e avisar qual nome nao existe 
-    stop(forestr::check_names(df,.groups, boolean=F), call.=F )
+    stop(check_names(df,.groups, boolean=F), call.=F )
     # se os grupos forem fornecidos e forem nomes dos dados
     # Transformar o objeto em simbolo, para que dplyr entenda
     # e procure o nome das variaveis dentro dos objetos
@@ -146,7 +146,7 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
     if(  "HD" %in% names(df) ){ df$HD <- NULL }
     
     # estimar altura dominante
-    x <- forestr::hdjoin(df = df, HT = HT,.groups= .groups)
+    x <- hdjoin(df = df, HT = HT,.groups= .groups)
     
     # caso contrario, renomear "Hd" para "HD"
   } else{ 
@@ -171,5 +171,5 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
       VSC_HA       = sum(!!VSC_sym, na.rm=T) * 10000/ AREA_PARCELA  ) %>% #sumarise 
     dplyr::na_if(0) %>% # substitui 0 por NA
     dplyr::select_if(Negate(anyNA)) %>%  # remove variaveis que nao foram informadas (argumentos opicionais nao inseridos viram NA)
-    forestr::round_df(casas_decimais)
+    round_df(casas_decimais)
 }

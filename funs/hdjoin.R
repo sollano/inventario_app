@@ -23,8 +23,8 @@ hdjoin <- function(df, HT, DAP, OBS, dom, .groups){
     stop("'HT' must be a character containing a variable name", call.=F)
   }else if(length(HT)!=1){
     stop("Length of 'HT' must be 1", call.=F)
-  }else if(forestr::check_names(df, HT)==F){
-    stop(forestr::check_names(df, HT, boolean=F), call.=F)
+  }else if(check_names(df, HT)==F){
+    stop(check_names(df, HT, boolean=F), call.=F)
   }
   
   # se DAP nao for fornecido, for igual "", nulo ou NA, nao fazer nada
@@ -36,8 +36,8 @@ hdjoin <- function(df, HT, DAP, OBS, dom, .groups){
     stop("'DAP' must be a character containing a variable name", call.=F)
   }else if(length(DAP)!=1){
     stop("Length of 'DAP' must be 1", call.=F)
-  }else if(forestr::check_names(df, DAP)==F){
-    stop(forestr::check_names(df, DAP, boolean=F), call.=F)
+  }else if(check_names(df, DAP)==F){
+    stop(check_names(df, DAP, boolean=F), call.=F)
   }
   
   # se OBS nao for fornecido, for igual "", nulo ou NA, fazer nada
@@ -49,8 +49,8 @@ hdjoin <- function(df, HT, DAP, OBS, dom, .groups){
     stop("'OBS' must be a character containing a variable name", call.=F)
   }else if(length(OBS)!=1){
     stop("Length of 'OBS' must be 1", call.=F)
-  }else if(forestr::check_names(df, OBS)==F){
-    stop(forestr::check_names(df, OBS, boolean=F), call.=F)
+  }else if(check_names(df, OBS)==F){
+    stop(check_names(df, OBS, boolean=F), call.=F)
   }
   
   
@@ -62,9 +62,9 @@ hdjoin <- function(df, HT, DAP, OBS, dom, .groups){
     stop(".groups must be a character", call. = F)
   }else if(! length(.groups)%in% 1:10){
     stop("Length of '.groups' must be between 1 and 10", call.=F) 
-  }else if(forestr::check_names(df,.groups)==F){
+  }else if(check_names(df,.groups)==F){
     # Parar se algum nome nao existir, e avisar qual nome nao existe
-    stop(forestr::check_names(df,.groups, boolean=F), call.=F) 
+    stop(check_names(df,.groups, boolean=F), call.=F) 
     # se os grupos forem fornecidos e forem nomes dos dados
     # Transformar o objeto em simbolo, para que dplyr entenda
     # e procure o nome das variaveis dentro dos objetos

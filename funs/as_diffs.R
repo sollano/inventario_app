@@ -78,8 +78,8 @@ as_diffs <- function(df, Yi, area_parcela, area_total,  idade, .groups, alpha = 
     stop("'Yi' must be a character containing a variable name", call.=F)
   }else if(length(Yi)!=1){
     stop("length of 'Yi' must be 1", call.=F)
-  }else if(forestr::check_names(df, Yi)==F){
-    stop(forestr::check_names(df, Yi, boolean = F), call.=F)
+  }else if(check_names(df, Yi)==F){
+    stop(check_names(df, Yi, boolean = F), call.=F)
   }
   
   # se area_parcela nao for fornecido, nao for numerico nem character, ou nao for um nome de variavel, parar
@@ -92,8 +92,8 @@ as_diffs <- function(df, Yi, area_parcela, area_total,  idade, .groups, alpha = 
     stop("'area_parcela' must be a character containing a variable name or a numeric value", call.=F)
   }else if(length(area_parcela)!=1){
     stop("length of 'area_parcela' must be 1", call.=F)
-  }else if(forestr::check_names(df, area_parcela)==F){
-    stop(forestr::check_names(df, area_parcela, boolean = F), call.=F)
+  }else if(check_names(df, area_parcela)==F){
+    stop(check_names(df, area_parcela, boolean = F), call.=F)
   }
   
   # se area_total nao for fornecido, nao for numerico nem character,  ou nao for um nome de variavel, parar
@@ -106,8 +106,8 @@ as_diffs <- function(df, Yi, area_parcela, area_total,  idade, .groups, alpha = 
     stop("'area_total' must be a character containing a variable name or a numeric value", call.=F)
   }else if(length(area_total)!=1){
     stop("length of 'area_total' must be 1", call.=F)
-  }else if(forestr::check_names(df, area_total)==F){
-    stop(forestr::check_names(df, area_total, boolean = F), call.=F)
+  }else if(check_names(df, area_total)==F){
+    stop(check_names(df, area_total, boolean = F), call.=F)
   }
   
   # se idade nao for fornecido, for igual "", nulo, nao existir no dataframe, criar
@@ -120,8 +120,8 @@ as_diffs <- function(df, Yi, area_parcela, area_total,  idade, .groups, alpha = 
     stop("'idade' must be a character containing a variable name", call.=F)
   }else if(length(idade)!=1){
     stop("length of 'idade' must be 1", call.=F)
-  }else if(forestr::check_names(df, idade)==F){
-    stop(forestr::check_names(df, idade, boolean = F), call.=F)
+  }else if(check_names(df, idade)==F){
+    stop(check_names(df, idade, boolean = F), call.=F)
   }
   
   # Se .groups nao for fornecido, criar objeto que dplyr::group_by ignora, sem causar erro
@@ -132,8 +132,8 @@ as_diffs <- function(df, Yi, area_parcela, area_total,  idade, .groups, alpha = 
     stop(".groups must be a character", call.=F)
   }else if(!length(.groups) %in% 1:10){
     stop("length of '.groups' must be between 1 and 10", call.=F)
-  }else if(forestr::check_names(df,.groups)==F ){
-    stop(forestr::check_names(df,.groups, boolean=F), call.=F)
+  }else if(check_names(df,.groups)==F ){
+    stop(check_names(df,.groups, boolean=F), call.=F)
   }else{
     .groups_syms <- rlang::syms(.groups)
   }
@@ -204,7 +204,7 @@ as_diffs <- function(df, Yi, area_parcela, area_total,  idade, .groups, alpha = 
       IC_Total_Sup = Yhat + Erro_Total) %>% # Intervalo de confiança total superior
     dplyr::na_if(0) %>% # substitui 0 por NA
     dplyr::select_if(Negate(anyNA) ) %>%  # remove variaveis que nao foram informadas (argumentos opicionais nao inseridos viram NA)
-    forestr::round_df(casas_decimais)
+    round_df(casas_decimais)
   
   
   x <- x_ %>% 
