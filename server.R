@@ -1,4 +1,3 @@
-options(java.parameters = "-Xss2048k",shiny.maxRequestSize=25*1024^2)
 library(shiny)
 suppressPackageStartupMessages(library(DT))
 #library(plotly)
@@ -11,12 +10,10 @@ suppressPackageStartupMessages(library(dplyr))
 library(lazyeval)
 library(ggplot2)
 library(ggthemes)
-suppressPackageStartupMessages(library(xlsx))
-library(rJava)
-library(xlsxjars)
+library(openxlsx)
 library(rmarkdown)
 
-# Data e functions
+# Data e functions ####
 
 ex_fuste <- read.csv2("examples/nivel_fuste/Inventory_exemplo_fuste.csv",fileEncoding="UTF-8")
 ex_arvore <- read.csv2("examples/nivel_arvore/ex1.csv")
@@ -2463,6 +2460,9 @@ shinyServer(function(input, output, session) {
       L[["Amostragem Sistematica"]] <- try( tabas() , silent=T)
     }
     
+    # Remover dataframes que geraram errol
+    L <- L[!sapply(L, is,"try-error")]
+    
     L
     
   })
@@ -2492,6 +2492,9 @@ shinyServer(function(input, output, session) {
     
     L[["Amostragem Sistematica"]] <- try( tabas() , silent=T)
     
+    # Remover dataframes que geraram errol
+    L <- L[!sapply(L, is,"try-error")]
+    
     L
     
   })
@@ -2499,14 +2502,14 @@ shinyServer(function(input, output, session) {
   output$downloadData <- downloadHandler(
     filename = function(){"tabelas_app_inventario.xlsx"},
     
-    content = function(file){xlsx.write.list(file, list_of_df_to_download() )}
+    content = function(file){suppressWarnings(openxlsx::write.xlsx( list_of_df_to_download(), file ))}
     
   )
   
   output$downloadAllData <- downloadHandler(
     filename = function(){"tabelas_app_inventario.xlsx"},
     
-    content = function(file){xlsx.write.list(file, list_of_df_all() )}
+    content = function(file){ suppressWarnings(openxlsx::write.xlsx( list_of_df_all(), file )) }
     
   )
   
