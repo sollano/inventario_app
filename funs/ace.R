@@ -85,7 +85,7 @@ ace <- function(df, Yi, area_parcela, area_estrato, .groups, idade, alpha = 0.05
   }
   
   # se area_parcela nao for fornecido, nao for numerico nem character, ou nao existir no dataframe,ou nao for de tamanho 1, parar
-  if(  missing(area_parcela) || area_parcela == "" ){  
+  if(  missing(area_parcela) ){  
     stop("area_parcela not set", call. = F) 
   }else if( is.null(area_parcela) || is.na(area_parcela) || area_parcela == "" ){
     stop("'area_parcela' must be a character containing a variable name or a numeric value", call.=F)
@@ -101,7 +101,7 @@ ace <- function(df, Yi, area_parcela, area_estrato, .groups, idade, alpha = 0.05
   }
   
   # se area_estrato nao for fornecido, nao for numerico nem character, ou nao existir no dataframe,ou nao for de tamanho 1, parar
-  if(  missing(area_estrato) || area_estrato == "" ){  
+  if(  missing(area_estrato) ){  
     stop("area_estrato not set", call. = F) 
   }else if( is.null(area_estrato) || is.na(area_estrato) || area_estrato == "" ){
     stop("'area_estrato' must be a character containing a variable name or a numeric value", call.=F)
@@ -149,7 +149,7 @@ ace <- function(df, Yi, area_parcela, area_estrato, .groups, idade, alpha = 0.05
   }
   
   # Se .groups nao for fornecido, criar objeto que dplyr::group_by ignora, sem causar erro
-  if( missing(.groups) ){
+  if( missing(.groups) || .groups == ""){
     stop(".groups not set", call. = F) 
     # Se groups for fornecido verificar se todos os nomes de variaveis fornecidos existem no dado  
   }else if(!is.character(.groups)){
