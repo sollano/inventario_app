@@ -131,7 +131,6 @@ acs <- function(df,Yi, area_parcela, area_total, idade, .groups, alpha = 0.05, e
   idade_sym <- rlang::sym(idade)
   
   # ####
-  print(c(Yi_sym, area_parcela_sym, area_total_sym, idade_sym))
   x_ <-df %>%
     dplyr::na_if(0) %>%
     dplyr::group_by(!!!.groups_syms, add=T) %>%
@@ -190,11 +189,9 @@ acs <- function(df,Yi, area_parcela, area_total, idade, .groups, alpha = 0.05, e
   } 
   else if(tidy==T & length(.groups_syms)==0 )
   {
-    print("aqui")
     #x <- data.frame(Variaveis = names(x), Valores = t(x) )
     #rownames(x) <- NULL
     # ou
-    print(x)
     x <- tibble::rownames_to_column(data.frame("Valores"=t(x)) , "Variaveis" ) 
     
     return(x)
