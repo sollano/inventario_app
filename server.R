@@ -1031,7 +1031,10 @@ shinyServer(function(input, output, session) {
       need(input$df == "Dados em nivel de fuste", "Base de dados incompativel" ),
       need(nm$arvore,"Por favor mapeie a coluna referente a 'Árvore'  "),
       need(nm$dap,"Por favor mapeie a coluna referente a 'CAP' ou 'DAP'  ") )
-    print(nm$area.parcela)
+    
+    groups <- c(nm$estrato, nm$parcelas)
+    groups <- groups[groups!=""]
+    
     arv_summary(
       df           = dados,
       arvore       = nm$arvore,
@@ -1039,7 +1042,7 @@ shinyServer(function(input, output, session) {
       ht           = nm$ht,
       vcc          = nm$vcc,
       vsc          = nm$vsc,
-      .groups      = c(nm$estrato, nm$parcelas),
+      .groups      = groups,
       area_parcela = nm$area.parcela,
       area_total   = nm$area.total )
     
