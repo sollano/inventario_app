@@ -2086,7 +2086,8 @@ shinyServer(function(input, output, session) {
                      area_total   = nm$area.total,
                      idade        = nm$idade,
                      VSC          = nm$vsc,
-                     Hd           = nm$hd)
+                     Hd           = nm$hd) %>% 
+       dplyr::ungroup()
     
     
     
@@ -2169,14 +2170,16 @@ shinyServer(function(input, output, session) {
       need(nm$area.total,"Por favor mapeie a coluna ou insira um valor referente a 'area.total'  ")
     )
 
-    grupos_name <- NULL
+    grupos_name <- ""
     # Fazer amostragem por estrato somente se o usuario marcar sim
     if(is.null(input$acs_estrato)){
-      
-    }else if(input$acs_estrato){
-      grupos_name <- nm$estrato
-      }
     
+    }else if(input$acs_estrato==T){
+      grupos_name <- nm$estrato
+    }else if(input$acs_estrato==F){
+      grupos_name <- ""
+    }
+    print(grupos_name)
     x <-     acs(df             = dados,
                  Yi             = input$yi_inv,
                  area_parcela   = nm$area.parcela,

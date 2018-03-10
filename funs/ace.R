@@ -74,7 +74,7 @@ ace <- function(df, Yi, area_parcela, area_estrato, .groups, idade, alpha = 0.05
   }
   
   # se Yi nao for fornecido nao for character, ou nao for um nome de variavel,ou nao for de tamanho 1, parar
-  if(  missing(Yi) ){  
+  if(  missing(Yi) || Yi == ""  ){  
     stop("Yi not set", call. = F) 
   }else if( !is.character(Yi) ){
     stop("'Yi' must be a character containing a variable name", call.=F)
@@ -85,7 +85,7 @@ ace <- function(df, Yi, area_parcela, area_estrato, .groups, idade, alpha = 0.05
   }
   
   # se area_parcela nao for fornecido, nao for numerico nem character, ou nao existir no dataframe,ou nao for de tamanho 1, parar
-  if(  missing(area_parcela) ){  
+  if(  missing(area_parcela) || area_parcela == "" ){  
     stop("area_parcela not set", call. = F) 
   }else if( is.null(area_parcela) || is.na(area_parcela) || area_parcela == "" ){
     stop("'area_parcela' must be a character containing a variable name or a numeric value", call.=F)
@@ -101,7 +101,7 @@ ace <- function(df, Yi, area_parcela, area_estrato, .groups, idade, alpha = 0.05
   }
   
   # se area_estrato nao for fornecido, nao for numerico nem character, ou nao existir no dataframe,ou nao for de tamanho 1, parar
-  if(  missing(area_estrato) ){  
+  if(  missing(area_estrato) || area_estrato == "" ){  
     stop("area_estrato not set", call. = F) 
   }else if( is.null(area_estrato) || is.na(area_estrato) || area_estrato == "" ){
     stop("'area_estrato' must be a character containing a variable name or a numeric value", call.=F)

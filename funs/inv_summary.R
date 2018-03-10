@@ -15,7 +15,7 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
   }
   
   # se DAP nao for fornecido nao for character, ou nao for um nome de variavel,ou nao for de tamanho 1, parar
-  if(  missing(DAP) ){  
+  if(  missing(DAP) || DAP == ""  ){  
     stop("DAP not set", call. = F) 
   }else if( !is.character(DAP) ){
     stop("'DAP' must be a character containing a variable name", call.=F)
@@ -26,7 +26,7 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
   }
   
   # se HT nao for fornecido nao for character, ou nao for um nome de variavel,ou nao for de tamanho 1, parar
-  if(  missing(HT) ){  
+  if(  missing(HT) || HT == ""  ){  
     stop("HT not set", call. = F) 
   }else if( !is.character(HT) ){
     stop("'HT' must be a character containing a variable name", call.=F)
@@ -37,7 +37,7 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
   }
   
   # se VCC nao for fornecido nao for character, ou nao for um nome de variavel,ou nao for de tamanho 1, parar
-  if(  missing(VCC) ){  
+  if(  missing(VCC)|| VCC == ""  ){  
     stop("VCC not set", call. = F) 
   }else if( !is.character(VCC) ){
     stop("'VCC' must be a character containing a variable name", call.=F)
@@ -155,7 +155,7 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
   # novo nome = nome antigo
   
   x %>% 
-    dplyr::group_by(!!!.groups_syms) %>% 
+    dplyr::group_by(!!!.groups_syms,add=T) %>% 
     dplyr::mutate(AS = pi * (!!DAP_sym)^2 / 40000 ) %>% 
     dplyr::summarise(
       IDADE        = round( mean(as.numeric( (!!idade_sym) ), na.rm=T) ),

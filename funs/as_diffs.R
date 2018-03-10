@@ -72,7 +72,7 @@ as_diffs <- function(df, Yi, area_parcela, area_total,  idade, .groups, alpha = 
   }
   
   # se Yi nao for fornecido, não for character, ou nao for um nome de variavel, parar
-  if(  missing(Yi) ){  
+  if(  missing(Yi) || Yi == "" ){  
     stop("Yi not set", call. = F) 
   }else if( !is.character(Yi) ){
     stop("'Yi' must be a character containing a variable name", call.=F)
@@ -83,7 +83,7 @@ as_diffs <- function(df, Yi, area_parcela, area_total,  idade, .groups, alpha = 
   }
   
   # se area_parcela nao for fornecido, nao for numerico nem character, ou nao for um nome de variavel, parar
-  if(  missing(area_parcela) ){  
+  if(  missing(area_parcela) ||area_parcela == "" ){  
     stop("area_parcela not set", call. = F) 
   }else if(is.numeric(area_parcela) & length(area_parcela)==1){
     df$area_parcela <- area_parcela
@@ -97,7 +97,7 @@ as_diffs <- function(df, Yi, area_parcela, area_total,  idade, .groups, alpha = 
   }
   
   # se area_total nao for fornecido, nao for numerico nem character,  ou nao for um nome de variavel, parar
-  if(  missing(area_total) ){  
+  if(  missing(area_total) || area_total == "" ){  
     stop("area_total not set", call. = F) 
   }else if(is.numeric(area_total) & length(area_total)==1){
     df$area_total <- area_total
