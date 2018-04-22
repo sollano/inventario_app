@@ -15,7 +15,7 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
   }
   
   # se DAP nao for fornecido nao for character, ou nao for um nome de variavel,ou nao for de tamanho 1, parar
-  if(  missing(DAP) || DAP == ""  ){  
+  if(  missing(DAP) ){  
     stop("DAP not set", call. = F) 
   }else if( !is.character(DAP) ){
     stop("'DAP' must be a character containing a variable name", call.=F)
@@ -26,7 +26,7 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
   }
   
   # se HT nao for fornecido nao for character, ou nao for um nome de variavel,ou nao for de tamanho 1, parar
-  if(  missing(HT) || HT == ""  ){  
+  if(  missing(HT) ){  
     stop("HT not set", call. = F) 
   }else if( !is.character(HT) ){
     stop("'HT' must be a character containing a variable name", call.=F)
@@ -36,16 +36,19 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
     stop(check_names(df, HT, boolean=F), call.=F)
   }
   
-  # se VCC nao for fornecido nao for character, ou nao for um nome de variavel,ou nao for de tamanho 1, parar
-  if(  missing(VCC)|| VCC == ""  ){  
-    stop("VCC not set", call. = F) 
-  }else if( !is.character(VCC) ){
+  # se VCC nao for fornecido, for igual "", nulo ou NA, criar variavel vazia 
+  # se existir e nao for character,  parar
+  if(missing(VCC) || is.null(VCC) || is.na(VCC) || VCC == "" ){
+    df $ VCC <- NA
+    VCC <- "VCC"
+  }else if(!is.character(VCC)){
     stop("'VCC' must be a character containing a variable name", call.=F)
   }else if(length(VCC)!=1){
     stop("Length of 'VCC' must be 1", call.=F)
   }else if(check_names(df, VCC)==F){
     stop(check_names(df, VCC, boolean=F), call.=F)
   }
+  
   
   # se area_parcela nao for fornecido, nao for numerico nem character, ou nao existir no dataframe,ou nao for de tamanho 1, parar
   if(  missing(area_parcela) || is.null(area_parcela) || is.na(area_parcela) || area_parcela == "" ){  

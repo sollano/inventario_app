@@ -37,6 +37,8 @@ source("funs/residuos_exp.R"       , encoding="UTF-8")
 source("funs/check_numeric.R"      , encoding="UTF-8")
 source("funs/notin.R"              , encoding="UTF-8")
 source("funs/arv_summary.R"        , encoding="UTF-8")
+source("funs/check_dap_min.R"      , encoding="UTF-8")
+source("funs/check_yi.R"           , encoding="UTF-8")
 
 # vectors for names ####
 arvore_names <- c("ARVORE", "Arvore", "arvore", "ARV", "Arv", "arv", "ARV.", "Arv.", "arv.","NP","Np","np","Árvore","ÁRVORE","árvore" )
@@ -666,7 +668,19 @@ shinyServer(function(input, output, session) {
       data$DAP <- data[[nm$cap]]/pi
     }
     
-    # o primeiro if sera para filtrar as linhas
+    # A seguir sera para definir o dap minimo
+    
+    # Primeiro verificamos se o dap minimo iserido pelo usuario
+    # nao ultrapassa os limites do dap fornecido
+    min.val <- min(data[[nm$dap]],na.rm=T)
+    max.val <- max(data[[nm$dap]],na.rm=T)
+  
+    validate(check_dap_min(nm$diam.min,min.val,max.val)) 
+     
+    # Caso nao ultrapasse, filtrar
+    data <- data[data[nm$dap]>=nm$diam.min, ] 
+    
+    # o proximo if sera para filtrar as linhas
     
     # se o usuario nao selecionar nada, retorna o dado normal 
     # (isso faz com o que o dado original seja exibido logo que se entra na aba de filtrar),
@@ -2068,11 +2082,15 @@ shinyServer(function(input, output, session) {
       need(nrow(dados)>0,"Base de dados vazia"),
       need(input$df != "Dados em nivel de parcela", "Base de dados incompativel" ),
       need(nm$dap,"Por favor mapeie a coluna referente a 'dap'  "),
-      need(nm$vcc,"Por favor mapeie a coluna referente a 'volume com casca' ou estime-o na aba preparação  "),
+      #need(nm$vcc,"Por favor mapeie a coluna referente a 'volume com casca' ou estime-o na aba preparação  "),
       need(nm$parcelas,"Por favor mapeie a coluna referente a 'parcelas'  "),
       need(nm$area.parcela,"Por favor mapeie a coluna ou insira um valor referente a 'area.parcela'  "),
       need(nm$area.total,"Por favor mapeie a coluna ou insira um valor referente a 'area.total'  ")
     )
+    
+    # Verificar se caso o usuario escolha volume como variavel para o inventario
+    # esta deve ser mapaeada anteriormente
+    validate(check_yi(nm$vcc, input$yi_inv))
     
     # Se o usuario inseir uma variavel de Estrato, considera-la na hora dos calculos
     if(nm$estrato =="" ){grupos<-nm$parcela}else{grupos <- c(nm$estrato, nm$parcela)}
@@ -2165,7 +2183,7 @@ shinyServer(function(input, output, session) {
     validate(
       need(dados, "Por favor, faça a totalização de parcelas, ou o upload de uma base de dados em nível de parcela" ),
       need(nrow(dados)>0,"Base de dados vazia"),
-      need(nm$vcc,"Por favor mapeie a coluna referente a 'volume com casca' ou estime-o na aba preparação  "),
+      #need(nm$vcc,"Por favor mapeie a coluna referente a 'volume com casca' ou estime-o na aba preparação  "),
       need(nm$area.parcela,"Por favor mapeie a coluna ou insira um valor referente a 'area.parcela'  "),
       need(nm$area.total,"Por favor mapeie a coluna ou insira um valor referente a 'area.total'  ")
     )
@@ -2179,7 +2197,7 @@ shinyServer(function(input, output, session) {
     }else if(input$acs_estrato==F){
       grupos_name <- ""
     }
-    print(grupos_name)
+    
     x <-     acs(df             = dados,
                  Yi             = input$yi_inv,
                  area_parcela   = nm$area.parcela,
@@ -2240,7 +2258,7 @@ shinyServer(function(input, output, session) {
     validate(
       need(dados, "Por favor, faça a totalização de parcelas, ou o upload de uma base de dados em nível de parcela" ),
       need(nrow(dados)>0,"Base de dados vazia"),
-      need(nm$vcc,"Por favor mapeie a coluna referente a 'volume com casca' ou estime-o na aba preparação  "),
+      #need(nm$vcc,"Por favor mapeie a coluna referente a 'volume com casca' ou estime-o na aba preparação  "),
       need(nm$area.parcela,"Por favor mapeie a coluna ou insira um valor referente a 'area.parcela'  "),
       need(nm$area.total,"Por favor mapeie a coluna ou insira um valor referente a 'area.total'  "),
       need(nm$estrato,"Por favor mapeie a coluna referente a 'Estrato' ")
@@ -2334,7 +2352,7 @@ shinyServer(function(input, output, session) {
     validate(
       need(dados, "Por favor, faça a totalização de parcelas, ou o upload de uma base de dados em nível de parcela" ),
       need(nrow(dados)>0,"Base de dados vazia"),
-      need(nm$vcc,"Por favor mapeie a coluna referente a 'volume com casca' ou estime-o na aba preparação  "),
+      #need(nm$vcc,"Por favor mapeie a coluna referente a 'volume com casca' ou estime-o na aba preparação  "),
       need(nm$area.parcela,"Por favor mapeie a coluna ou insira um valor referente a 'area.parcela'  "),
       need(nm$area.total,"Por favor mapeie a coluna ou insira um valor referente a 'area.total'  ")
     )
