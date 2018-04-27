@@ -39,7 +39,7 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
   # se VCC nao for fornecido, for igual "", nulo ou NA, criar variavel vazia 
   # se existir e nao for character,  parar
   if(missing(VCC) || is.null(VCC) || is.na(VCC) || VCC == "" ){
-    df $ VCC <- NA
+    df$VCC <- NA
     VCC <- "VCC"
   }else if(!is.character(VCC)){
     stop("'VCC' must be a character containing a variable name", call.=F)
@@ -54,7 +54,7 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
   if(  missing(area_parcela) || is.null(area_parcela) || is.na(area_parcela) || area_parcela == "" ){  
     stop("area_parcela not set", call. = F) 
   }else if(is.numeric(area_parcela) & length(area_parcela)==1){
-    df $ area_parcela <- area_parcela
+    df$area_parcela <- area_parcela
     area_parcela <- "area_parcela"
   }else if(!is.character(area_parcela)){
     stop("'area_parcela' must be a character containing a variable name or a numeric value", call.=F)
@@ -67,10 +67,10 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
   # se area_total nao for fornecido, nao for numerico nem character, ou nao existir no dataframe,ou nao for de tamanho 1, criar variavel vazia
   # Se for fornecida verificar se e numerica ou nome de variavel
   if(  missing(area_total) || is.null(area_total) || is.na(area_total) || area_total == "" ){ 
-    df $ area_total <- NA
+    df$area_total <- NA
     area_total <- "area_total" 
   }else if(is.numeric(area_total) & length(area_total)==1){
-    df $ area_total <- area_total
+    df$area_total <- area_total
     area_total <- "area_total"
   }else if(!is.character(area_total)){
     stop("'area_total' must be a character containing a variable name or a numeric value", call.=F)
@@ -83,7 +83,7 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
   # se idade nao for fornecido, for igual "", nulo ou NA, criar variavel vazia 
   # se existir e nao for character,  parar
   if(missing(idade) || is.null(idade) || is.na(idade) || idade == "" ){
-    df $ idade <- NA
+    df$idade <- NA
     idade <- "idade"
   }else if(!is.character(idade)){
     stop("'idade' must be a character containing a variable name", call.=F)
@@ -96,7 +96,7 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
   # se VSC nao for fornecido, for igual "", nulo ou NA, criar variavel vazia 
   # se existir e nao for character,  parar
   if(missing(VSC) || is.null(VSC) || is.na(VSC) || VSC == "" ){
-    df $ VSC <- NA
+    df$VSC <- NA
     VSC <- "VSC"
   }else if(!is.character(VSC)){
     stop("'VSC' must be a character containing a variable name", call.=F)
@@ -133,6 +133,15 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
     stop("'casas_decimais' must be a number between 0 and 9", call.=F)
   }
   
+  DAP_name <- DAP
+  HT_name <- HT
+  area_parcela_name <- area_parcela
+  area_total_name <- area_total
+  VCC_name <- VCC
+  VSC_name <- VSC
+  idade_name <- idade
+  
+  
   DAP_sym <- rlang::sym( DAP )
   HT_sym <- rlang::sym( HT )
   VCC_sym <- rlang::sym( VCC )
@@ -161,17 +170,17 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
     dplyr::group_by(!!!.groups_syms,add=T) %>% 
     dplyr::mutate(AS = pi * (!!DAP_sym)^2 / 40000 ) %>% 
     dplyr::summarise(
-      IDADE        = round( mean(as.numeric( (!!idade_sym) ), na.rm=T) ),
-      AREA_TOTAL   = mean( !!area_total_sym, na.rm=T), 
-      AREA_PARCELA = mean( !!area_parcela_sym, na.rm=T),
-      DAP          = mean(!!DAP_sym, na.rm=T),
+      !!idade_name        := round( mean(as.numeric( (!!idade_sym) ), na.rm=T) ),
+      !!area_total_name   := mean( !!area_total_sym, na.rm=T), 
+      !!area_parcela_name := mean( !!area_parcela_sym, na.rm=T),
+      !!DAP_name          := mean(!!DAP_sym, na.rm=T),
       q            = sqrt(mean(AS, na.rm=T) * 40000 / pi),
-      HT           = mean(!!HT_sym, na.rm=T),
+      !!HT_name    := mean(!!HT_sym, na.rm=T),
       HD           = mean(HD),
-      IndvHA       = n()* 10000/AREA_PARCELA,
-      G_HA         = sum(AS, na.rm=T) * 10000/AREA_PARCELA,
-      VCC_HA       = sum(!!VCC_sym, na.rm=T) * 10000/ AREA_PARCELA,
-      VSC_HA       = sum(!!VSC_sym, na.rm=T) * 10000/ AREA_PARCELA  ) %>% #sumarise 
+      IndvHA       = n()* 10000/(!!area_parcela_sym),
+      G_HA         = sum(AS, na.rm=T) * 10000/(!!area_parcela_sym),
+      VCC_HA       = sum(!!VCC_sym, na.rm=T) * 10000/ (!!area_parcela_sym),
+      VSC_HA       = sum(!!VSC_sym, na.rm=T) * 10000/ (!!area_parcela_sym)  ) %>% #sumarise 
     dplyr::na_if(0) %>% # substitui 0 por NA
     dplyr::select_if(Negate(anyNA)) %>%  # remove variaveis que nao foram informadas (argumentos opicionais nao inseridos viram NA)
     round_df(casas_decimais)
