@@ -667,11 +667,13 @@ shinyServer(function(input, output, session) {
     if(!is.null(input$col.cap) && !is.na(input$col.cap) ){
       data$DAP <- data[[nm$cap]]/pi
     
-    
-    # A seguir sera para definir o dap minimo
+    }
     
     # Primeiro verificamos se o dap minimo iserido pelo usuario
     # nao ultrapassa os limites do dap fornecido
+ 
+    
+    if(nm$dap!=""){
     max.val <- max(data[[nm$dap]],na.rm=T)
   
     validate(check_dap_min(nm$diam.min,max.val)) 
