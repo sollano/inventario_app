@@ -666,7 +666,7 @@ shinyServer(function(input, output, session) {
     # O if a seguir sera para calcular o DAP, caso o usuario insira a coluna CAP
     if(!is.null(input$col.cap) && !is.na(input$col.cap) ){
       data$DAP <- data[[nm$cap]]/pi
-    }
+    
     
     # A seguir sera para definir o dap minimo
     
@@ -679,6 +679,8 @@ shinyServer(function(input, output, session) {
     # Caso nao ultrapasse, filtrar
     if(!is.na(nm$diam.min)){
       data <- data[data[nm$dap]>=nm$diam.min, ] 
+      }
+    
     }
     
     # o proximo if sera para filtrar as linhas
