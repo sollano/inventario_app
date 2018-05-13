@@ -158,7 +158,7 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
     if(  "HD" %in% names(df) ){ df$HD <- NULL }
     
     # estimar altura dominante
-    x <- hdjoin(df = df, HT = HT,.groups= .groups)
+    x <- forestr::hdjoin(df = df, HT = HT,.groups= .groups)
     
     # caso contrario, renomear "Hd" para "HD"
   } else{ 
@@ -177,10 +177,14 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
       q            = sqrt(mean(AS, na.rm=T) * 40000 / pi),
       !!HT_name    := mean(!!HT_sym, na.rm=T),
       HD           = mean(HD),
-      IndvHA       = n()* 10000/(!!area_parcela_sym),
-      G_HA         = sum(AS, na.rm=T) * 10000/(!!area_parcela_sym),
-      VCC_HA       = sum(!!VCC_sym, na.rm=T) * 10000/ (!!area_parcela_sym),
-      VSC_HA       = sum(!!VSC_sym, na.rm=T) * 10000/ (!!area_parcela_sym)  ) %>% #sumarise 
+      Indv         = n(),
+      IndvHA       = Indv* 10000/(!!area_parcela_sym),
+      G            = sum(AS, na.rm=T),
+      G_HA         = G * 10000/(!!area_parcela_sym),
+      VCC          = sum(!!VCC_sym, na.rm=T),
+      VCC_HA       = VCC * 10000/ (!!area_parcela_sym),
+      VSC          = sum(!!VSC_sym, na.rm=T),
+      VSC_HA       = VSC * 10000/ (!!area_parcela_sym)  ) %>% #sumarise 
     dplyr::na_if(0) %>% # substitui 0 por NA
     dplyr::select_if(Negate(anyNA)) %>%  # remove variaveis que nao foram informadas (argumentos opicionais nao inseridos viram NA)
     round_df(casas_decimais)

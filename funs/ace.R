@@ -149,7 +149,7 @@ ace <- function(df, Yi, area_parcela, area_estrato, .groups, idade, alpha = 0.05
   }
   
   # Se .groups nao for fornecido, criar objeto que dplyr::group_by ignora, sem causar erro
-  if( missing(.groups) || .groups == ""){
+  if( missing(.groups) || .groups == "" ){
     stop(".groups not set", call. = F) 
     # Se groups for fornecido verificar se todos os nomes de variaveis fornecidos existem no dado  
   }else if(!is.character(.groups)){
@@ -240,6 +240,7 @@ ace <- function(df, Yi, area_parcela, area_estrato, .groups, idade, alpha = 0.05
     dplyr::group_by( !!!.groups_syms) %>%
     dplyr::summarise(
       IDADE  = mean(!!idade_sym),
+      AREA_PC= mean(!!area_parcela_sym),
       nj     = n() ,
       Nj     = mean(Nj),
       N      = mean(N),
@@ -251,22 +252,23 @@ ace <- function(df, Yi, area_parcela, area_estrato, .groups, idade, alpha = 0.05
       Pj_Sj  = Pj * stats::sd(!!Yi_sym, na.rm=T),
       Pj_Yj  = Pj * Yj ) %>%
     # ungroup %>%
-    dplyr::mutate( EPj_Sj2  =   sum(Pj_Sj2), 
-                   EPj_Sj   =   sum(Pj_Sj), 
-                   Y        =   sum(Pj_Yj), # media estratificada (ponderada)     
-                   CV       = EPj_Sj / Y * 100, # Coeficiente de variancia
-                   t        = qt(alpha/2, df = sum(nj)-1, lower.tail = FALSE),     # a seguir, o t sera calculado utilizando o n calculado, de forma direta
-                   t_rec    = ifelse(pop=="inf",
-                                     qt(alpha/2, df = ceiling( t^2 * EPj_Sj^2 / (erro*Y/100)^2 )-1, lower.tail = FALSE),
-                                     qt(alpha/2, df = ceiling( t^2 * EPj_Sj^2 / ( (erro*Y/100)^2 + (t^2 * EPj_Sj2 / N )  ) )-1, lower.tail = FALSE)
-                   ),
-                   n_recalc = ifelse(pop=="inf",
-                                     ceiling( t_rec^2 * EPj_Sj^2 / (erro*Y/100)^2 ),
-                                     ceiling( t_rec^2 * EPj_Sj^2 / ( (erro*Y/100)^2 + (t_rec^2 * EPj_Sj2 / N )  ) ) 
-                   ), # agora fazemos o recalculo do n, utilizando o t correto
-                   nj_otimo = ceiling(n_recalc*Pj_Sj/EPj_Sj), # por estrato utilizando o metodo de Neyman
-                   n_otimo  = sum(nj_otimo), # n calculado total
-                   Yhatj    = Nj * Yj )  %>% # producao total por estrato
+    dplyr::mutate(
+      EPj_Sj2  =   sum(Pj_Sj2), 
+      EPj_Sj   =   sum(Pj_Sj), 
+      Y        =   sum(Pj_Yj), # media estratificada (ponderada)     
+      CV       = EPj_Sj / Y * 100, # Coeficiente de variancia
+      t        = qt(alpha/2, df = sum(nj)-1, lower.tail = FALSE),     # a seguir, o t sera calculado utilizando o n calculado, de forma direta
+      t_rec    = ifelse(pop=="inf",
+                        qt(alpha/2, df = ceiling( t^2 * EPj_Sj^2 / (erro*Y/100)^2 )-1, lower.tail = FALSE),
+                        qt(alpha/2, df = ceiling( t^2 * EPj_Sj^2 / ( (erro*Y/100)^2 + (t^2 * EPj_Sj2 / N )  ) )-1, lower.tail = FALSE)
+      ),
+      n_recalc = ifelse(pop=="inf",
+                        ceiling( t_rec^2 * EPj_Sj^2 / (erro*Y/100)^2 ),
+                        ceiling( t_rec^2 * EPj_Sj^2 / ( (erro*Y/100)^2 + (t_rec^2 * EPj_Sj2 / N )  ) ) 
+      ), # agora fazemos o recalculo do n, utilizando o t correto
+      nj_otimo = ceiling(n_recalc*Pj_Sj/EPj_Sj), # por estrato utilizando o metodo de Neyman
+      n_otimo  = sum(nj_otimo), # n calculado total
+      Yhatj    = Nj * Yj )  %>% # producao total por estrato
     dplyr::na_if(0) %>% # substitui 0 por NA
     dplyr::select_if(Negate(anyNA) ) # remove variaveis que nao foram informadas (argumentos opicionais nao inseridos viram NA)
   
@@ -274,6 +276,7 @@ ace <- function(df, Yi, area_parcela, area_estrato, .groups, idade, alpha = 0.05
   x <- x_ %>% 
     plyr::rename(
       c("IDADE" = "Idade (meses)",
+        "AREA_PC" = "Área da parcela",
         "nj" = "numero de amostras / estrato (nj)" ,
         "Nj" = "Numero de amostras cabiveis / estrato (Nj)",
         "N" = "Numero de amostras cabiveis (N)", 
@@ -301,20 +304,23 @@ ace <- function(df, Yi, area_parcela, area_estrato, .groups, idade, alpha = 0.05
   y_ <- x_ %>%
     dplyr::group_by(!!! (.groups_syms[-length(.groups)]) ) %>%
     #dplyr::group_by_(.dots=.groups[-length(.groups)] ) %>%
-    dplyr::summarise(t     = mean(t),
-                     Sy           = ifelse(pop=="inf",
-                                           sqrt(sum(Pj_Sj)^2 / sum(nj) ),
-                                           sqrt(sum(Pj_Sj) ^2 / sum(nj) - (mean(EPj_Sj2) / mean(N) )  )
-                     ), # Erro-padrao da media
-                     Y            = sum(Pj_Yj), # media de Yi estratificada (ponderada) 
-                     Erroabs      = Sy * t, # Erro Absoluto
-                     Erroperc     = Erroabs / Y * 100, # Erro percentual
-                     Yhat         = sum(Nj) * Y, # Volume Total
-                     Erro_Total   = Erroabs * sum(Nj), # Erro Total
-                     IC_ha_Inf    = Y - Erroabs, # Intervalo de confianca por ha inferior
-                     IC_ha_Sup    = Y + Erroabs, # Intervalo de confianca por ha superior
-                     IC_Total_inf = Yhat - Erro_Total, # Intervalo de confianca total inferior
-                     IC_Total_Sup = Yhat + Erro_Total    ) %>% # Intervalo de confianca total superior)
+    dplyr::summarise(
+      t     = mean(t),
+      Sy           = ifelse(pop=="inf",
+                            sqrt(sum(Pj_Sj)^2 / sum(nj) ),
+                            sqrt(sum(Pj_Sj) ^2 / sum(nj) - (mean(EPj_Sj2) / mean(N) )  )
+      ), # Erro-padrao da media
+      Y            = sum(Pj_Yj), # media de Yi estratificada (ponderada) 
+      Erroabs      = Sy * t, # Erro Absoluto
+      Erroperc     = Erroabs / Y * 100, # Erro percentual
+      Yhat         = sum(Nj) * Y, # Volume Total
+      Erro_Total   = Erroabs * sum(Nj), # Erro Total
+      IC_Inf       = Y - Erroabs, # Intervalo de confiança inferior
+      IC_Sup       = Y + Erroabs, # Intervalo de confiança superior
+      IC_ha_Inf    = (Y - Erroabs)*10000/mean(AREA_PC,na.rm=T), # Intervalo de confiança por ha inferior
+      IC_ha_Sup    = (Y + Erroabs)*10000/mean(AREA_PC,na.rm=T), # Intervalo de confiança por ha superior
+      IC_Total_inf = Yhat - Erro_Total, # Intervalo de confianca total inferior
+      IC_Total_Sup = Yhat + Erro_Total    ) %>% # Intervalo de confianca total superior)
     round_df(casas_decimais)  
   
   
@@ -327,6 +333,8 @@ ace <- function(df, Yi, area_parcela, area_estrato, .groups, idade, alpha = 0.05
         "Erroperc" = "Erro Relativo (%)",
         "Yhat" = "Valor total estimado (Yhat)", 
         "Erro_Total" = "Erro Total",
+        "IC_Inf" = "IC (m3) Inferior" ,
+        "IC_Sup" = "IC (m3) Superior",
         "IC_ha_Inf" = "IC (m3/ha) Inferior" ,
         "IC_ha_Sup" = "IC (m3/ha) Superior",
         "IC_Total_inf" = "IC Total (m3) inferior",

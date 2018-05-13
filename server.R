@@ -2282,7 +2282,7 @@ shinyServer(function(input, output, session) {
     ace1dt <- list_ace()[[1]] 
     
     datatable( ace1dt, # seleciona a linha 5 previamente
-               selection = list(mode = 'multiple', selected = c(13,17,18,19), target = 'row'),
+               selection = list(mode = 'multiple', selected = c(14,18,19,20), target = 'row'),
                options = list(searching = FALSE,
                               paging=FALSE,
                               initComplete = JS( # muda a cor do cabecalho

@@ -198,8 +198,10 @@ as_diffs <- function(df, Yi, area_parcela, area_total,  idade, .groups, alpha = 
       Erroperc     = Erroabs / Y * 100 , # Erro Percentual
       Yhat         = Y * N, # Média estimada para Área total
       Erro_Total   = Erroabs * N, # Erro EStimado Para Área Total
-      IC_ha_Inf    = Y - Erroabs, # Intervalo de confiança por ha inferior
-      IC_ha_Sup    = Y + Erroabs, # Intervalo de confiança por ha superior
+      IC_Inf       = Y - Erroabs, # Intervalo de confiança inferior
+      IC_Sup       = Y + Erroabs, # Intervalo de confiança superior
+      IC_ha_Inf    = (Y - Erroabs)*10000/mean(!!area_parcela_sym,na.rm=T), # Intervalo de confiança por ha inferior
+      IC_ha_Sup    = (Y + Erroabs)*10000/mean(!!area_parcela_sym,na.rm=T), # Intervalo de confiança por ha superior
       IC_Total_inf = Yhat - Erro_Total, # Intervalo de confiança total inferior
       IC_Total_Sup = Yhat + Erro_Total) %>% # Intervalo de confiança total superior
     dplyr::na_if(0) %>% # substitui 0 por NA
@@ -221,6 +223,8 @@ as_diffs <- function(df, Yi, area_parcela, area_total,  idade, .groups, alpha = 
                     "Erroperc"     = "Erro Relativo (%)"              ,
                     "Yhat"         = "Volume total estimado (Yhat)"   , 
                     "Erro_Total"   = "Erro Total"                     ,
+                    "IC_Inf"       = "IC (m3) Inferior"               ,
+                    "IC_Sup"       = "IC (m3) Superior"               ,
                     "IC_ha_Inf"    = "IC (m3/ha) Inferior"            ,
                     "IC_ha_Sup"    = "IC (m3/ha) Superior"            ,
                     "IC_Total_inf" = "IC Total (m3) inferior"         ,
