@@ -158,7 +158,7 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
     if(  "HD" %in% names(df) ){ df$HD <- NULL }
     
     # estimar altura dominante
-    x <- forestr::hdjoin(df = df, HT = HT,.groups= .groups)
+    x <- hdjoin(df = df, HT = HT,.groups= .groups)
     
     # caso contrario, renomear "Hd" para "HD"
   } else{ 
