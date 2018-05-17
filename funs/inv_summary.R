@@ -25,10 +25,12 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
     stop(check_names(df, DAP, boolean=F), call.=F)
   }
   
-  # se HT nao for fornecido nao for character, ou nao for um nome de variavel,ou nao for de tamanho 1, parar
-  if(  missing(HT) ){  
-    stop("HT not set", call. = F) 
-  }else if( !is.character(HT) ){
+  # se HT nao for fornecido, for igual "", nulo ou NA, criar variavel vazia 
+  # se existir e nao for character,  parar
+  if(missing(HT) || is.null(HT) || is.na(HT) || HT == "" ){
+    df $ HT <- NA
+    HT <- "HT"
+  }else if(!is.character(HT)){
     stop("'HT' must be a character containing a variable name", call.=F)
   }else if(length(HT)!=1){
     stop("Length of 'HT' must be 1", call.=F)

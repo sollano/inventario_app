@@ -47,7 +47,7 @@ shinyUI(
           
           
           # Version ####
-          navbarPage("App Inventário Florestal 2.0.2",
+          navbarPage("App Inventário Florestal 2.0.3",
           # ####           
                      theme = "green_yeti2.css",
                      # theme = "green.css", # seleciona um tema contido na pasta www
