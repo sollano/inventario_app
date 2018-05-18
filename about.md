@@ -15,9 +15,9 @@ Com este app, é possível processar um inventário florestal, utilizando os mé
 
 #### Para citar e referenciar este app, utilize:
 
-(BRAGA; OLIVEIRA GORGENS, 2017)
+(BRAGA; OLIVEIRA; GORGENS, 2017)
 
-BRAGA, S. R.; GORGENS, E. B; OLIVEIRA, M. L. R. DE. Inventário Florestal: Aplicativo shiny para processamento de inventário de florestas plantadas, 2017. Disponível em: <http://gorgens.wixsite.com/treelab>.
+BRAGA, S. R.; OLIVEIRA, M. L. R. DE; GORGENS, E. B. Inventário Florestal: Aplicativo shiny para processamento de inventário de florestas plantadas, 2017. Disponível em: <http://gorgens.wixsite.com/treelab>.
 
 
 ### Referências:
