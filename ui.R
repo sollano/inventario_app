@@ -47,7 +47,7 @@ shinyUI(
           
           
           # Version ####
-          navbarPage("App Inventário Florestal 2.0.3",
+          navbarPage("App Inventário Florestal 2.0.4",
           # ####           
                      theme = "green_yeti2.css",
                      # theme = "green.css", # seleciona um tema contido na pasta www
@@ -124,7 +124,7 @@ shinyUI(
                                   
                                   column(4,
                                          wellPanel(
-                                           h3("Circunferência (CAP)"),
+                                           h3("Circunferência (CAP)*"),
                                            p("Selecione o nome da variável referente à CAP:"#, 
                                              #style = "font-family: 'Source Sans Pro';"
                                            ),
@@ -133,7 +133,7 @@ shinyUI(
                                   
                                   column(4,
                                          wellPanel(
-                                           h3("Diâmetro (DAP)"),
+                                           h3("Diâmetro (DAP)*"),
                                            p("Selecione o nome da variável referente à DAP:"#, 
                                              #style = "font-family: 'Source Sans Pro';"
                                            ),
@@ -142,7 +142,7 @@ shinyUI(
                                   
                                   column(4,
                                          wellPanel(
-                                           h3("Altura total"),
+                                           h3("Altura total*"),
                                            p("Selecione o nome da variável referente à altura total:"#, 
                                              #style = "font-family: 'Source Sans Pro';"
                                            ),
@@ -166,7 +166,7 @@ shinyUI(
                                   
                                   column(4,
                                          wellPanel(
-                                           h3("Parcela"),
+                                           h3("Parcela*"),
                                            p("Selecione o nome da variável referente à parcela:"#, 
                                              #style = "font-family: 'Source Sans Pro';"
                                            ),

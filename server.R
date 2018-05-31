@@ -243,7 +243,7 @@ shinyServer(function(input, output, session) {
     
     selectizeInput( # cria uma lista de opcoes em que o usuario pode clicar
       "col.dap", # Id
-      "Caso o CAP seja fornecido, o DAP será calculado automaticamente", # nome que sera mostrado na UI
+      strong("Caso o CAP seja fornecido, o DAP será calculado automaticamente"), # nome que sera mostrado na UI
       choices = names(data), # como as opcoes serao atualizadas de acordo com o arquivo que o usuario insere, deixamos este campo em branco
       selected = DAP_names,     
       multiple=T,
@@ -282,7 +282,7 @@ shinyServer(function(input, output, session) {
     
     selectizeInput( # cria uma lista de opcoes em que o usuario pode clicar
       "col.arvore", # Id
-      "Esta variável é necessária para o processamento de dados em nível de fuste", # nome que sera mostrado na UI
+      strong("Esta variável é necessária para o processamento de dados em nível de fuste"), # nome que sera mostrado na UI
       choices = names(data), # como as opcoes serao atualizadas de acordo com o arquivo que o usuario insere, deixamos este campo em branco
       selected = arvore_names,
       multiple=T,
