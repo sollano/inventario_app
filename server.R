@@ -360,7 +360,7 @@ shinyServer(function(input, output, session) {
                    selected = estratos_names,
                    multiple = T,
                    options = list(
-                     maxItems = 1,
+                     maxItems = 10,
                      placeholder = 'Selecione uma coluna abaixo:'#,
                      #    onInitialize = I('function() { this.setValue(""); }')
                    ) # options    
