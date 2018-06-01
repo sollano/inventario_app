@@ -102,8 +102,7 @@ hdjoin <- function(df, HT, DAP, OBS, dom, .groups){
     
     DAP_sym <- rlang::sym( DAP )
     OBS_sym <- rlang::sym( OBS )
-    print(paste("OBS: ", OBS))
-    print(paste("OBS: ", OBS_sym))
+    
     x <- df %>%
       dplyr::group_by(!!!.groups_syms) %>%
       dplyr::filter( 
