@@ -7,8 +7,8 @@ check_yi <- function( vol, yi  ){
     
   }else if(is.na(vol)){
     
-  }else if(vol=="" & yi=="VCC_HA"){
-    paste("Volume variable must be defined if 'VCC_HA' is chosen as Yi")
+  }else if(vol=="" & yi=="VCC"){
+    paste("Volume variable must be defined if 'VCC' is chosen as Yi")
   }
   
 }
