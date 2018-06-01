@@ -2102,7 +2102,7 @@ shinyServer(function(input, output, session) {
     
     # Verificar se caso o usuario escolha volume como variavel para o inventario
     # esta deve ser mapaeada anteriormente
-    validate(check_yi(nm$vcc, input$yi_inv))
+    validate(check_yi(nm$vcc, input$yi_inv), errorClass = "WRONG")
     
     # Se o usuario inseir uma variavel de Estrato, considera-la na hora dos calculos
     if(nm$estrato =="" ){grupos<-nm$parcela}else{grupos <- c(nm$estrato, nm$parcela)}
