@@ -37,7 +37,7 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
   }else if(check_names(df, HT)==F){
     stop(check_names(df, HT, boolean=F), call.=F)
   }
-  
+
   # se VCC nao for fornecido, for igual "", nulo ou NA, criar variavel vazia 
   # se existir e nao for character,  parar
   if(missing(VCC) || is.null(VCC) || is.na(VCC) || VCC == "" ){
@@ -168,6 +168,15 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
     x <- df %>% dplyr::rename(HD = !!Hd_sym) }
   # novo nome = nome antigo
   
+  #function to check if columns have all NA
+  allNA <- function(x){all(is.na(x))}
+  
+  #function to check if columns have all 0
+  allzero <- function(x){all(x==0|is.na(x))}
+  
+  # convert NA to something
+  NA_to <- function(x,y){ x[is.na(x)] <- y;return(x)}
+  
   x %>% 
     dplyr::group_by(!!!.groups_syms,add=T) %>% 
     dplyr::mutate(AS = pi * (!!DAP_sym)^2 / 40000 ) %>% 
@@ -179,7 +188,7 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
       q            = sqrt(mean(AS, na.rm=T) * 40000 / pi),
       !!HT_name    := mean(!!HT_sym, na.rm=T),
       HD           = mean(HD),
-      Indv         = n(),
+      Indv         = ifelse(is.na(!!DAP_sym), NA, n()  ),
       IndvHA       = Indv* 10000/(!!area_parcela_sym),
       G            = sum(AS, na.rm=T),
       G_HA         = G * 10000/(!!area_parcela_sym),
@@ -188,6 +197,8 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
       VSC          = sum(!!VSC_sym, na.rm=T),
       VSC_HA       = VSC * 10000/ (!!area_parcela_sym)  ) %>% #sumarise 
     dplyr::na_if(0) %>% # substitui 0 por NA
-    dplyr::select_if(Negate(anyNA)) %>%  # remove variaveis que nao foram informadas (argumentos opicionais nao inseridos viram NA)
+    dplyr::select_if(Negate(allzero)) %>%  # remove variaveis que nao foram informadas (argumentos opicionais nao inseridos viram NA)
+    NA_to(NA) %>% 
+   # mutate_at(vars(Indv, IndvHA), funs(ifelse(is.na(.),0,. )) ) %>% 
     round_df(casas_decimais)
 }
