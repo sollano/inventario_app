@@ -18,8 +18,8 @@ alt.filter.keep <- function(df, var,levelstokeep, .groups, varstokeep){
     stop("'var' must be a character containing a variable name", call.=F)
   }else if(length(var)!=1){
     stop("Length of 'var' must be 1", call.=F)
-  }else if(forestr::check_names(df, var)==F){
-    stop(forestr::check_names(df, var, boolean=F), call.=F)
+  }else if(check_names(df, var)==F){
+    stop(check_names(df, var, boolean=F), call.=F)
   }
   
   # Se .groups nao for fornecido, criar objeto que dplyr::group_by ignora, sem causar erro
@@ -31,9 +31,9 @@ alt.filter.keep <- function(df, var,levelstokeep, .groups, varstokeep){
     stop(".groups must be a character", call. = F)
   }else if(! length(.groups)%in% 1:10){
     stop("Length of '.groups' must be between 1 and 10", call.=F)
-  }else if(forestr::check_names(df,.groups)==F){
+  }else if(check_names(df,.groups)==F){
     # Parar se algum nome nao existir, e avisar qual nome nao existe
-    stop(forestr::check_names(df,.groups, boolean=F), call.=F)
+    stop(check_names(df,.groups, boolean=F), call.=F)
     # se os grupos forem fornecidos e forem nomes dos dados
     # Transformar o objeto em simbolo, para que dplyr entenda
     # e procure o nome das variaveis dentro dos objetos
@@ -48,8 +48,8 @@ alt.filter.keep <- function(df, var,levelstokeep, .groups, varstokeep){
     stop("'varstokeep' must be a character containing a variable name", call.=F)
   }else if(length(varstokeep) > ncol(df)){
     stop("Length of 'varstokeep' must be 1", call.=F)
-  }else if(forestr::check_names(df, varstokeep)==F){
-    stop(forestr::check_names(df, varstokeep, boolean=F), call.=F)
+  }else if(check_names(df, varstokeep)==F){
+    stop(check_names(df, varstokeep, boolean=F), call.=F)
   }
   
   lvls <- levels(as.factor(df[[var]]))
