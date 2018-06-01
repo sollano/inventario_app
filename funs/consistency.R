@@ -3,7 +3,7 @@ consistency <- function(df, dap, ht, parcela,lower=0.2, upper=10){
   DF <- as.data.frame(df)
   
   # se DF nao for fornecido, nulo, ou  nao for dataframe, parar
-  if(  missing(DF) || is.null(DF) || is.na(DF) || !is.data.frame(DF) ){  
+  if(  missing(DF) || all(is.null(DF)) || all(is.na(DF)) || !is.data.frame(DF) ){  
     stop("DF not set", call. = F) 
   }
   

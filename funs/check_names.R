@@ -3,7 +3,7 @@
 check_names <- function(df, var_names, boolean=T){
   
   # se df nao for fornecido, nulo, ou  nao for dataframe, parar
-  if(  missing(df) || is.null(df) || is.na(df) ){  
+  if(  missing(df) || all(is.null(df)) || all(is.na(df)) ){  
     stop("df not set", call. = F) 
   }else if(!is.data.frame(df)){
     stop("df must be a dataframe", call.=F)

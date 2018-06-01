@@ -6,7 +6,7 @@ inv_summary <- function(df, DAP, HT, VCC, area_parcela, .groups, area_total,idad
   `%>%` <- dplyr::`%>%`
   
   # se df nao for fornecido, nulo, ou  nao for dataframe, ou nao tiver tamanho e nrow maior que 1,parar
-  if(  missing(df) || is.null(df) || is.na(df) ){  
+  if(  missing(df) || all(is.null(df)) || all(is.na(df)) ){  
     stop("df not set", call. = F) 
   }else if(!is.data.frame(df)){
     stop("df must be a dataframe", call.=F)
