@@ -53,9 +53,10 @@ residuos_exp <- function (df, obs, ..., type = "scatterplot",point_size = 3,colo
   }
   
   # Se o usuario utilizar histograma, converter a cor pra fator
-  if(is.null(COLOR) || is.na(COLOR) || COLOR==""){}else if(type == "histogram" | type == "histogram_curve"){
+  if(is.null(COLOR) || is.na(COLOR) || COLOR==""){}else{ #if(type == "histogram" | type == "histogram_curve"){
     
     df_graph[[COLOR]] <- as.factor(df_graph[[COLOR]])
+    
   }
   
   lista2
@@ -71,7 +72,7 @@ residuos_exp <- function (df, obs, ..., type = "scatterplot",point_size = 3,colo
     else if (type == "histogram" | type == "histogram_curve")  ggplot2::geom_histogram(ggplot2::aes_string(x = "ERRO", y = "..density..", fill=COLORgg), color = "gray50", binwidth = 3, position = "dodge")
     else if (type == "versus") ggplot2::geom_point(ggplot2::aes_string(OBSgg, "EST", color=COLORgg), size = point_size, alpha = 0.9)
   } + {
-    if (type == "histogram_curve") ggplot2::geom_density(ggplot2::aes_string("ERRO"), size = 1, color = "gray10")
+    if (type == "histogram_curve") ggplot2::geom_density(ggplot2::aes_string("ERRO", color=COLORgg), size = 1)
   } + {
     if (type == "scatterplot") ggplot2::geom_hline(yintercept = 0, color = "gray45")
     else if (type == "histogram" | type == "histogram_curve")ggplot2::geom_vline(xintercept = 0, linetype="dashed",color = "gray45")
@@ -85,10 +86,14 @@ residuos_exp <- function (df, obs, ..., type = "scatterplot",point_size = 3,colo
     else if (type == "versus") ggplot2::labs(x = XLAB, y = YLAB, color = CLAB)
   } + {
     if(is.null(COLOR)){
-    }else if(is.numeric(DF[[COLOR]]) )ggplot2::scale_colour_gradient(low = "light gray", high = "gray20")
-    else( ggplot2::scale_colour_grey(start = 0.8, end = 0.2) )
+      
+    }else if(is.numeric(df_graph[[COLOR]]) ){
+      
+      ggplot2::scale_colour_gradient(low = "light gray", high = "gray20")
+      
+    }else( ggplot2::scale_colour_grey(start = 0.7, end = 0.2) )
     
-  }  + ggplot2::scale_fill_grey(start = 0.8, end = 0.2) +
+  }  + ggplot2::scale_fill_grey(start = 0.7, end = 0.2) +
     ggthemes::theme_igray(base_family = font) +
     ggplot2::theme(
       legend.position = legend_pos,
