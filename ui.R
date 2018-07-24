@@ -402,11 +402,11 @@ shinyUI(
                      
                      # tabPanel Distribuições e gráficos ####
                                 # tabPanel("Distribuição diamétrica",
-                                  tabPanel("Distribuições e gráficos",
+                                  tabPanel("Análise descritiva",
                                                    
                                           fluidPage(
                                           #  h1("Distribuição diamétrica (DD)", style = "text-align: center;"),
-                                            h1("Distribuições e gráficos", style = "text-align: center;"),
+                                            h1("Análise descritiva", style = "text-align: center;"),
                                             br(),
                                             tabsetPanel(
                                               
