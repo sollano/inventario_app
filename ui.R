@@ -273,7 +273,7 @@ shinyUI(
                      ),# tabPanel Mapeamento
                      
                      # tabPanel Preparação ####
-                     tabPanel("Preparação dos dados", 
+                     tabPanel("Preparação", 
                               
                               
                               fluidPage(
@@ -362,7 +362,7 @@ shinyUI(
 
                      # tabPanel Estimativas de altura e volume ####
                      
-                     tabPanel("Estimativas de altura e volume",
+                     tabPanel("Altura e volume",
                               
                               fluidPage(
                                 
@@ -429,7 +429,7 @@ shinyUI(
                                  ), # tabPanel DD 
                                  
                      # tabPanel inventario florestal ####
-                                 tabPanel("Inventário florestal",
+                                 tabPanel("Inventário",
                                           
                                           fluidPage(
                                             
