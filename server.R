@@ -1347,15 +1347,15 @@ shinyServer(function(input, output, session) {
       
       if(input$modelo_est_ht ==  "LN(HT) = b0 + b1 * 1/DAP + e" ){
         
-        modelo_ht <- paste( "log(", nm$ht, ") ~ inv(", nm$dap ,")"  )
+        modelo_ht <- paste( "log(`", nm$ht, "`) ~ inv(`", nm$dap ,"`)",sep="")
         
       }else if(input$modelo_est_ht ==  "LN(HT) = b0 + b1 * LN(DAP) + e" ){
         
-        modelo_ht <- paste( "log(", nm$ht, ") ~ log(", nm$dap ,")"  )
+        modelo_ht <- paste( "log(`", nm$ht, "`) ~ log(`", nm$dap ,"`)",sep="")
         
       }else if(input$modelo_est_ht ==  "LN(HT) = b0 + b1 * 1/DAP + b2 * LN(HD) + e" ){
         
-        modelo_ht <- paste( "log(", nm$ht, ") ~ inv(", nm$dap ,") + ", "log(", nm$hd ,")" )
+        modelo_ht <- paste( "log(`", nm$ht, "`) ~ inv(`", nm$dap ,"`) + ", "log(`", nm$hd ,"`)",sep="")
       }
       
       
@@ -1587,9 +1587,9 @@ shinyServer(function(input, output, session) {
     # junto com a altura observada
     lista <- list(
       dados[!is.na(dados[nm$ht]), nm$ht,drop=F],
-      "LN(HT) = b0 + b1 * 1/DAP + e"               = try(lm_table(dados, paste( "log(", nm$ht, ") ~ inv(", nm$dap ,")"  )                       ,.groups = grupo, output = "est" )[["est"]], silent = T),
-      "LN(HT) = b0 + b1 * LN(DAP) + e"             = try(lm_table(dados, paste( "log(", nm$ht, ") ~ log(", nm$dap ,")"  )                       ,.groups = grupo, output = "est" )[["est"]], silent = T),
-      "LN(HT) = b0 + b1 * 1/DAP + b2 * LN(HD) + e" = try(lm_table(dados, paste( "log(", nm$ht, ") ~ inv(", nm$dap ,") + ", "log(", nm$hd ,")" ) ,.groups = grupo, output = "est" )[["est"]], silent = T)
+      "LN(HT) = b0 + b1 * 1/DAP + e"               = try(lm_table(dados, paste( "log(`", nm$ht, "`) ~ inv(`", nm$dap ,"`)",sep="")                          ,.groups = grupo, output = "est" )[["est"]], silent = T),
+      "LN(HT) = b0 + b1 * LN(DAP) + e"             = try(lm_table(dados, paste( "log(`", nm$ht, "`) ~ log(`", nm$dap ,"`)",sep="")                          ,.groups = grupo, output = "est" )[["est"]], silent = T),
+      "LN(HT) = b0 + b1 * 1/DAP + b2 * LN(HD) + e" = try(lm_table(dados, paste( "log(`", nm$ht, "`) ~ inv(`", nm$dap ,"`) + ", "log(`", nm$hd ,"`)",sep="") ,.groups = grupo, output = "est" )[["est"]], silent = T)
     )
     
     # adicionar grupos, para a lista, caso o usuário selecione o ajuste por grupos
@@ -1661,9 +1661,9 @@ shinyServer(function(input, output, session) {
     # junto com a altura observada
     lista <- list(
       dados[!is.na(dados[nm$ht]), nm$ht,drop=F],
-      "LN(HT) = b0 + b1 * 1/DAP + e"               = try(lm_table(dados, paste( "log(", nm$ht, ") ~ inv(", nm$dap ,")"  )                       ,.groups = grupo, output = "est" )[["est"]], silent = T),
-      "LN(HT) = b0 + b1 * LN(DAP) + e"             = try(lm_table(dados, paste( "log(", nm$ht, ") ~ log(", nm$dap ,")"  )                       ,.groups = grupo, output = "est" )[["est"]], silent = T),
-      "LN(HT) = b0 + b1 * 1/DAP + b2 * LN(HD) + e" = try(lm_table(dados, paste( "log(", nm$ht, ") ~ inv(", nm$dap ,") + ", "log(", nm$hd ,")" ) ,.groups = grupo, output = "est" )[["est"]], silent = T)
+      "LN(HT) = b0 + b1 * 1/DAP + e"               = try(lm_table(dados, paste( "log(`", nm$ht, "`) ~ inv(`", nm$dap ,"`)",sep="")                          ,.groups = grupo, output = "est" )[["est"]], silent = T),
+      "LN(HT) = b0 + b1 * LN(DAP) + e"             = try(lm_table(dados, paste( "log(`", nm$ht, "`) ~ log(`", nm$dap ,"`)",sep="")                          ,.groups = grupo, output = "est" )[["est"]], silent = T),
+      "LN(HT) = b0 + b1 * 1/DAP + b2 * LN(HD) + e" = try(lm_table(dados, paste( "log(`", nm$ht, "`) ~ inv(`", nm$dap ,"`) + ", "log(`", nm$hd ,"`)",sep="") ,.groups = grupo, output = "est" )[["est"]], silent = T)
     )
     
     # adicionar grupos, para a lista, caso o usuário selecione o ajuste por grupos
@@ -1734,9 +1734,9 @@ shinyServer(function(input, output, session) {
     # junto com a altura observada
     lista <- list(
       dados[!is.na(dados[nm$ht]), nm$ht,drop=F],
-      "LN(HT) = b0 + b1 * 1/DAP + e"               = try(lm_table(dados, paste( "log(", nm$ht, ") ~ inv(", nm$dap ,")"  )                       ,.groups = grupo, output = "est" )[["est"]], silent = T),
-      "LN(HT) = b0 + b1 * LN(DAP) + e"             = try(lm_table(dados, paste( "log(", nm$ht, ") ~ log(", nm$dap ,")"  )                       ,.groups = grupo, output = "est" )[["est"]], silent = T),
-      "LN(HT) = b0 + b1 * 1/DAP + b2 * LN(HD) + e" = try(lm_table(dados, paste( "log(", nm$ht, ") ~ inv(", nm$dap ,") + ", "log(", nm$hd ,")" ) ,.groups = grupo, output = "est" )[["est"]], silent = T)
+      "LN(HT) = b0 + b1 * 1/DAP + e"               = try(lm_table(dados, paste( "log(`", nm$ht, "`) ~ inv(`", nm$dap ,"`)",sep="")                          ,.groups = grupo, output = "est" )[["est"]], silent = T),
+      "LN(HT) = b0 + b1 * LN(DAP) + e"             = try(lm_table(dados, paste( "log(`", nm$ht, "`) ~ log(`", nm$dap ,"`)",sep="")                          ,.groups = grupo, output = "est" )[["est"]], silent = T),
+      "LN(HT) = b0 + b1 * 1/DAP + b2 * LN(HD) + e" = try(lm_table(dados, paste( "log(`", nm$ht, "`) ~ inv(`", nm$dap ,"`) + ", "log(`", nm$hd ,"`)",sep="") ,.groups = grupo, output = "est" )[["est"]], silent = T)
     )
     
     # adicionar grupos, para a lista, caso o usuário selecione o ajuste por grupos
