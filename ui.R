@@ -47,7 +47,7 @@ shinyUI(
           
           
           # Version ####
-          navbarPage("App Inventário Florestal 2.0.6",
+          navbarPage("App Inventário Florestal 2.0.7",
           # ####           
                      theme = "green_yeti2.css",
                      # theme = "green.css", # seleciona um tema contido na pasta www
@@ -293,7 +293,7 @@ shinyUI(
                                     numericInput("int.classe.dap", "Insira o intervalo de classe:", 2, 1, 50, 0.5),
                                     
                                     h4("Diâmetro mínimo"),
-                                    numericInput("diam.min", "Insira o diâmetro mínimo:", 5, 1, 100, 1),
+                                    numericInput("diam.min", "Insira o diâmetro mínimo:", 1, 1, 100, 1),
                                     
                                     h3("Variaveis para grafico de classe de altura"),
                                     h4("Intervalo de classe"),
@@ -444,7 +444,7 @@ shinyUI(
                                                                  label = "Selecione o nível de significância:", 
                                                                  min = 0.01, 
                                                                  max = 0.10, 
-                                                                 value = 0.05,
+                                                                 value = 0.10,
                                                                  step = 0.01)
                                               ),
                                               
