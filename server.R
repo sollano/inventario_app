@@ -2205,7 +2205,7 @@ shinyServer(function(input, output, session) {
     }
     
     if(input$df=="Dados em nivel de parcela"){
-      dados <- dados %>% dplyr::rename(VCC = .data[[nm$vcc]] )
+      dados <- dados %>% dplyr::rename(VCC = !!(rlang::sym(nm$vcc)) )
     }
     
     x <-     acs(df             = dados,
@@ -2275,7 +2275,7 @@ shinyServer(function(input, output, session) {
     )
     
     if(input$df=="Dados em nivel de parcela"){
-      dados <- dados %>% dplyr::rename(VCC = .data[[nm$vcc]] )
+      dados <- dados %>% dplyr::rename(VCC = !!(rlang::sym(nm$vcc)) )
     }
     
     x <- ace(df             = dados, 
@@ -2380,7 +2380,7 @@ shinyServer(function(input, output, session) {
     }
     
     if(input$df=="Dados em nivel de parcela"){
-      dados <- dados %>% dplyr::rename(VCC = .data[[nm$vcc]] )
+      dados <- dados %>% dplyr::rename(VCC = !!(rlang::sym(nm$vcc)) )
     }
     
     dados <- invData()
