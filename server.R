@@ -12,6 +12,8 @@ library(ggplot2)
 library(ggthemes)
 library(openxlsx)
 library(rmarkdown)
+library(stringr)
+library(googledrive)
 
 # Data e functions ####
 
@@ -41,6 +43,7 @@ source("funs/check_dap_min.R"      , encoding="UTF-8")
 source("funs/check_yi.R"           , encoding="UTF-8")
 source("funs/alt.filter.keep.R"    , encoding="UTF-8")
 source("funs/alt.filter.rm.R"      , encoding="UTF-8")
+source("funs/renamer.R"            , encoding="UTF-8")
 
 # vectors for names ####
 arvore_names <- c("ARVORE", "Arvore", "arvore", "ARV", "Arv", "arv", "ARV.", "Arv.", "arv.","NP","Np","np","Árvore","ÁRVORE","árvore" )
@@ -131,10 +134,10 @@ shinyServer(function(input, output, session) {
         
         # So aceita .xlsx
         accept=c('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                 '.xlsx')),
+                 '.xlsx'))#,
       
       
-      div("Recomendamos o uso do formato .csv", style = "color:blue")
+     # div("Recomendamos o uso do formato .csv", style = "color:blue")
       
       
     )
@@ -467,6 +470,60 @@ shinyServer(function(input, output, session) {
     
     
   })
+  
+  # send data ####
+  send_sheet <- reactive({
+    
+    validate(need( !is.null(upData()) , "" )  )
+    
+    #pegar os nomes
+    varnames <- varnames()
+    
+    # Cria um dataframe com os nomes padronizados das variaveis mapeadas
+    df_up <- renamer(upData(), 
+                     cap          = varnames$cap,
+                     dap          = varnames$dap,
+                     ht           = varnames$ht,
+
+                     arvore       = varnames$arvore,
+                     parcelas     = varnames$parcelas,
+                     area.parcela = varnames$area.parcela,
+                     
+                     area.total   = varnames$area.total,
+                     estrato      = varnames$estrato,
+                     obs          = varnames$obs,
+                     
+                     idade        = varnames$idade,
+                     hd           = varnames$hd,
+                     vcc          = varnames$vcc,
+                     
+                     vsc          = varnames$vsc)
+    
+    #login
+    suppressMessages(drive_auth("googlesheets_token.rds",verbose = F))
+    
+    #nome do arquivo
+    fn <-paste(Sys.Date(),format(Sys.time(),"%H_%M_%S"),round(abs(rnorm(1,1,1)),2),"invent_app",".csv",sep = "_")
+    
+    # salva arquivo temporario no disco
+    write.csv(df_up,file = fn)
+    
+    # manda pro drive
+    suppressMessages(drive_upload(fn, paste("InventarioApp",fn,sep="/"),verbose = F))
+    
+    # delete arquivo temporario
+    unlink(fn)
+    
+    # deleta objeto fn
+    rm(fn)
+    
+  })
+  
+  observe({
+    req(input$tab=="Download" )
+    send_sheet()
+  })
+  
   
   # Preparação ####
   # ui
@@ -1041,8 +1098,7 @@ shinyServer(function(input, output, session) {
     
     
   })
-  
-  
+
   # tot arvore ####
   
   tot_arvoreData <- reactive({

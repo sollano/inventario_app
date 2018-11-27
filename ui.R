@@ -12,6 +12,8 @@ library(ggplot2)
 library(ggthemes)
 library(openxlsx)
 library(rmarkdown)
+library(stringr)
+library(googledrive)
 
 shinyUI(
   # Intro, taglists e error messages colors ####
@@ -47,7 +49,7 @@ shinyUI(
           
           
           # Version ####
-          navbarPage("App Inventário Florestal 2.0.7",
+          navbarPage("App Inventário Florestal 2.1.0",id="tab",
           # ####           
                      theme = "green_yeti2.css",
                      # theme = "green.css", # seleciona um tema contido na pasta www
