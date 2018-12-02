@@ -1,7 +1,6 @@
 # App Inventário Florestal
 
 <div style="text-align:justify">
-Ao utilizar esse aplicativo, você concorda em forncer os seus dados de forma anônima, de acordo com os termos de serviço descritos <a href="https://docs.google.com/document/d/1nvPcNTHCZJhuqsEYoHdYR9NVc44_AJuaHUynQwveVgk/edit?usp=sharing">aqui</a>.
 Informações necessárias ao manejo e planejamento de povoamentos, que normalmente são referentes ao volume de madeira e/ou outra variável dendrométrica, no sentido qualitativo e quantitativo, são obtidas por meio do inventário florestal. 
 Entretanto, o processamento dos mesmos geralmente é feito utilizando softwares pagos. Este app foi criado com o intuito de facilitar este processo, de forma prática e gratuita, sem a necessidade de se manipular planilhas ou instalar softwares. Utilizando a linguagem R em conjunto com o pacote Shiny, temos uma ferramenta poderosa, que pode ser utilizada direto do navegador, por profissionais da área, estudantes e entusiastas que desejam processar um inventário pelos métodos mais utilizados de amostragem. 
 Com este app, é possível processar um inventário florestal, utilizando os métodos: Amostragem Casual Simples, Amostragem Estratificada e Amostragem Sistemática.

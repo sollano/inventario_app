@@ -520,7 +520,11 @@ shinyUI(
                                              
                                              h2("Download de tabelas", style = "text-align: center;"),
                                              br(),
-                                             
+                                             helpText(
+                                               "Ao clicar no botão de download, você se declara de acordo com os termos descritos",
+                                               a(href="https://docs.google.com/document/d/1nvPcNTHCZJhuqsEYoHdYR9NVc44_AJuaHUynQwveVgk/edit?usp=sharing", "aqui"),
+                                               "."
+                                             ),
                                              fluidRow(
                                                column(
                                                  10

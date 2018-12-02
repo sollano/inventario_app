@@ -149,7 +149,10 @@ shinyServer(function(input, output, session) {
   upData <- reactive({ # Criamos uma nova funcao reactive. este sera o objeto filtrado, utilizado nos calculos
     
     # sera vazio caso nao seja selecionado "fazer o upload"
-    validate(need(input$df_select == "Fazer o upload" , "" )  )
+    validate(
+      need(input$df_select, ""),
+      need(input$df_extension, ""),
+      need(input$df_select == "Fazer o upload" , "" )  )
     
     # Salva o caminho do arquivo uploadado em um arquivo, dependendo do que o usuario selecionar
     if(input$df_extension == ".csv (Valor separado por virgulas) ou .txt (arquivo de texto)"){
@@ -521,6 +524,7 @@ shinyServer(function(input, output, session) {
   
   observe({
     req(input$tab=="Download" )
+    req(!is.null(upData()))
     send_sheet()
   })
   
