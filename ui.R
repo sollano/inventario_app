@@ -562,6 +562,12 @@ shinyUI(
                                                
                                                h3("Download de graficos"),
                                                
+                                               helpText(
+                                                 "Ao clicar no botão de download, você se declara de acordo com os termos descritos",
+                                                 a(href="https://docs.google.com/document/d/1nvPcNTHCZJhuqsEYoHdYR9NVc44_AJuaHUynQwveVgk/edit?usp=sharing", "aqui"),
+                                                 "."
+                                               ),
+                                               
                                                selectInput("graph_d", "Escolha um grafico:", 
                                                            choices = c(
                                                              "Indv. por ha por CC",

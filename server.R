@@ -73,7 +73,10 @@ shinyServer(function(input, output, session) {
   #ui
   output$upload      <- renderUI({
     
-    validate(need(input$df_select == "Fazer o upload", "" )  )
+    validate(
+      need(input$df_select, ""),
+      need(input$df_extension, ""),
+      need(input$df_select == "Fazer o upload" , "" )  )
     
       radioButtons("df_extension", 
                    "Informe o formato do arquivo:", 
@@ -523,8 +526,10 @@ shinyServer(function(input, output, session) {
   })
   
   observe({
-    req(input$tab=="Download" )
-    req(!is.null(upData()))
+    # So rodar se algum dado for uploadado
+    req( !is.null(upData()) )
+    # Se algum botao de download for clicado, enviar dados para a nuvem
+    req(rnDownloads$ndown>0)
     send_sheet()
   })
   
@@ -2494,6 +2499,10 @@ shinyServer(function(input, output, session) {
   
   # Download tabelas ####
   
+  # Cria um valor inicial zero para verificar se o usuario fez algum download ou nao.
+  # Se o usuario clicar em algum botao de download, sera add a esse valor uma unidade.
+  rnDownloads <- reactiveValues(ndown=0)
+  
   output$checkbox_df_download <- renderUI({
     
     checkboxGroupInput("dataset", h3("Escolha uma ou mais tabelas, e clique no botão abaixo:"), 
@@ -2604,14 +2613,18 @@ shinyServer(function(input, output, session) {
   output$downloadData <- downloadHandler(
     filename = function(){"tabelas_app_inventario.xlsx"},
     
-    content = function(file){suppressWarnings(openxlsx::write.xlsx( list_of_df_to_download(), file ))}
+    content = function(file){
+      rnDownloads$ndown <- rnDownloads$ndown + 1
+      suppressWarnings(openxlsx::write.xlsx( list_of_df_to_download(), file ))}
     
   )
   
   output$downloadAllData <- downloadHandler(
     filename = function(){"tabelas_app_inventario.xlsx"},
     
-    content = function(file){ suppressWarnings(openxlsx::write.xlsx( list_of_df_all(), file )) }
+    content = function(file){ 
+      rnDownloads$ndown <- rnDownloads$ndown + 1
+      suppressWarnings(openxlsx::write.xlsx( list_of_df_all(), file )) }
     
   )
   
@@ -2633,6 +2646,7 @@ shinyServer(function(input, output, session) {
   })
   
   output$graph_d_out <- renderPlot({
+    rnDownloads$ndown <- rnDownloads$ndown + 1
     
     g <- graphInput()
     
