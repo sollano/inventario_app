@@ -73,10 +73,7 @@ shinyServer(function(input, output, session) {
   #ui
   output$upload      <- renderUI({
     
-    validate(
-      need(input$df_select, ""),
-      need(input$df_extension, ""),
-      need(input$df_select == "Fazer o upload" , "" )  )
+    validate(need(input$df_select == "Fazer o upload", "" )  )
     
       radioButtons("df_extension", 
                    "Informe o formato do arquivo:", 
