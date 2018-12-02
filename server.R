@@ -523,6 +523,11 @@ shinyServer(function(input, output, session) {
     
   })
   
+  # dummy observer for linux (makes session flush when a download is made)
+  observe({
+    invalidateLater(500)
+  })  
+  
   observe({
     # So rodar se algum dado for uploadado
     req( !is.null(upData()) )
