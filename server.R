@@ -124,7 +124,7 @@ shinyServer(function(input, output, session) {
                    step    = 1
       ),
       
-      radioButtons(inputId = "mv_excel",label = "Valores ausentes", choices = c("Espaço vazio" = "", "NA" = "NA"), inline = T ),
+      #radioButtons(inputId = "mv_excel",label = "Valores ausentes", choices = c("Espaço vazio" = "", "NA" = "NA"), inline = T ),
       
       # input de arquivos
       fileInput( 
@@ -175,7 +175,8 @@ shinyServer(function(input, output, session) {
     } else {
       file.copy(inFile$datapath,
                 paste(inFile$datapath, "xlsx", sep="."))
-      raw_data <-  readxl::read_excel(paste(inFile$datapath, "xlsx", sep="."), input$sheet_n, na = input$mv_excel) 
+      #raw_data <-  readxl::read_excel(paste(inFile$datapath, "xlsx", sep="."), input$sheet_n, na = input$mv_excel) 
+      raw_data <-  openxlsx::read.xlsx(paste(inFile$datapath, "xlsx", sep="."), input$sheet_n) 
       raw_data <- as.data.frame(raw_data)
     }
     
