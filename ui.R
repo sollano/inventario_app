@@ -317,8 +317,7 @@ shinyUI(
                                     uiOutput("selec_area_total_num"),
                                     uiOutput("est_hd1"),
                                     uiOutput("est_hd2"),
-                                    uiOutput("est_hd3"),
-                                    uiOutput("consist_warning1")
+                                    uiOutput("est_hd3")
                                     
                                     
                                     
@@ -332,7 +331,18 @@ shinyUI(
                                              tableOutput("teste")
                                              
                                     ),
-                                    tabPanel("Dados inconsistentes",
+                                    tabPanel("Consistência dos dados",
+                                             
+                                             radioButtons(
+                                               "run_consist",
+                                               h3("Deseja verificar a consistência dos dados?"),
+                                               choices = c("Sim"=TRUE,"Nao"=FALSE),
+                                               selected=FALSE,
+                                               inline = TRUE,
+                                               width = "200%"),
+                                             p("Obs: A consistência requer que a variável DAP esteja mapeada. Recomenda-se mapear também a variável Altura."),
+                                             
+                                             uiOutput("consist_warning1"),
                                              uiOutput("consist_warning2"),
                                              uiOutput("consist_table_help"),
                                              uiOutput("consist_choice"),

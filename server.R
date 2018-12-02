@@ -1044,6 +1044,7 @@ shinyServer(function(input, output, session) {
     consistency(data, dap = input$col.dap, ht = input$col.ht, parcela = input$col.parcelas) 
   })
   output$consist_warning1 <- renderUI({
+    req(input$run_consist==TRUE)
     # Essa aviso ira aparcer na UI caso consit_fun() nao seja nulo.
     # Esse objeto so nao sera nulo quando a funcao rodar, ou seja,
     # quando houverem dados inconsistentes.
@@ -1051,6 +1052,7 @@ shinyServer(function(input, output, session) {
     validate(need(is.null(consist_fun()), "Dados inconsistentes foram detectados" ), errorClass = "AVISO")
   })
   output$consist_warning2 <- renderUI({
+    req(input$run_consist==TRUE)
     # Essa aviso ira aparcer na UI caso consit_fun() nao seja um objeto valido.
     # Esse objeto so  sera nulo quando a funcao rodar e gerar um resultado nulo.
     # Isso ocorre quando nao sao encontradas inconsistencias.
@@ -1058,7 +1060,7 @@ shinyServer(function(input, output, session) {
     validate(need(consist_fun(), "Não foram encontradas inconsistências" ) )
   })
   output$consist_choice <- renderUI({
-    
+    req(input$run_consist==TRUE)
     req(consist_fun())
     
     # Funcionando de forma semelhante a consist_warning,
@@ -1073,21 +1075,21 @@ shinyServer(function(input, output, session) {
     
   })
   output$consist_table_help <- renderUI({
-    
+    req(input$run_consist==TRUE)
     req(consist_fun())
     
     # Se houverem inconsistencias, essa UI ira aparecer, 
     # que gera um titulo e um texto de ajuda para a mesma
     
     list(
-      h2("Dados inconsistentes:"),
+      #  h2("Dados inconsistentes:"),
       p("Analise os dados a seguir e clique nas linhas que desejar remover da analise."),
       p("Em seguida basta selecionar a opção 'Sim' àbaixo, e os dados serão removidos.")
       
     )
   })
   output$consist_table <- DT::renderDataTable({
-    
+    req(input$run_consist==TRUE)
     # Se o usuario quiser ver a tabela, e ela nao for nula,
     # nem a opcao de ver ela for nula, mostrar se nao, aviso
     validate(need(consist_fun(),""), errorClass = "AVISO" )
@@ -1110,7 +1112,7 @@ shinyServer(function(input, output, session) {
     
     
   })
-
+  
   # tot arvore ####
   
   tot_arvoreData <- reactive({
