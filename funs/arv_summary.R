@@ -63,6 +63,8 @@ arv_summary <- function(df, arvore, dap, .groups){
 
   # ####
   
+ 
+  
   x <- df %>% 
     dplyr::group_by(!!!.groups_syms, !!arvore_sym) %>% 
     dplyr::summarise(
@@ -70,24 +72,20 @@ arv_summary <- function(df, arvore, dap, .groups){
     dplyr::na_if(0) %>% 
     as.data.frame() %>% 
     dplyr::ungroup()
-  #return(x)
- 
+  
+  
   # Remove data from other boles, keep only the first one
- df <- df %>% 
+  df <- df %>% 
    dplyr::group_by(!!!.groups_syms, !!arvore_sym) %>% 
-   dplyr::mutate(n=1:dplyr::n()) %>% 
-   dplyr::filter(n==1) %>% 
-   dplyr::select(-n, - (!!dap_sym) ) 
-  
-  
+   dplyr::mutate(nn=seq(1,n())) %>% 
+   dplyr::filter(nn==1) %>% 
+   dplyr::select(-nn, - (!!dap_sym) ) 
+ 
   # Unir aos dados originais remanescentes
   if(missing(.groups)||is.null(.groups)||is.na(.groups)||.groups==F||.groups==""){
-    return(as.data.frame(dplyr::left_join(df,x, by=carvore)) ) 
+    return(as.data.frame(dplyr::left_join(df,x, by=arvore)) ) 
   }else{
     return(as.data.frame(dplyr::left_join(df,x, by=c(.groups,arvore) )) )
   }
-  
-  
-  
   
 }
