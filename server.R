@@ -537,6 +537,101 @@ shinyServer(function(input, output, session) {
   })
   
   
+  # Set names ####
+  varnames <- reactive({
+    
+    #req(input$col.especies,input$col.parcelas, input$col.dap,input$col.ht,input$col.vcc, input$col.vsc,input$col.area.parcela,input$col.area.total, input$col.col.estrato,  input$col.est.vertical,input$col.est.interna)
+    
+    varnameslist <- list(
+      cap          = input$col.cap,
+      dap          = input$col.dap,
+      ht           = input$col.ht,
+      ht.est       = input$col.ht,
+      
+      arvore       = input$col.arvore,
+      parcelas     = input$col.parcelas,
+      area.parcela = input$col.area.parcela,
+      
+      area.total   = input$col.area.total,
+      estrato      = input$col.estrato,
+      obs          = input$col.obs,
+      
+      idade        = input$col.idade,
+      hd           = input$col.hd,
+      cod.dom      = input$cod.dom,
+      vcc          = input$col.vcc,
+      
+      vsc          = input$col.vsc,
+      
+      IC.dap       = input$int.classe.dap,
+      diam.min     = input$diam.min,
+      IC.ht        = input$int.classe.ht,
+      ht.min       = input$ht.min
+    )
+    # Se nao selecionar nome de variavel de area, a area sera o valor numerico inserido em preparacao
+    if(is.null(input$num.area.parcela)|| is.na(input$num.area.parcela) ||input$num.area.parcela==""){}else{varnameslist$area.parcela <- input$num.area.parcela  }
+    if(is.null(input$num.area.total) || is.na(input$num.area.total) ||input$num.area.total==""){}else{varnameslist$area.total <- input$num.area.total  }
+    
+    # Se o usuario inserir os coeficientes de volume, a variavel criada (na parte de preparacao, ou seja, raw_data)
+    # sera nomeada VCC (e vsc, no caso de sem casca) durante esse processo. Por isso e preciso definir este nome em varnameslist quando isso ocorrer
+    if( !is.null(input$b0_estvcc) && !is.na(input$b0_estvcc) && !is.null(input$b1_estvcc) && !is.na(input$b1_estvcc)  ){
+      varnameslist$vcc <- "VCC"
+    }
+    
+    if( !is.null(input$b0_estvsc) && !is.na(input$b0_estvsc) && !is.null(input$b1_estvsc) && !is.na(input$b1_estvsc)  ){
+      varnameslist$vsc <- "VSC"
+    }
+    
+    # Caso existam NAs na coluna altura, ela sera estimada, entao o nome da altura utilizada devera ser
+    # HT_EST, que e o nome utilizado na aba preparacao na estimacao da altura.
+    data <- rawData_()
+    
+    # Transformar zero em NA para conferir NAs abaixo
+    data[data==0] <- NA
+    
+    if(  ( is.null(input$col.ht) || is.na(input$col.ht) ) ){
+      
+    }else if(any(is.na(data[[input$col.ht]])) ){
+      
+      varnameslist$ht.est <- "HT_EST"
+      
+      
+    }
+    
+    
+    if(is.null(input$est.hd) || is.na(input$est.hd) ){
+      
+    }else if( input$est.hd==TRUE  && is.null(input$col.hd) ){
+      
+      # A altura dominante tera seu nome definido para HD caso o usuario
+      # queira estimar HD,
+      # e nao tenha selecionado nenhuma variavel para ser HD
+      varnameslist$hd <- "HD"  
+      
+    }
+    
+    
+    # se cao for selecionado, definir o nome de DAP para DAP, pois este sera calculado
+    # na preparacao
+    if(!is.null(input$col.cap) && !is.na(input$col.cap) ){
+      varnameslist$dap <- "DAP"
+    }
+    
+    
+    # Os nomes nao selecionados serao salvos como NULL na lista,
+    # estes sao entao convertidos para "", por conveniencia 
+    #x <- data.frame(do.call(cbind, lapply(varnameslist, function(x){if(is.null(x)){x<-""}else{x} } )  ))    
+    
+    x <- lapply(varnameslist, function(x){if(is.null(x)){x<-""}else{x} } )   
+    x
+  })
+  
+  output$teste <- renderTable({
+    varnames()
+    
+  })
+  
+  
   # Preparação ####
   # ui
   output$rm_data_var <- renderUI({
@@ -804,7 +899,7 @@ shinyServer(function(input, output, session) {
     }
     
     # Estimar HD
-    if(is.null(input$est.hd) || is.null(input$col.parcelas ) || input$col.parcelas =="" || is.na(input$col.parcelas ) || is.null(input$col.ht ) || input$col.ht =="" || is.na(input$col.ht ) || is.na(input$col.dap) || input$col.dap=="" || is.null(input$col.dap) ){
+    if(is.null(input$est.hd) || is.null(input$col.parcelas ) || input$col.parcelas =="" || is.na(input$col.parcelas ) || is.null(input$col.ht ) || input$col.ht =="" || is.na(input$col.ht ) || is.na(nm$dap) || nm$dap=="" || is.null(nm$dap) ){
       
       
     }else if(is.null(input$col.hd) || input$col.hd=="" || is.na(input$col.hd) ){
@@ -820,8 +915,7 @@ shinyServer(function(input, output, session) {
              group_hd <- nm$parcelas
              
            }
-           
-             
+
                  data <- hdjoin(
                    df      =  data,
                    .groups =  group_hd, 
@@ -926,100 +1020,6 @@ shinyServer(function(input, output, session) {
     # A errorClass AVISO foi criada no comeco da UI
     
   })
-  # Set names ####
-  varnames <- reactive({
-    
-    #req(input$col.especies,input$col.parcelas, input$col.dap,input$col.ht,input$col.vcc, input$col.vsc,input$col.area.parcela,input$col.area.total, input$col.col.estrato,  input$col.est.vertical,input$col.est.interna)
-    
-    varnameslist <- list(
-      cap          = input$col.cap,
-      dap          = input$col.dap,
-      ht           = input$col.ht,
-      ht.est       = input$col.ht,
-      
-      arvore       = input$col.arvore,
-      parcelas     = input$col.parcelas,
-      area.parcela = input$col.area.parcela,
-      
-      area.total   = input$col.area.total,
-      estrato      = input$col.estrato,
-      obs          = input$col.obs,
-      
-      idade        = input$col.idade,
-      hd           = input$col.hd,
-      cod.dom      = input$cod.dom,
-      vcc          = input$col.vcc,
-      
-      vsc          = input$col.vsc,
-      
-      IC.dap       = input$int.classe.dap,
-      diam.min     = input$diam.min,
-      IC.ht        = input$int.classe.ht,
-      ht.min       = input$ht.min
-    )
-    # Se nao selecionar nome de variavel de area, a area sera o valor numerico inserido em preparacao
-    if(is.null(input$num.area.parcela)|| is.na(input$num.area.parcela) ||input$num.area.parcela==""){}else{varnameslist$area.parcela <- input$num.area.parcela  }
-    if(is.null(input$num.area.total) || is.na(input$num.area.total) ||input$num.area.total==""){}else{varnameslist$area.total <- input$num.area.total  }
-    
-    # Se o usuario inserir os coeficientes de volume, a variavel criada (na parte de preparacao, ou seja, raw_data)
-    # sera nomeada VCC (e vsc, no caso de sem casca) durante esse processo. Por isso e preciso definir este nome em varnameslist quando isso ocorrer
-    if( !is.null(input$b0_estvcc) && !is.na(input$b0_estvcc) && !is.null(input$b1_estvcc) && !is.na(input$b1_estvcc)  ){
-      varnameslist$vcc <- "VCC"
-    }
-    
-    if( !is.null(input$b0_estvsc) && !is.na(input$b0_estvsc) && !is.null(input$b1_estvsc) && !is.na(input$b1_estvsc)  ){
-      varnameslist$vsc <- "VSC"
-    }
-    
-    # Caso existam NAs na coluna altura, ela sera estimada, entao o nome da altura utilizada devera ser
-    # HT_EST, que e o nome utilizado na aba preparacao na estimacao da altura.
-    data <- rawData_()
-    
-    # Transformar zero em NA para conferir NAs abaixo
-    data[data==0] <- NA
-    
-    if(  ( is.null(input$col.ht) || is.na(input$col.ht) ) ){
-
-    }else if(any(is.na(data[[input$col.ht]])) ){
-      
-      varnameslist$ht.est <- "HT_EST"
-      
-      
-    }
-    
-
-  if(is.null(input$est.hd) || is.na(input$est.hd) ){
-    
-  }else if( input$est.hd==TRUE  && is.null(input$col.hd) ){
-    
-      # A altura dominante tera seu nome definido para HD caso o usuario
-      # queira estimar HD,
-      # e nao tenha selecionado nenhuma variavel para ser HD
-     varnameslist$hd <- "HD"  
-     
-   }
-    
-    
-    # se cao for selecionado, definir o nome de DAP para DAP, pois este sera calculado
-    # na preparacao
-    if(!is.null(input$col.cap) && !is.na(input$col.cap) ){
-      varnameslist$dap <- "DAP"
-    }
-    
-    
-    # Os nomes nao selecionados serao salvos como NULL na lista,
-    # estes sao entao convertidos para "", por conveniencia 
-    #x <- data.frame(do.call(cbind, lapply(varnameslist, function(x){if(is.null(x)){x<-""}else{x} } )  ))    
-    
-    x <- lapply(varnameslist, function(x){if(is.null(x)){x<-""}else{x} } )   
-    x
-  })
-  
-  output$teste <- renderTable({
-    varnames()
-    
-  })
-  
   # Consistencia ####
   consist_fun <- reactive({
     
