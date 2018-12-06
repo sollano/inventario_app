@@ -115,7 +115,6 @@ hdjoin <- function(df, HT, DAP, OBS, dom, .groups){
     
     
     df %>%
-      dplyr::filter( !is.na(!!DAP_sym) ) %>%
       dplyr::left_join(x, by = .groups)
     
     
