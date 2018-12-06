@@ -82,9 +82,9 @@ arv_summary <- function(df, arvore, dap, .groups){
   
   # Unir aos dados originais remanescentes
   if(missing(.groups)||is.null(.groups)||is.na(.groups)||.groups==F||.groups==""){
-    return(as.data.frame(left_join(df,x, by=carvore)) ) 
+    return(as.data.frame(dplyr::left_join(df,x, by=carvore)) ) 
   }else{
-    return(as.data.frame(left_join(df,x, by=c(.groups,arvore) )) )
+    return(as.data.frame(dplyr::left_join(df,x, by=c(.groups,arvore) )) )
   }
   
   
