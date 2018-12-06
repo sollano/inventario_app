@@ -49,7 +49,7 @@ shinyUI(
           
           
           # Version ####
-          navbarPage("App Inventário Florestal 2.1.0",id="tab",
+          navbarPage("App Inventário Florestal 2.1.1",id="tab",
           # ####           
                      theme = "green_yeti2.css",
                      # theme = "green.css", # seleciona um tema contido na pasta www
@@ -303,10 +303,6 @@ shinyUI(
                                     
                                     h4("Altura mínima"),
                                     numericInput("ht.min", "Insira o diâmetro mínimo:", 10, 1, 100, 1),
-                                    
-                                    
-                                    h3("Transformar zero em NA"),
-                                    radioButtons("zero_to_NA","Transformar zeros em variávies numéricas em NA? (recomendado)",c("Sim"=TRUE,"Nao"=FALSE), inline = TRUE),
                                     
                                     h3("Filtrar dados"),
                                     

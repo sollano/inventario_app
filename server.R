@@ -79,7 +79,7 @@ shinyServer(function(input, output, session) {
                    "Informe o formato do arquivo:", 
                    choices = c(".csv (Valor separado por virgulas) ou .txt (arquivo de texto)",
                                ".xlsx (Excel)"),
-                   selected = ".csv (Valor separado por virgulas) ou .txt (arquivo de texto)")
+                   selected = ".xlsx (Excel)")
     
   })
   output$upload_csv  <- renderUI({
@@ -797,17 +797,10 @@ shinyServer(function(input, output, session) {
     data[, input$col.rm_vars] <- NULL
     
     
-    # Aqui caso o usuario selecione, zeros serao transformados em NA nas variaveis numericas
-    
-    if(input$zero_to_NA){
-      
-      #ex1["HT"][ ex1["HT"] == 0 ] <- NA
-      
-      # Converter zero em NA quando a variavel tiver o seu nome definido
-      if(nrow(data)>0){
-         if(nm$dap!=""){  data[nm$dap][ data[nm$dap] == 0 ] <- NA }
-         if(nm$ht!= ""){  data[nm$ht ][ data[nm$ht ] == 0 ] <- NA }
-        }
+
+    # Converter zero em NA quando dado tiver mais de 1 linha
+    if(nrow(data)>0){
+      data <- data %>% dplyr::mutate_if(is.numeric, funs(dplyr::na_if(.,0)) ) 
     }
     
     # Estimar HD
