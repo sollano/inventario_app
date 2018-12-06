@@ -1124,16 +1124,18 @@ shinyServer(function(input, output, session) {
     groups <- c(nm$estrato, nm$parcelas)
     groups <- groups[groups!=""]
     
+    # O if a seguir sera para remover o CAP, caso o usuario tenha informado o CAP
+    # Isso pq o dap ja estara calculado, e ele que sera usado nos calculos.
+    # Se o CAP nao for removido, sera mantido, e pode causar confusao para os usuarios.
+    if(!is.null(input$col.cap) && !is.na(input$col.cap) ){
+      dados[[nm$cap]] <- NULL
+    }
+    
     arv_summary(
       df           = dados,
       arvore       = nm$arvore,
       dap          = nm$dap,
-      ht           = nm$ht,
-      vcc          = nm$vcc,
-      vsc          = nm$vsc,
-      .groups      = groups,
-      area_parcela = nm$area.parcela,
-      area_total   = nm$area.total )
+      .groups      = groups)
     
     
   })
