@@ -295,7 +295,7 @@ shinyUI(
                                     numericInput("int.classe.dap", "Insira o intervalo de classe:", 2, 1, 50, 0.5),
                                     
                                     h4("Diâmetro mínimo"),
-                                    numericInput("diam.min", "Insira o diâmetro mínimo:", 1, 1, 100, 1),
+                                    numericInput("diam.min", "Insira o diâmetro mínimo:", 0, 0, 100, 1),
                                     
                                     h3("Variaveis para grafico de classe de altura"),
                                     h4("Intervalo de classe"),

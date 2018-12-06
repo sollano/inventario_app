@@ -752,7 +752,7 @@ shinyServer(function(input, output, session) {
     
     # Caso nao ultrapasse, filtrar
     if(!is.na(nm$diam.min)){
-      data <- data[which(data[nm$dap]>=nm$diam.min), ] 
+      data <- data %>% dplyr::filter(is.na(.data[[nm$dap]]) | .data[[nm$dap]] >= nm$diam.min)
       }
     
     }
@@ -798,7 +798,7 @@ shinyServer(function(input, output, session) {
     
     
 
-    # Converter zero em NA quando dado tiver mais de 1 linha
+    # Converter zero em NA em dados numericos quando dado tiver mais de 1 linha
     if(nrow(data)>0){
       data <- data %>% dplyr::mutate_if(is.numeric, funs(dplyr::na_if(.,0)) ) 
     }
