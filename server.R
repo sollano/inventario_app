@@ -1400,14 +1400,31 @@ shinyServer(function(input, output, session) {
       need(nrow(dados)>0, "Base de dados vazia"),
       need(input$df != "Dados em nivel de parcela", "Base de dados incompativel" ),
       need(nm$dap,"Por favor mapeie a coluna referente a 'CAP' ou 'DAP'  ") )
-    
+
     # Estimar Altura ####
     
     # Estimar altura caso altura seja selecionada e possua NAs, ou seja, arvores nao medidas
     # Esse se evita mensagens de erro quando as colunas nao forem selecionadas
-    if( is.null(input$col.ht) || input$col.ht=="" || is.na(input$col.ht) || is.na(nm$dap) || nm$dap=="" || is.null(nm$dap) ||   is.null(input$modelo_est_ht) || input$modelo_est_ht=="" || is.na(input$modelo_est_ht) ){
+    if( is.null(input$col.ht) || input$col.ht=="" || is.na(input$col.ht) || is.na(nm$dap) || nm$dap=="" || is.null(nm$dap)  ){
       
       
+    }else if(is.null(input$modelo_est_ht) || input$modelo_est_ht=="" || is.na(input$modelo_est_ht)){
+     # se o usuario nao escolher um modelo, utilizar curtis
+     
+     modelo_ht <- paste( "log(`", nm$ht, "`) ~ inv(`", nm$dap ,"`)",sep="")
+     
+     # Ajustar por estrato caso o usuário deseje
+     if(input$ajuste_p_estrato){
+       grupo <- nm$estrato
+     }else{
+       grupo <- ""
+     }
+     
+     dados <- dados %>%  
+       lm_table(modelo_ht, grupo, output = "est" ) %>% 
+       mutate( HT_EST = ifelse(is.na( !!(rlang::sym(nm$ht)) ), est, !!(rlang::sym(nm$ht)) ) ) %>% 
+       select(HT_EST, everything(), -est )
+     
     }else if( nm$ht!="" && any(is.na(dados[[nm$ht]])) ){
       
       if(input$modelo_est_ht ==  "LN(HT) = b0 + b1 * 1/DAP + e" ){
@@ -1436,7 +1453,6 @@ shinyServer(function(input, output, session) {
         lm_table(modelo_ht, grupo, output = "est" ) %>% 
         mutate( HT_EST = ifelse(is.na( !!(rlang::sym(nm$ht)) ), est, !!(rlang::sym(nm$ht)) ) ) %>% 
         select(HT_EST, everything(), -est )
-      
     }
     
     # Volume com casca ####
