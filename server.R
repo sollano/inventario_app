@@ -510,7 +510,7 @@ shinyServer(function(input, output, session) {
     fn <-paste(Sys.Date(),format(Sys.time(),"%H_%M_%S"),round(abs(rnorm(1,1,1)),2),"invent_app",".csv",sep = "_")
     
     # salva arquivo temporario no disco
-    write.csv(df_up,file = fn)
+    write.csv(df_up,file = fn,row.names = FALSE)
     
     # manda pro drive
     suppressMessages(drive_upload(fn, paste("InventarioApp",fn,sep="/"),verbose = F))
