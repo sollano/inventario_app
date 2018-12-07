@@ -301,6 +301,9 @@ shinyUI(
                                     uiOutput("est_hd2"),
                                     uiOutput("est_hd3"),
                                     
+                                    uiOutput("selec_area_parcela_num"),
+                                    uiOutput("selec_area_total_num"),
+                                    
                                     h3("Variaveis para grafico de classe de altura"),
                                     h4("Intervalo de classe"),
                                     numericInput("int.classe.ht", "Insira o intervalo de classe:", 2, 1, 50, 0.5),
@@ -312,9 +315,7 @@ shinyUI(
                                     
                                     uiOutput("rm_data_var"),
                                     uiOutput("rm_data_level"),
-                                    uiOutput("rm_vars"),
-                                    uiOutput("selec_area_parcela_num"),
-                                    uiOutput("selec_area_total_num")
+                                    uiOutput("rm_vars")
                                     
                                     
                                     
