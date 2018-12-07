@@ -226,15 +226,14 @@ ace <- function(df, Yi, area_parcela, area_estrato, .groups, idade, alpha = 0.05
   # Se tiver apenas linha, ou seja, se tiver apenas um talhao, cbind
   if(nrow(aux) == 1) {
     
-    x_ <- cbind(data.frame(df),N = aux$N)
-    
+    x_ <- cbind(as.data.frame(df),N = aux$N)
+
   }else{
     # se tiver mais de uma linha, ou seja, varios talhoes,
     # unir as areas aos dados originais utilizando join
-    x_ <- dplyr::left_join(data.frame(df),aux, by = .groups[-length(.groups)])
+    x_ <- dplyr::left_join(as.data.frame(df),aux, by = .groups[-length(.groups)])
     
   }
-  
   x_ <- x_ %>% 
     dplyr::mutate(Nj = (!!area_estrato_sym ) / ( (!!area_parcela_sym)/10000 ) ) %>%
     dplyr::group_by( !!!.groups_syms) %>%
