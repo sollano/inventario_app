@@ -77,9 +77,10 @@ arv_summary <- function(df, arvore, dap, .groups){
   # Remove data from other boles, keep only the first one
   df <- df %>% 
    dplyr::group_by(!!!.groups_syms, !!arvore_sym) %>% 
-   dplyr::mutate(nn=seq(1,n())) %>% 
+   dplyr::mutate(nn=seq(1,dplyr::n())) %>% 
    dplyr::filter(nn==1) %>% 
-   dplyr::select(-nn, - (!!dap_sym) ) 
+   dplyr::select(-nn, - (!!dap_sym) ) %>% 
+   dplyr::ungroup()
  
   # Unir aos dados originais remanescentes
   if(missing(.groups)||is.null(.groups)||is.na(.groups)||.groups==F||.groups==""){
