@@ -27,7 +27,7 @@ renamer <- function(df, arvore,parcelas,especies,cap,dap,ht,
   }else if(length(arvore)!=1){
     stop("Length of 'arvore' must be 1", call.=F)
   }else if(check_names(df, arvore)==F){
-    stop(check_names(df, arvore, boolean=F), call.=F)
+    
   }else{
     dfmod[["arvore"]] <- df[[arvore]]
   }
@@ -39,7 +39,7 @@ renamer <- function(df, arvore,parcelas,especies,cap,dap,ht,
   }else if(length(parcelas)!=1){
     stop("Length of 'parcelas' must be 1", call.=F)
   }else if(check_names(df, parcelas)==F){
-    stop(check_names(df, parcelas, boolean=F), call.=F)
+    
   }else{
     dfmod[["parcelas"]] <- df[[parcelas]]
   }
@@ -51,7 +51,7 @@ renamer <- function(df, arvore,parcelas,especies,cap,dap,ht,
   }else if(length(especies)!=1){
     stop("Length of 'especies' must be 1", call.=F)
   }else if(check_names(df, especies)==F){
-    stop(check_names(df, especies, boolean=F), call.=F)
+    
   }else{
     dfmod[["especies"]] <- df[[especies]]
   }
@@ -63,7 +63,7 @@ renamer <- function(df, arvore,parcelas,especies,cap,dap,ht,
   }else if(length(cap)!=1){
     stop("Length of 'cap' must be 1", call.=F)
   }else if(check_names(df, cap)==F){
-    stop(check_names(df, cap, boolean=F), call.=F)
+    
   }else{
     dfmod[["cap"]] <- df[[cap]]
   }
@@ -75,7 +75,7 @@ renamer <- function(df, arvore,parcelas,especies,cap,dap,ht,
   }else if(length(dap)!=1){
     stop("Length of 'dap' must be 1", call.=F)
   }else if(check_names(df, dap)==F){
-    stop(check_names(df, dap, boolean=F), call.=F)
+    
   }else{
     dfmod[["dap"]] <- df[[dap]]
   }
@@ -87,7 +87,7 @@ renamer <- function(df, arvore,parcelas,especies,cap,dap,ht,
   }else if(length(ht)!=1){
     stop("Length of 'ht' must be 1", call.=F)
   }else if(check_names(df, ht)==F){
-    stop(check_names(df, ht, boolean=F), call.=F)
+    
   }else{
     dfmod[["ht"]] <- df[[ht]]
   }
@@ -99,7 +99,7 @@ renamer <- function(df, arvore,parcelas,especies,cap,dap,ht,
   }else if(length(vcc)!=1){
     stop("Length of 'vcc' must be 1", call.=F)
   }else if(check_names(df, vcc)==F){
-    stop(check_names(df, vcc, boolean=F), call.=F)
+   
   }else{
     dfmod[["vcc"]] <- df[[vcc]]
   }
@@ -112,7 +112,7 @@ renamer <- function(df, arvore,parcelas,especies,cap,dap,ht,
   }else if(length(vsc)!=1){
     stop("Length of 'vsc' must be 1", call.=F)
   }else if(check_names(df, vsc)==F){
-    stop(check_names(df, vsc, boolean=F), call.=F)
+    
   }else{
     dfmod[["vsc"]] <- df[[vsc]]
   }
@@ -131,7 +131,7 @@ renamer <- function(df, arvore,parcelas,especies,cap,dap,ht,
   }else if(length(area.parcela)!=1){
     stop("Length of 'area.parcela' must be 1", call.=F)
   }else if(check_names(df, area.parcela)==F){
-    stop(check_names(df, area.parcela, boolean = F), call.=F)
+    
   }else{
     dfmod[["area.parcela"]] <- df[[area.parcela]]
   }
@@ -147,7 +147,7 @@ renamer <- function(df, arvore,parcelas,especies,cap,dap,ht,
   }else if(length(area.total)!=1){
     stop("Length of 'area.total' must be 1", call.=F)
   }else if(check_names(df, area.total)==F){
-    stop(check_names(df, area.total, boolean = F), call.=F)
+    
   }else{
     dfmod[["area.total"]] <- df[[area.total]]
   }
@@ -158,7 +158,7 @@ renamer <- function(df, arvore,parcelas,especies,cap,dap,ht,
   }else if(length(est.vertical)!=1){
     stop("Length of 'est.vertical' must be 1", call.=F)
   }else if(check_names(df, est.vertical)==F){
-    stop(check_names(df, est.vertical, boolean=F), call.=F)
+    
   }else{
     dfmod[["est.vertical"]] <- df[[est.vertical]]
   }
@@ -169,7 +169,7 @@ renamer <- function(df, arvore,parcelas,especies,cap,dap,ht,
   }else if(length(est.interna)!=1){
     stop("Length of 'est.interna' must be 1", call.=F)
   }else if(check_names(df, est.interna)==F){
-    stop(check_names(df, est.interna, boolean=F), call.=F)
+   
   }else{
     dfmod[["est.interna"]] <- df[[est.interna]]
   }
@@ -180,7 +180,7 @@ renamer <- function(df, arvore,parcelas,especies,cap,dap,ht,
   }else if(length(estrato)!=1){
     stop("Length of 'estrato' must be 1", call.=F)
   }else if(check_names(df, estrato)==F){
-    stop(check_names(df, estrato, boolean=F), call.=F)
+    
   }else{
     dfmod[["estrato"]] <- df[[estrato]]
   }
@@ -189,11 +189,10 @@ renamer <- function(df, arvore,parcelas,especies,cap,dap,ht,
   # se existir e nao for character,  parar
   if(missing(hd) || is.null(hd) || is.na(hd) || hd == "" ){
   }else if(!is.character(hd)){
-    stop("'hd' must be a character containing a variable name", call.=F)
   }else if(length(hd)!=1){
     stop("Length of 'hd' must be 1", call.=F)
   }else if(check_names(df, hd)==F){
-    stop(check_names(df, hd, boolean=F), call.=F)
+    
   }else{
     dfmod[["hd"]] <- df[[hd]]
   }
@@ -202,11 +201,10 @@ renamer <- function(df, arvore,parcelas,especies,cap,dap,ht,
   # se existir e nao for character,  parar
   if(missing(idade) || is.null(idade) || is.na(idade) || idade == "" ){
   }else if(!is.character(idade)){
-    stop("'idade' must be a character containing a variable name", call.=F)
   }else if(length(idade)!=1){
     stop("Length of 'idade' must be 1", call.=F)
   }else if(check_names(df, idade)==F){
-    stop(check_names(df, idade, boolean=F), call.=F)
+    
   }else{
     dfmod[["idade"]] <- df[[idade]]
   }
