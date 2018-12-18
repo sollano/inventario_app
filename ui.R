@@ -298,10 +298,9 @@ shinyUI(
                                     uiOutput("selec_area_parcela_num"),
                                     uiOutput("selec_area_total_num"),
                                     
+                                    h3("Variaveis para graficos de classe de diametro"),
                                     h4("Diâmetro mínimo"),
                                     numericInput("diam.min", "Insira o diâmetro mínimo:", 0, 0, 100, 1),
-
-                                    h3("Variaveis para graficos de classe de diametro"),
                                     h4("Intervalo de classe"),
                                     numericInput("int.classe.dap", "Insira o intervalo de classe:", 2, 1, 50, 0.5),
                                     
