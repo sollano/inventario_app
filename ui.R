@@ -49,7 +49,7 @@ shinyUI(
           
           
           # Version ####
-          navbarPage("App Inventário Florestal 2.1.3",id="tab",
+          navbarPage("App Inventário Florestal 2.1.4",id="tab",
           # ####           
                      theme = "green_yeti2.css",
                      # theme = "green.css", # seleciona um tema contido na pasta www
@@ -159,7 +159,7 @@ shinyUI(
                                   
                                   column(4,
                                          wellPanel(
-                                           h3("Arvore"),
+                                           h3("Árvore"),
                                            p("Selecione o nome da variável referente à árvore:"#, 
                                              #style = "font-family: 'Source Sans Pro';"
                                            ),
@@ -451,7 +451,7 @@ shinyUI(
                                               
                                               column(2,
                                                      sliderInput("alpha_inv", 
-                                                                 label = "Selecione o nível de significância:", 
+                                                                 label = "Nível de significância:", 
                                                                  min = 0.01, 
                                                                  max = 0.10, 
                                                                  value = 0.10,
@@ -459,7 +459,7 @@ shinyUI(
                                               ),
                                               
                                               column( 2,  sliderInput("erro_inv", 
-                                                                      label = "Selecione o erro admitido (%):", 
+                                                                      label = "Erro admitido (%):", 
                                                                       min = 1, 
                                                                       max = 20, 
                                                                       value = 10,
@@ -467,7 +467,7 @@ shinyUI(
                                               
                                               column(2,
                                                      sliderInput("cd_inv", 
-                                                                 label = "Selecione o nº de casas decimais:", 
+                                                                 label = "Número de casas decimais:", 
                                                                  min = 0, 
                                                                  max = 10, 
                                                                  value = 4,
@@ -477,7 +477,7 @@ shinyUI(
                                               column(2,
                                                      radioButtons(
                                                        inputId='pop_inv', # Id
-                                                       label='Considerar a população infinita ou finita?', # nome que sera mostrado na UI
+                                                       label='População:', # nome que sera mostrado na UI
                                                        choices=c(Infinita="inf", Finita="fin"), # opcoes e seus nomes
                                                        selected="inf",
                                                        inline = T)
@@ -492,7 +492,7 @@ shinyUI(
                         
                                             fluidRow(
                                               radioButtons("yi_inv",
-                                                           label="Selecione a variável utilizada nas estatísticas:",
+                                                           label="Variável utilizada nas estatísticas:",
                                                            choices = c("Indv", "G","VCC", "VSC"),
                                                            selected = "VCC",
                                                            inline=T )
