@@ -38,7 +38,7 @@ source("funs/hdjoin.R"             , encoding="UTF-8")
 source("funs/residuos_exp.R"       , encoding="UTF-8")
 source("funs/check_numeric.R"      , encoding="UTF-8")
 source("funs/notin.R"              , encoding="UTF-8")
-source("funs/arv_summary.R"        , encoding="UTF-8")
+source("funs/tree_summarise.R"     , encoding="UTF-8")
 source("funs/check_dap_min.R"      , encoding="UTF-8")
 source("funs/check_yi.R"           , encoding="UTF-8")
 source("funs/alt.filter.keep.R"    , encoding="UTF-8")
@@ -1131,11 +1131,14 @@ shinyServer(function(input, output, session) {
       dados[[nm$cap]] <- NULL
     }
     
-    arv_summary(
+    tree_summarise(
       df           = dados,
-      arvore       = nm$arvore,
-      dap          = nm$dap,
-      .groups      = groups)
+      tree         = nm$arvore,
+      dbh          = nm$dap,
+      .groups      = groups,
+      vwb          = nm$vcc,
+      vwob         = nm$vsc
+      )
     
     
   })
