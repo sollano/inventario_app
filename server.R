@@ -1,3 +1,4 @@
+options(shiny.sanitize.errors = FALSE)
 library(shiny)
 suppressPackageStartupMessages(library(DT))
 #library(plotly)
@@ -14,7 +15,6 @@ library(openxlsx)
 library(rmarkdown)
 library(stringr)
 library(googledrive)
-#options(shiny.sanitize.errors = FALSE)
 # Data e functions ####
 
 ex_fuste <- read.csv2("examples/nivel_fuste/Inventory_exemplo_fuste.csv",fileEncoding="UTF-8")
