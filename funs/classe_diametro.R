@@ -149,10 +149,12 @@ classe_diametro <- function(df, dap, parcela, area_parcela, ic = 5, dapmin = 5, 
   
   # ####
   
+  if(dapmin%%ic==0) crtion <- 0 else crtion <- dapmin%%ic - ic
+  
   df_final <- df %>% 
     dplyr::filter(!is.na( !!dap_sym ) ) %>% # remover NA
     dplyr::mutate(
-      CC = ceiling(( !!dap_sym )/ic) * ic - ic/2, # Calcular Centro de classe
+      CC = (trunc(( !!dap_sym )/ic) * ic - ic/2) + crtion, # Calcular Centro de classe
       g = pi * (!!dap_sym)^2 / 40000   ) %>%  # Calcular area seccional
     dplyr::group_by(!!!especies_sym, CC ) %>% # Agrupar e calcular o numero de individuos, e n de individuos por ha
     dplyr::summarise(
