@@ -15,6 +15,9 @@ library(openxlsx)
 library(rmarkdown)
 library(stringr)
 library(googledrive)
+library(googlesheets)
+library(rgeolocate)
+
 # Data e functions ####
 
 ex_fuste <- read.csv2("examples/nivel_fuste/Inventory_exemplo_fuste.csv",fileEncoding="UTF-8")
@@ -474,6 +477,48 @@ shinyServer(function(input, output, session) {
     
     
   })
+  
+  # logging ####
+  
+  # once=TRUE resolve o problema de postar duas vezes
+  observeEvent(input$ipid,once=TRUE,eventExpr={
+    
+    # add require pra so rodar quando conseguir o ip
+    req(input$ipid!="")
+    
+    fingerprint <- input$fingerprint
+    ipid <- input$ipid
+    print(ipid)
+    suppressMessages(gs_auth("googlesheets_token.rds",verbose = F))
+    
+    # pega informacoes com base no ip
+    result <- rgeolocate::ip_api(input$ipid)
+    #result <- rgeolocate::ip_api("186.244.182.177")
+    
+    # converter data pro timezone correto
+    systime <- lubridate::with_tz(Sys.time(), tzone = result$timezone)
+    
+    # add informacoes
+    
+    result <- result %>% 
+      mutate(
+        app= "App Inventário Florestal",
+        ip = input$ipid,
+        hash = input$fingerprint,
+        data = format(systime, "%d/%m/%Y"),
+        dia = format(systime, "%d"),
+        mes = format(systime, "%B"),
+        ano = format(systime, "%Y"),
+        hora=format(systime, "%X") ) %>% 
+      select(app,ip,data,hora,region_name,region_code,country_code,isp,latitude,longitude,organisation,timezone,zip_code,status,hash,dia,mes,ano)
+    
+    gs_add_row(gs_title("app_logs",verbose=FALSE), 
+               ws = 1,
+               input = result,
+               verbose = FALSE)
+    
+  })
+  
   
   # send data ####
   send_sheet <- reactive({
