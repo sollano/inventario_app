@@ -1089,12 +1089,13 @@ shinyServer(function(input, output, session) {
     
     
     #htdapratio(data, dap = input$col.dap, ht = input$col.ht) 
+    suppressWarnings(
     consistency(data, 
                 cap = input$col.cap, 
                 dap = input$col.dap, 
                 ht = input$col.ht, 
                 parcela = input$col.parcelas,
-                arvore = input$col.arvore ) 
+                arvore = input$col.arvore ) )
   })
   output$consist_warning1 <- renderUI({
     req(input$run_consist==TRUE)
