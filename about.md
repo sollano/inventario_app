@@ -7,6 +7,31 @@ Com este app, é possível processar um inventário florestal, utilizando os mé
 
 </div>
 
+## Ajude esse projeto a se manter no ar!
+
+<div style="text-align:justify">
+Esse projeto foi criado com o intuito de ajudar a comunidade florestal. Para continuarmos a mantê-lo de forma gratuita a todos,
+precisamos de doações para cobrir os custos do servidor que mantêm esse aplicativo no ar. Sua contribução é de grande ajuda.
+Para doar, basta clicar no botão abaixo:
+</div>
+
+<div style="text-align:center">
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+<input type="hidden" name="cmd" value="_s-xclick" />
+<input type="hidden" name="hosted_button_id" value="JVF7VGRMANRC6" />
+<input type="image" src="https://www.paypalobjects.com/pt_BR/BR/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Faça doações com o botão do PayPal" />
+<img alt="" border="0" src="https://www.paypal.com/pt_BR/i/scr/pixel.gif" width="1" height="1" />
+</form>
+</div>
+
+Conheça nossos outros projetos:
+[App Inventário de Nativas](http://34.234.76.169/shiny/nativas_app/),
+[App Cubagem](http://34.234.76.169/shiny/cubagem_app/),
+[App Economia Florestal](http://34.234.76.169/shiny/forest_economy_app/),
+[App F de Graybill](http://34.234.76.169/shiny/graybill_app/),
+[R package: forestmangr](https://github.com/sollano/forestmangr#readme)
+
+
 ### Script criado por:
 
 [Sollano Rabelo Braga](http://lattes.cnpq.br/7271838547135276 "Curriculum Lattes"), [Marcio Leles R. de Oliveira](http://lattes.cnpq.br/1808132114787261 "Curriculum Lattes") & [Eric Bastos Gorgens](http://lattes.cnpq.br/2266409430041146 "Curriculum Lattes")
@@ -16,7 +41,7 @@ Com este app, é possível processar um inventário florestal, utilizando os mé
 
 (BRAGA; OLIVEIRA; GORGENS, 2017)
 
-BRAGA, S. R.; OLIVEIRA, M. L. R. DE; GORGENS, E. B. Inventário Florestal: Aplicativo shiny para processamento de inventário de florestas plantadas, 2017. Disponível em: <http://gorgens.wixsite.com/treelab>.
+BRAGA, S. R.; OLIVEIRA, M. L. R. DE; GORGENS, E. B. Inventário Florestal: Aplicativo shiny para processamento de inventário de florestas plantadas, 2017. Disponível em: <https://sites.google.com/view/forestsuite/home>.
 
 
 ### Referências:
@@ -29,7 +54,7 @@ SOARES, C. P. B.; NETO, F. D. P.; SOUZA, A. L. D. Dendrometria e Inventário Flo
 <a href="http://www.ufvjm.edu.br/"><img src="www/UFVJM_logo2.png" width="50" height="50"/> </a>
 <img src="www/EF_logo.png" width="50" height="50" />
 <a href="http://marcioromarco.webnode.com/"><img src="www/GEMMF_logo2.png" width="50" height="50"/> </a>
-<a href="http://gorgens.wixsite.com/treelab"><img src="www/LAB_logo.png" width="50"height="50" /></a> 
+<a href="https://sites.google.com/view/treelab-ufvjm"><img src="www/LAB_logo.png" width="50"height="50" /></a> 
 </div>
 
 
