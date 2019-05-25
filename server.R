@@ -48,6 +48,7 @@ source("funs/check_yi.R"           , encoding="UTF-8")
 source("funs/alt.filter.keep.R"    , encoding="UTF-8")
 source("funs/alt.filter.rm.R"      , encoding="UTF-8")
 source("funs/renamer.R"            , encoding="UTF-8")
+source("funs/selecter.R"           , encoding="UTF-8")
 
 # vectors for names ####
 arvore_names <- c("ARVORE", "Arvore", "arvore", "ARV", "Arv", "arv", "ARV.", "Arv.", "arv.","NP","Np","np","Árvore","ÁRVORE","árvore" )
@@ -941,7 +942,7 @@ shinyServer(function(input, output, session) {
 
     # Converter zero em NA em dados numericos quando dado tiver mais de 1 linha
     if(nrow(data)>0){
-      data <- data %>% dplyr::mutate_if(is.numeric, funs(dplyr::na_if(.,0)) ) 
+      data <- data %>% dplyr::mutate_if(is.numeric, list(~dplyr::na_if(.,0)) ) 
     }
     
     # Estimar HD
@@ -997,6 +998,27 @@ shinyServer(function(input, output, session) {
       data <- data[ -insconsist_rows ,  ]
     }
     
+    
+    
+    data <- selecter(data, 
+                            cap          = nm$cap,
+                            dap          = nm$dap,
+                            ht           = nm$ht,
+                            
+                            arvore       = nm$arvore,
+                            parcelas     = nm$parcelas,
+                            area.parcela = nm$area.parcela,
+                            
+                            area.total   = nm$area.total,
+                            estrato      = nm$estrato,
+                            obs          = nm$obs,
+                            
+                            idade        = nm$idade,
+                            hd           = nm$hd,
+                            vcc          = nm$vcc,
+                            
+                            vsc          = nm$vsc)
+    
     data
     
   })
@@ -1008,6 +1030,7 @@ shinyServer(function(input, output, session) {
     validate(need(rawData(), "Please import a dataset"))
     
     data <- round_df(rawData(), 4)
+    #data <- round_df(selectedData(), 4)
     
     
     DT::datatable(data,
