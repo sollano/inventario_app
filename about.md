@@ -78,16 +78,15 @@ Com este app, é possível processar um inventário florestal, utilizando os mé
 </div>
 
 Conheça nossos outros projetos:
-[App Inventário de Nativas](http://34.234.76.169/shiny/nativas_app/),
-[App Cubagem](http://34.234.76.169/shiny/cubagem_app/),
-[App Economia Florestal](http://34.234.76.169/shiny/forest_economy_app/),
-[App F de Graybill](http://34.234.76.169/shiny/graybill_app/),
+[App Inventário de Nativas](http://52.87.251.141/shiny/nativas_app/),
+[App Cubagem](http://52.87.251.141/shiny/cubagem_app/),
+[App Economia Florestal](http://52.87.251.141/shiny/forest_economy_app/),
+[App F de Graybill](http://52.87.251.141/shiny/graybill_app/),
 [R package: forestmangr](https://github.com/sollano/forestmangr#readme)
 
 
-### Script criado por:
-
-[Sollano Rabelo Braga](http://lattes.cnpq.br/7271838547135276 "Curriculum Lattes"), [Marcio Leles R. de Oliveira](http://lattes.cnpq.br/1808132114787261 "Curriculum Lattes") & [Eric Bastos Gorgens](http://lattes.cnpq.br/2266409430041146 "Curriculum Lattes")
+### Desenvolvido por:
+[Sollano Rabelo Braga](https://www.linkedin.com/in/sollano/ "LinkedIn"), [Marcio Leles R. de Oliveira](http://lattes.cnpq.br/1808132114787261 "Curriculum Lattes") & [Eric Bastos Gorgens](http://lattes.cnpq.br/2266409430041146 "Curriculum Lattes")
 
 
 #### Para citar e referenciar este app, utilize:
