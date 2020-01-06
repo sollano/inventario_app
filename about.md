@@ -1,19 +1,65 @@
 # App Inventário Florestal
 
-<div style="text-align:justify">
-Informações necessárias ao manejo e planejamento de povoamentos, que normalmente são referentes ao volume de madeira e/ou outra variável dendrométrica, no sentido qualitativo e quantitativo, são obtidas por meio do inventário florestal. 
-Entretanto, o processamento dos mesmos geralmente é feito utilizando softwares pagos. Este app foi criado com o intuito de facilitar este processo, de forma prática e gratuita, sem a necessidade de se manipular planilhas ou instalar softwares. Utilizando a linguagem R em conjunto com o pacote Shiny, temos uma ferramenta poderosa, que pode ser utilizada direto do navegador, por profissionais da área, estudantes e entusiastas que desejam processar um inventário pelos métodos mais utilizados de amostragem. 
-Com este app, é possível processar um inventário florestal, utilizando os métodos: Amostragem Casual Simples, Amostragem Estratificada e Amostragem Sistemática.
-
-</div>
-
-## Ajude esse projeto a se manter no ar!
+### Ajude o nosso projeto a se manter no ar!
 
 <div style="text-align:justify">
-Esse projeto foi criado com o intuito de ajudar a comunidade florestal. Para continuarmos a mantê-lo de forma gratuita a todos,
-precisamos de doações para cobrir os custos do servidor que mantêm esse aplicativo no ar. Sua contribução é de grande ajuda.
-Para doar, basta clicar no botão abaixo:
+O projeto foi criado com o intuito de ajudar a comunidade florestal. Para continuarmos a mantê-lo de forma gratuita a todos,
+precisamos de doações para cobrir os custos do servidor que mantêm o app disponível. Sua contribução é de grande ajuda.
 </div>
+
+
+## Apoiadores do Mês 
+
+<div><p style="float:left;"><a href="https://www.linkedin.com/in/marcio-manfrenato-80032ba6/"><img src="www/marciomanfrenato.jpg" width="100" height="100"/></a></p>
+  
+<p><font size="5">  Marcio Manfrenato</font></p>
+    
+<p><font size="4"> R$ 150,00 </font></p>
+      
+<p><font size="4"><a href="https://www.linkedin.com/in/marcio-manfrenato-80032ba6/">LinkedIn</a></font></p>
+        
+</div>
+        
+<div style="clear: left;"></div>
+
+<div><p style="float:left;"><a href="https://www.linkedin.com/in/fernanda-luiza-silva-de-oliveira-0a3bbb43/"><img src="www/fernandaoliveira.jfif" width="100" height="100"/></a></p>
+  
+<p><font size="5">  Fernanda Luiza Silva de Oliveira</font></p>
+    
+<p><font size="4"> R$ 80,00</font></p>
+      
+<p><font size="4"><a href="https://www.linkedin.com/in/fernanda-luiza-silva-de-oliveira-0a3bbb43/">LinkedIn</a></font></p>
+        
+</div>
+        
+<div style="clear: left;"></div>
+
+
+<div><p style="float:left;"><a href="https://www.linkedin.com/in/jorge-luiz-b-mainart-15442866/M"><img src="www/jorgemainart.jfif" width="100" height="100"/></a></p>
+  
+<p><font size="5">  Jorge Luiz B. Mainart</font></p>
+    
+<p><font size="4"> R$ 75,00</font></p>
+      
+<p><font size="4"><a href="https://www.linkedin.com/in/jorge-luiz-b-mainart-15442866/">LinkedIn</a></font></p>
+        
+</div>
+        
+<div style="clear: left;"></div>
+
+<div><p style="float:left;"><a href="https://www.linkedin.com/in/karize-patriota-80927258/"><img src="www/karizepatriota.jfif" width="100" height="100"/></a></p>
+  
+<p><font size="5">  Karize Patriota</font></p>
+    
+<p><font size="4"> R$ 50,00</font></p>
+      
+<p><font size="4"><a href="https://www.linkedin.com/in/karize-patriota-80927258/">LinkedIn</a></font></p>
+        
+</div>
+        
+<div style="clear: left;"></div>
+
+<p><font size="3">  Para contribuir com o nosso projeto, basta clicar no botão abaixo!</font></p>
 
 <div style="text-align:center">
 <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
@@ -22,6 +68,13 @@ Para doar, basta clicar no botão abaixo:
 <input type="image" src="https://www.paypalobjects.com/pt_BR/BR/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Faça doações com o botão do PayPal" />
 <img alt="" border="0" src="https://www.paypal.com/pt_BR/i/scr/pixel.gif" width="1" height="1" />
 </form>
+</div>
+
+## Sobre:
+<div style="text-align:justify">
+Informações necessárias ao manejo e planejamento de povoamentos, que normalmente são referentes ao volume de madeira e/ou outra variável dendrométrica, no sentido qualitativo e quantitativo, são obtidas por meio do inventário florestal. 
+Entretanto, o processamento dos mesmos geralmente é feito utilizando softwares pagos. Este app foi criado com o intuito de facilitar este processo, de forma prática e gratuita, sem a necessidade de se manipular planilhas ou instalar softwares. Utilizando a linguagem R em conjunto com o pacote Shiny, temos uma ferramenta poderosa, que pode ser utilizada direto do navegador, por profissionais da área, estudantes e entusiastas que desejam processar um inventário pelos métodos mais utilizados de amostragem. 
+Com este app, é possível processar um inventário florestal, utilizando os métodos: Amostragem Casual Simples, Amostragem Estratificada e Amostragem Sistemática.
 </div>
 
 Conheça nossos outros projetos:
