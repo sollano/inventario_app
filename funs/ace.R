@@ -65,7 +65,7 @@ ace <- function(df, Yi, area_parcela, area_estrato, .groups, idade, alpha = 0.05
   `%>%` <- dplyr::`%>%`
   
   # se df nao for fornecido, nulo, ou  nao for dataframe, ou nao tiver tamanho e nrow maior que 1,parar
-  if(  missing(df) ){  
+  if(  missing(df) || all(is.null(df)) || all(is.na(df)) ){  
     stop("df not set", call. = F) 
   }else if(!is.data.frame(df)){
     stop("df must be a dataframe", call.=F)
@@ -227,13 +227,14 @@ ace <- function(df, Yi, area_parcela, area_estrato, .groups, idade, alpha = 0.05
   if(nrow(aux) == 1) {
     
     x_ <- cbind(as.data.frame(df),N = aux$N)
-
+    
   }else{
     # se tiver mais de uma linha, ou seja, varios talhoes,
     # unir as areas aos dados originais utilizando join
     x_ <- dplyr::left_join(as.data.frame(df),aux, by = .groups[-length(.groups)])
     
   }
+  
   x_ <- x_ %>% 
     dplyr::mutate(Nj = (!!area_estrato_sym ) / ( (!!area_parcela_sym)/10000 ) ) %>%
     dplyr::group_by( !!!.groups_syms) %>%
@@ -286,10 +287,10 @@ ace <- function(df, Yi, area_parcela, area_estrato, .groups, idade, alpha = 0.05
         "Pj_Sj2" = "PjSj2", 
         "Pj_Sj" = "PjSj", 
         "Pj_Yj" = "PjYj",
-        "EPj_Sj2" = "EPjSj2",
-        "EPj_Sj" = "EPjSj", 
-        "Y" = "Media Estratificada (Y)",
+        "EPj_Sj2" = "Variancia Estratificada",
+        "EPj_Sj" = "Desvio Padrao Estratificado", 
         "CV" = "Coeficiente de Variancia (CV)", 
+        "Y" = "Media Estratificada (Y)",
         "t" = "t-student", 
         "t_rec" = "t-student recalculado", 
         "n_recalc" = "Numero de amostras referente ao erro admitido",

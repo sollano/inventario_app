@@ -63,7 +63,7 @@ as_diffs <- function(df, Yi, area_parcela, area_total,  idade, .groups, alpha = 
   `%>%` <- dplyr::`%>%`
   
   # se df nao for fornecido, nulo, ou  nao for dataframe, parar
-  if(  missing(df) ){  
+  if(  missing(df) || all(is.null(df)) || all(is.na(df)) ){  
     stop("df not set", call. = F) 
   }else if(!is.data.frame(df)){
     stop("df must be a dataframe", call.=F)
@@ -192,6 +192,8 @@ as_diffs <- function(df, Yi, area_parcela, area_total,  idade, .groups, alpha = 
       t            = qt(alpha/2, df = n-1, lower.tail = FALSE) ,
       t_rec        = qt(alpha/2, df = ceiling( t^2 * CV^2 / erro^2) - 1, lower.tail = FALSE),
       n_recalc     = ceiling( t_rec ^2 * CV^2 / erro^2 ) ,
+      S2           = stats::var(!!Yi_sym,na.rm=T), #Variancia
+      sd           = sd(!!Yi_sym,na.rm=T), # desvio padrao
       Y            = mean(!!Yi_sym, na.rm=T), # Média do volume
       Sy           = sqrt( (sum(diff(!!Yi_sym)^2,na.rm=T) / (2 * n * (n-1) ) ) * ((N-n)/N) ),
       Erroabs      = Sy * t , # Erro Absoluto
@@ -213,10 +215,12 @@ as_diffs <- function(df, Yi, area_parcela, area_total,  idade, .groups, alpha = 
     plyr::rename(c( "idade"        = "Idade (meses)"                  , 
                     "n"            = "Numero de Parcelas (n)"         ,
                     "N"            = "Numero de Parcelas cabiveis (N)", 
-                    "CV"           = "Coeficiente de Variancia (CV)"  ,
                     "t"            = "t-student"                      ,
                     "t_rec"        = "t-student recalculado"                  ,
                     "n_recalc"     = "Numero de amostras referente ao erro admitido",
+                    "S2"           = "Variancia (s²)"                 ,
+                    "sd"           = "Desvio Padrao (sd)"             ,
+                    "CV"           = "Coeficiente de Variancia (CV)"  ,
                     "Y"            = "Media geral (Y)"                ,
                     "Sy"           = "Erro-Padrao da Media (Sy)"      ,
                     "Erroabs"      = "Erro Absoluto"                  ,

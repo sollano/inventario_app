@@ -66,7 +66,7 @@ acs <- function(df,Yi, area_parcela, area_total, idade, .groups, alpha = 0.05, e
   `%>%` <- dplyr::`%>%`
   
   # se df nao for fornecido, nulo, ou  nao for dataframe, parar
-  if(  missing(df) ){  
+  if(  missing(df) || all(is.null(df)) || all(is.na(df)) ){  
     stop("df not set", call. = F) 
   }else if(!is.data.frame(df)){
     stop("df must be a dataframe", call.=F)
@@ -208,6 +208,8 @@ acs <- function(df,Yi, area_parcela, area_total, idade, .groups, alpha = 0.05, e
       n_recalc     = ifelse(pop=="inf",
                             ceiling( t_rec ^2 * CV^2 / erro^2 ) ,
                             ceiling( t_rec ^2 * CV^2 / ( erro^2 +(t_rec^2 * CV^2 / N) ) ) ),
+      S2           = stats::var(!!Yi_sym,na.rm=T), #Variancia
+      sd           = sd(!!Yi_sym,na.rm=T), # desvio padrao
       Y            = mean(!!Yi_sym, na.rm=T), # Média do volume
       Sy           = ifelse(pop=="inf", 
                             sqrt( stats::var(!!Yi_sym,na.rm=T)/n ), 
@@ -231,12 +233,14 @@ acs <- function(df,Yi, area_parcela, area_total, idade, .groups, alpha = 0.05, e
     plyr::rename(c( "idade"        = "Idade (meses)"                  , 
                     "n"            = "Numero de amostras (n)"         ,
                     "N"            = "Numero de amostras cabiveis (N)", 
-                    "CV"           = "Coeficiente de Variancia (CV)"  ,
                     "t"            = "t-student"                      ,
                     "t_rec"        = "t recalculado"                  ,
                     "n_recalc"     = "Numero de amostras referente ao erro admitido",
+                    "S2"           = "Variancia (s²)"                 ,
+                    "sd"           = "Desvio Padrao (sd)"             ,
                     "Y"            = "Media geral (Y)"                ,
                     "Sy"           = "Erro-Padrao da Media (Sy)"      ,
+                    "CV"           = "Coeficiente de Variancia (CV)"  ,
                     "Erroabs"      = "Erro Absoluto"                  ,
                     "Erroperc"     = "Erro Relativo (%)"              ,
                     "Yhat"         = "Valor total estimado (Yhat)"    , 
