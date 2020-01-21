@@ -291,14 +291,14 @@ ace <- function(df, Yi, area_parcela, area_estrato, .groups, idade, alpha = 0.05
        # "EPj_Sj" = "Desvio Padrao Estratificado", 
         #"CV" = "Coeficiente de Variancia (CV)", 
        # "Y" = "Media Estratificada (Y)",
-      #  "t" = "t-student", 
-       # "t_rec" = "t-student recalculado", 
+        "t" = "t-student", 
+        "t_rec" = "t-student recalculado", 
         "n_recalc" = "Numero de amostras referente ao erro admitido",
         "nj_otimo" = "Numero otimo de amostras por estrato (nj otimo)", 
         "n_otimo" = "numero otimo de amostras (n otimo)", 
         "Yhatj" = "Valor total por estrato (Yhatj)"  ),
       warn_missing = F) %>% 
-    dplyr::select(-EPj_Sj2,-EPj_Sj,-CV,-Y,-t,-t_rec) %>% #remover variaveis comuns aos estratos
+    dplyr::select(-EPj_Sj2,-EPj_Sj,-CV,-Y) %>% #remover variaveis comuns aos estratos
     round_df(casas_decimais)  
   
   
@@ -307,7 +307,6 @@ ace <- function(df, Yi, area_parcela, area_estrato, .groups, idade, alpha = 0.05
     #dplyr::group_by_(.dots=.groups[-length(.groups)] ) %>%
     dplyr::summarise(
       t     = mean(t),
-      t_rec = mean(t_rec),
       EPj_Sj2  =   sum(Pj_Sj2), 
       EPj_Sj   =   sum(Pj_Sj), 
       CV       = EPj_Sj / sum(Pj_Yj) * 100, # Coeficiente de variancia
@@ -332,7 +331,6 @@ ace <- function(df, Yi, area_parcela, area_estrato, .groups, idade, alpha = 0.05
   y <- y_ %>% 
     plyr::rename(
       c("t" = "t-student",
-        "t_rec"      = "recalculated t-student",
         "EPj_Sj2"    = "Variancia Estratificada",
         "EPj_Sj"     = "Desvio Padrao Estratificado", 
         "CV"         = "Coeficiente de variancia (CV)", 

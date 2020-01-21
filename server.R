@@ -2488,14 +2488,14 @@ shinyServer(function(input, output, session) {
     as.datatable( formattable(ace2dt, 
                               list(
                                 # colore o erro estimado de verde ou vemelho, se ela for menor ou maior que o erro desejado
-                                area(row=7, col=2) ~ formatter("span", 
+                                area(row=8, col=2) ~ formatter("span", 
                                                                style = x ~ formattable::style(color = ifelse(x <= input$erro_inv, "#108e00", "red")))
                                 
                                 
                               )#list
     ), #formattable
     # pre seleciona linhas
-    selection = list(mode = 'multiple', selected = c(6,7,14,15), target = 'row'),
+    selection = list(mode = 'multiple', selected = c(5,8,9,13,14), target = 'row'),
     options = list(searching = FALSE,
                    paging=FALSE,
                    initComplete = JS( # muda cor do cabecalho
