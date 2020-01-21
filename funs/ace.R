@@ -287,17 +287,18 @@ ace <- function(df, Yi, area_parcela, area_estrato, .groups, idade, alpha = 0.05
         "Pj_Sj2" = "PjSj2", 
         "Pj_Sj" = "PjSj", 
         "Pj_Yj" = "PjYj",
-        "EPj_Sj2" = "Variancia Estratificada",
-        "EPj_Sj" = "Desvio Padrao Estratificado", 
-        "CV" = "Coeficiente de Variancia (CV)", 
-        "Y" = "Media Estratificada (Y)",
-        "t" = "t-student", 
-        "t_rec" = "t-student recalculado", 
+       # "EPj_Sj2" = "Variancia Estratificada",
+       # "EPj_Sj" = "Desvio Padrao Estratificado", 
+        #"CV" = "Coeficiente de Variancia (CV)", 
+       # "Y" = "Media Estratificada (Y)",
+      #  "t" = "t-student", 
+       # "t_rec" = "t-student recalculado", 
         "n_recalc" = "Numero de amostras referente ao erro admitido",
         "nj_otimo" = "Numero otimo de amostras por estrato (nj otimo)", 
         "n_otimo" = "numero otimo de amostras (n otimo)", 
         "Yhatj" = "Valor total por estrato (Yhatj)"  ),
       warn_missing = F) %>% 
+    dplyr::select(-EPj_Sj2,-EPj_Sj,-CV,-Y,-t,-t_rec) %>% #remover variaveis comuns aos estratos
     round_df(casas_decimais)  
   
   
@@ -306,11 +307,15 @@ ace <- function(df, Yi, area_parcela, area_estrato, .groups, idade, alpha = 0.05
     #dplyr::group_by_(.dots=.groups[-length(.groups)] ) %>%
     dplyr::summarise(
       t     = mean(t),
+      t_rec = mean(t_rec),
+      EPj_Sj2  =   sum(Pj_Sj2), 
+      EPj_Sj   =   sum(Pj_Sj), 
+      CV       = EPj_Sj / sum(Pj_Yj) * 100, # Coeficiente de variancia
+      Y            = sum(Pj_Yj), # media de Yi estratificada (ponderada) 
       Sy           = ifelse(pop=="inf",
                             sqrt(sum(Pj_Sj)^2 / sum(nj) ),
                             sqrt(sum(Pj_Sj) ^2 / sum(nj) - (mean(EPj_Sj2) / mean(N) )  )
       ), # Erro-padrao da media
-      Y            = sum(Pj_Yj), # media de Yi estratificada (ponderada) 
       Erroabs      = Sy * t, # Erro Absoluto
       Erroperc     = Erroabs / Y * 100, # Erro percentual
       Yhat         = sum(Nj) * Y, # Volume Total
@@ -327,8 +332,12 @@ ace <- function(df, Yi, area_parcela, area_estrato, .groups, idade, alpha = 0.05
   y <- y_ %>% 
     plyr::rename(
       c("t" = "t-student",
-        "Sy" = "Erro-Padrao da Media (Sy)",
+        "t_rec"      = "recalculated t-student",
+        "EPj_Sj2"    = "Variancia Estratificada",
+        "EPj_Sj"     = "Desvio Padrao Estratificado", 
+        "CV"         = "Coeficiente de variancia (CV)", 
         "Y" = "Media estratificada (Y)",
+        "Sy" = "Erro-Padrao da Media (Sy)",
         "Erroabs" = "Erro Absoluto" ,
         "Erroperc" = "Erro Relativo (%)",
         "Yhat" = "Valor total estimado (Yhat)", 
