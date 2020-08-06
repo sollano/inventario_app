@@ -233,6 +233,20 @@ selecter <- function(df, arvore,parcelas,especies,cap,dap,ht,
     dfmod[[idade]] <- df[[idade]]
   }
   
+  # se obs nao for fornecido, for igual "", nulo ou NA, criar variavel vazia 
+  # se existir e nao for character,  parar
+  if(missing(obs) || is.null(obs) || is.na(obs) || obs == "" ){
+  }else if(!is.character(obs)){
+    stop("'obs' must be a character containing a variable name", call.=F)
+  }else if(length(obs)!=1){
+    stop("Length of 'obs' must be 1", call.=F)
+  }else if(check_names(df, obs)==F){
+    
+  }else{
+    dfmod[[obs]] <- df[[obs]]
+  }
+  
+  
   # se di nao for fornecido, for igual "", nulo ou NA, criar variavel vazia 
   # se existir e nao for character,  parar
   if(missing(di) || is.null(di) || is.na(di) || di == "" ){
