@@ -1,4 +1,5 @@
 options(shiny.sanitize.errors = FALSE)
+options(shiny.maxRequestSize=30*1024^2) 
 library(shiny)
 suppressPackageStartupMessages(library(DT))
 #library(plotly)
@@ -10,14 +11,37 @@ library(tidyr)
 suppressPackageStartupMessages(library(dplyr))
 library(lazyeval)
 suppressPackageStartupMessages(library(ggplot2))
+library(ggdendro)
 library(ggthemes)
 library(openxlsx)
 library(rmarkdown)
 library(stringr)
-library(googledrive)
+#library(googledrive)
 library(googlesheets)
 library(rgeolocate)
-library(shinyalert)
+#library(shinyalert)
+suppressPackageStartupMessages(library(shinyBS))
+#suppressPackageStartupMessages(library(shinyjs))
+
+
+bsModalNoClose <-function(...) {
+  b = shinyBS::bsModal(...)
+  b[[2]]$`data-backdrop` = "static"
+  b[[2]]$`data-keyboard` = "false"
+  return(b)
+}
+
+
+labelMandatory <- function(label) {
+  tagList(
+    label,
+    span("*", class = "mandatory_star")
+  )
+}
+
+appCSS <-
+  ".mandatory_star { color: red; }"
+
 
 inputUserid <- function(inputId, value='') {
   #   print(paste(inputId, "=", value))
@@ -49,7 +73,7 @@ shinyUI(
                             color: #00a90a;
                             }
                             "))
-            ),
+          ),
           
           # cor das mensagens que eu especificar com "WRONG"
           tags$head(
@@ -58,7 +82,7 @@ shinyUI(
                             color: red;
                             }
                             "))
-            ),
+          ),
           
           # cor das mensagens que eu especificar com "AVISO"
           tags$head(
@@ -67,13 +91,13 @@ shinyUI(
                             color: orange;
                             }
                             "))
-            ),
+          ),
           
           
           
           # Version ####
-          navbarPage("App Inventário Florestal 2.2.1",id="tab",
-          # ####           
+          navbarPage("App Inventário Florestal 2.3.0",id="tab",
+                     # ####           
                      theme = "green_yeti2.css",
                      # theme = "green.css", # seleciona um tema contido na pasta www
                      # theme = shinythemes::shinytheme("paper"), # seleciona um tema utilizando pacote
@@ -285,17 +309,17 @@ shinyUI(
                                   
                                 ),# fluidRow 4
                                 
-                             fluidRow(
-                               column(4,
-                                      wellPanel(
-                                        h3("Volume sem casca"),
-                                        p("Selecione o nome da variável referente à Volume sem casca:"#, 
-                                          #style = "font-family: 'Source Sans Pro';"
-                                        ),
-                                        uiOutput("selec_vsc")
-                                      )) # Coluna vsc
-                               
-                               )#fluidRow 5   
+                                fluidRow(
+                                  column(4,
+                                         wellPanel(
+                                           h3("Volume sem casca"),
+                                           p("Selecione o nome da variável referente à Volume sem casca:"#, 
+                                             #style = "font-family: 'Source Sans Pro';"
+                                           ),
+                                           uiOutput("selec_vsc")
+                                         )) # Coluna vsc
+                                  
+                                )#fluidRow 5   
                                 
                               ) # fluidPage 
                               
@@ -397,7 +421,7 @@ shinyUI(
                                 DT::dataTableOutput("tot_fuste_tab")
                               )
                      ),# tabpanel Totalização de fustes
-
+                     
                      # tabPanel Estimativas de altura e volume ####
                      
                      tabPanel("Altura e volume",
@@ -410,9 +434,9 @@ shinyUI(
                                 fluidRow(
                                   column(2,uiOutput("ui_ht_est" ),
                                          radioButtons("ajuste_p_estrato",
-                                         "Ajustar modelos por estrato?",
-                                         c("Sim"=TRUE,"Nao"=FALSE), selected = FALSE,inline = TRUE)
-                                         ),
+                                                      "Ajustar modelos por estrato?",
+                                                      c("Sim"=TRUE,"Nao"=FALSE), selected = FALSE,inline = TRUE)
+                                  ),
                                   column(3,uiOutput("ui_estvcc1")),
                                   column(2,uiOutput("ui_estvcc3"),uiOutput("ui_estvcc4")),
                                   
@@ -432,116 +456,145 @@ shinyUI(
                                            plotOutput("ht_vs_plot" ,height = "550px")
                                   )
                                 )
-                                )
+                              )
                               
-                       
+                              
                      ), # Estimativas de altura e volume end
                      
                      
                      # tabPanel Distribuições e gráficos ####
-                                # tabPanel("Distribuição diamétrica",
-                                  tabPanel("Análise descritiva",
-                                                   
-                                          fluidPage(
-                                          #  h1("Distribuição diamétrica (DD)", style = "text-align: center;"),
-                                            h1("Análise descritiva", style = "text-align: center;"),
-                                            br(),
-                                            tabsetPanel(
-                                              
-                                              tabPanel("Tabela da distribuição diamétrica"                   , DT::dataTableOutput("dd_geral_tab") ),
-                                              tabPanel("Gráfico do Nº de indivíduos por ha por classe diamétrica" , plotOutput("dd_graph_indv",height = "550px") ),
-                                              tabPanel("Gráfico do volume por ha por classe diamétrica"      , plotOutput("dd_graph_vol" ,height = "550px")),
-                                              tabPanel("Gráfico de G por ha por classe diamétrica"           , plotOutput("dd_graph_G"   ,height = "550px")),
-                                              
-                                              tabPanel("Tabela da distribuição de Altura"                    , DT::dataTableOutput("dist_ht_tabela") ),
-                                              tabPanel("Gráfico dos indivíduos por ha por classe de altura"  , plotOutput("dist_ht_plot",height = "550px") ),
-                                              
-                                              
-                                              tabPanel("Tabela de frequência para a variável Qualidade"      , DT::dataTableOutput("obs_tabela") ),
-                                              tabPanel("Gráfico de frequencia variável Qualidade"            , plotOutput("obs_plot_1"   ,height = "550px")),
-                                              tabPanel("Gráfico da porcentagem da variável Qualidade"        , plotOutput("obs_plot_2"   ,height = "550px"))
-                                            )
-                                            
-                                          )
-                                          
-                                 ), # tabPanel DD 
-                                 
+                     # tabPanel("Distribuição diamétrica",
+                     tabPanel("Análise descritiva",
+                              
+                              fluidPage(
+                                #  h1("Distribuição diamétrica (DD)", style = "text-align: center;"),
+                                h1("Análise descritiva", style = "text-align: center;"),
+                                br(),
+                                tabsetPanel(
+                                  
+                                  tabPanel("Tabela da distribuição diamétrica"                   , DT::dataTableOutput("dd_geral_tab") ),
+                                  tabPanel("Gráfico do Nº de indivíduos por ha por classe diamétrica" , plotOutput("dd_graph_indv",height = "550px") ),
+                                  tabPanel("Gráfico do volume por ha por classe diamétrica"      , plotOutput("dd_graph_vol" ,height = "550px")),
+                                  tabPanel("Gráfico de G por ha por classe diamétrica"           , plotOutput("dd_graph_G"   ,height = "550px")),
+                                  
+                                  tabPanel("Tabela da distribuição de Altura"                    , DT::dataTableOutput("dist_ht_tabela") ),
+                                  tabPanel("Gráfico dos indivíduos por ha por classe de altura"  , plotOutput("dist_ht_plot",height = "550px") ),
+                                  
+                                  
+                                  tabPanel("Tabela de frequência para a variável Qualidade"      , DT::dataTableOutput("obs_tabela") ),
+                                  tabPanel("Gráfico de frequencia variável Qualidade"            , plotOutput("obs_plot_1"   ,height = "550px")),
+                                  tabPanel("Gráfico da porcentagem da variável Qualidade"        , plotOutput("obs_plot_2"   ,height = "550px"))
+                                )
+                                
+                              )
+                              
+                     ), # tabPanel DD 
+                     
                      # tabPanel inventario florestal ####
-                                 tabPanel("Inventário",
-                                          
-                                          fluidPage(
-                                            
-                                            h1("Inventário florestal", style = "text-align: center;"),
-                                            br(),
-                                            
-                        # ####
-                                            fluidRow(
-                                              
-                                              column(2,
-                                                     sliderInput("alpha_inv", 
-                                                                 label = "Nível de significância:", 
-                                                                 min = 0.01, 
-                                                                 max = 0.10, 
-                                                                 value = 0.10,
-                                                                 step = 0.01)
-                                              ),
-                                              
-                                              column( 2,  sliderInput("erro_inv", 
-                                                                      label = "Erro admitido (%):", 
-                                                                      min = 1, 
-                                                                      max = 20, 
-                                                                      value = 10,
-                                                                      step = 1)),
-                                              
-                                              column(2,
-                                                     sliderInput("cd_inv", 
-                                                                 label = "Número de casas decimais:", 
-                                                                 min = 0, 
-                                                                 max = 10, 
-                                                                 value = 4,
-                                                                 step = 1)
-                                              ),
-                                              
-                                              column(2,
-                                                     radioButtons(
-                                                       inputId='pop_inv', # Id
-                                                       label='População:', # nome que sera mostrado na UI
-                                                       choices=c(Infinita="inf", Finita="fin"), # opcoes e seus nomes
-                                                       selected="inf",
-                                                       inline = T)
-                                              ),
-                                              
-                                              column(3,
-                                                     uiOutput("acs_estrato_rb"), uiOutput("as_estrato_rb"),
-                                                     uiOutput("acs_as_warning")
-                                                     )
-                                              
-                                            ),
-                        
-                                            fluidRow(
-                                              radioButtons("yi_inv",
-                                                           label="Variável utilizada nas estatísticas:",
-                                                           choices = c("Indv", "G","VCC", "VSC"),
-                                                           selected = "VCC",
-                                                           inline=T )
-                                                     ),
-                                            fluidRow(   
-                                              tabsetPanel(id="tabset_inv",
-                                                tabPanel("Totalização de parcelas",DT::dataTableOutput("tot_parc_tab") ) , 
-                                                tabPanel("Amostragem casual simples",DT::dataTableOutput("acs") ), 
-                                                tabPanel("Amostragem casual estratificada",DT::dataTableOutput("ace1"),br(),DT::dataTableOutput("ace2") ), 
-                                                tabPanel("Amostragem sistemática",DT::dataTableOutput("as") ) )
-                                            )
-                        # ####
-                                            
-                                          )
-                                 ),# TabPanel Inventario
-                                 
-                                 
+                     tabPanel("Inventário",
+                              
+                              fluidPage(
+                                
+                                h1("Inventário florestal", style = "text-align: center;"),
+                                br(),
+                                
+                                # ####
+                                fluidRow(
+                                  
+                                  column(2,
+                                         sliderInput("alpha_inv", 
+                                                     label = "Nível de significância:", 
+                                                     min = 0.01, 
+                                                     max = 0.10, 
+                                                     value = 0.10,
+                                                     step = 0.01)
+                                  ),
+                                  
+                                  column( 2,  sliderInput("erro_inv", 
+                                                          label = "Erro admitido (%):", 
+                                                          min = 1, 
+                                                          max = 20, 
+                                                          value = 10,
+                                                          step = 1)),
+                                  
+                                  column(2,
+                                         sliderInput("cd_inv", 
+                                                     label = "Número de casas decimais:", 
+                                                     min = 0, 
+                                                     max = 10, 
+                                                     value = 4,
+                                                     step = 1)
+                                  ),
+                                  
+                                  column(2,
+                                         radioButtons(
+                                           inputId='pop_inv', # Id
+                                           label='População:', # nome que sera mostrado na UI
+                                           choices=c(Infinita="inf", Finita="fin"), # opcoes e seus nomes
+                                           selected="inf",
+                                           inline = T)
+                                  ),
+                                  
+                                  column(3,
+                                         uiOutput("acs_estrato_rb"), uiOutput("as_estrato_rb"),
+                                         uiOutput("acs_as_warning")
+                                  )
+                                  
+                                ),
+                                
+                                fluidRow(
+                                  radioButtons("yi_inv",
+                                               label="Variável utilizada nas estatísticas:",
+                                               choices = c("Indv", "G","VCC", "VSC"),
+                                               selected = "VCC",
+                                               inline=T )
+                                ),
+                                fluidRow(   
+                                  tabsetPanel(id="tabset_inv",
+                                              tabPanel("Totalização de parcelas",DT::dataTableOutput("tot_parc_tab") ) , 
+                                              tabPanel("Amostragem casual simples",DT::dataTableOutput("acs") ), 
+                                              tabPanel("Amostragem casual estratificada",DT::dataTableOutput("ace1"),br(),DT::dataTableOutput("ace2") ), 
+                                              tabPanel("Amostragem sistemática",DT::dataTableOutput("as") ) )
+                                )
+                                # ####
+                                
+                              )
+                     ),# TabPanel Inventario
+                     
+                     
                      # navbarMenu  Download ####
                      tabPanel("Download",
                               # Painel Download Tabelas ####
                               
+                              #shinyjs e mandatorio para escondermos o botao de enviar antes de tudo ser preenchido
+                              shinyjs::useShinyjs(),
+                              # css pra fazer o asterisco vermelho
+                              shinyjs::inlineCSS(appCSS),
+                              
+                              bsModalNoClose(id="formbs",
+                                             #"Por favor preencha essas informações antes de fazer o download",
+                                             "Para prosseguir para o download, por favor preencha as informações abaixo",
+                                             trigger= 'downloadtab',
+                                             div(
+                                               id = "form",
+                                               h3("Por favor, preencha as informações abaixo para fazer o download", 
+                                                  style = "text-align: center;"),
+                                               textInput("name", labelMandatory("Nome"), ""),
+                                               textInput("email", labelMandatory("e-mail")),
+                                               textInput("cidade", labelMandatory("Cidade"), ""),
+                                               textInput("estado", labelMandatory("Estado"), ""),
+                                               radioButtons("prof", labelMandatory("Profissão"),
+                                                            c( "Eng. Florestal","Estudante",
+                                                               "Eng. Agrônomo", "Biólogo", "Outro"),inline=TRUE,selected = character(0)),
+                                               textInput("emp_inst", labelMandatory("Empresa/Instituição"), ""),
+                                               radioButtons("motiv", labelMandatory("Aplicação do app"),
+                                                            c( "Consultoria","Pesquisa", "Outro"),inline=TRUE,selected = character(0)),
+                                               
+                                               actionButton("button_enviar", "Enviar", class = "btn-primary")
+                                             ),
+                                             
+                                             tags$head(tags$style("#formbs .modal-footer{display:none}
+                                                                           .modal-header{display:none}")) ),
                               fluidPage(
                                 
                                 
@@ -552,7 +605,7 @@ shinyUI(
                                 tabsetPanel(
                                   tabPanel("Download de tabelas", 
                                            fluidPage(
-                                             
+                                             # Necessario para os avisos funcionarem
                                              shinyalert::useShinyalert(),
                                              
                                              h2("Download de tabelas", style = "text-align: center;"),
@@ -616,7 +669,7 @@ shinyUI(
                                                              "Dispersao dos residuos em porcentagem para HT",
                                                              "Histograma dos residuos em porcentagem para HT",
                                                              "HT vs HT estimada"
-                                                             )),
+                                                           )),
                                                
                                                selectInput("graphformat",
                                                            "Escolha o formato do gráfico:",
@@ -638,8 +691,8 @@ shinyUI(
                      ) # final navbarMenu download ####    
                      # final da UI  ####    
           ) # navbarPage
-            )#tagList
-            ) # ShinyUI
+  )#tagList
+) # ShinyUI
 
 
 

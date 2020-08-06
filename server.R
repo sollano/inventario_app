@@ -1,4 +1,5 @@
 options(shiny.sanitize.errors = FALSE)
+options(shiny.maxRequestSize=30*1024^2) 
 library(shiny)
 suppressPackageStartupMessages(library(DT))
 #library(plotly)
@@ -10,14 +11,19 @@ library(tidyr)
 suppressPackageStartupMessages(library(dplyr))
 library(lazyeval)
 suppressPackageStartupMessages(library(ggplot2))
+library(ggdendro)
 library(ggthemes)
 library(openxlsx)
 library(rmarkdown)
 library(stringr)
-library(googledrive)
+#library(googledrive)
 library(googlesheets)
 library(rgeolocate)
-library(shinyalert)
+#library(shinyalert)
+suppressPackageStartupMessages(library(shinyBS))
+#suppressPackageStartupMessages(library(shinyjs))
+
+fieldsMandatory <- c("name", "email","cidade","estado","prof","emp_inst","motiv")
 
 # Data e functions ####
 
@@ -72,7 +78,10 @@ obs_names <- c("OBS")
 
 shinyServer(function(input, output, session) {
   
-  
+  shinyalert::shinyalert("Bem vindo ao app Inventário Florestal!",
+                         text = "Estamos investindo em melhorias para o app!",
+                         type = "info",
+                         closeOnEsc = TRUE)  
   # Importação ####
   
   #ui
@@ -2602,6 +2611,93 @@ shinyServer(function(input, output, session) {
   })
   
   # Download tabelas ####
+  ## pop-up formulario antes de fazer download ####
+  
+  # print(input$tab)
+  # Criar um valor reativo que tem +1 toda vez que alguem clica na aba de downloads
+  # para isso observamos os nomes das tabelas
+  downtab <- reactiveValues(downtab=0)
+  observeEvent(input$tab,{
+    tabname <- input$tab
+    if(tabname=="Download"){
+      downtab$downtab <- downtab$downtab+1
+    }
+    #print(downtab$downtab)
+  })
+  
+  # Abre o pop=up quando se clica na aba de download
+  # vanis observar o valor reativo criado anteriormente. Esse codigo roda apenas uma vez (once=TRUE),
+  # e ignora o valor inicial(ignoreInit=TRUE). Quando o download for 1, o modal abre, ou seja, quando
+  # a aba download for clicada pela primeira vez 
+  observeEvent(downtab$downtab,ignoreInit=TRUE,once=TRUE,{
+    if(downtab$downtab==1){
+      shinyBS::toggleModal(session, 'formbs', toggle = "open") }
+  })
+  
+  
+  # desabilitar o botao de enviar se os campos nao forem preenchidos
+  observe({
+    # check if all mandatory fields have a value
+    mandatoryFilled <-
+      vapply(fieldsMandatory,
+             function(x) {
+               !is.null(input[[x]]) && input[[x]] != ""
+             },
+             logical(1))
+    mandatoryFilled <- all(mandatoryFilled)
+    
+    # enable/disable the submit button
+    shinyjs::toggleState(id = "button_enviar", condition = mandatoryFilled)
+  })
+  
+  
+  # atualizar planilha com informações e fechar o pop-up quando o formulario e enviado (observamos o botao de enviar)
+  observeEvent(input$button_enviar,{
+    formenviar <- input$button_enviar
+    if(formenviar>0){
+      
+      # converter data pro timezone correto
+      # pega informacoes com base no ip e salva em um df
+      geolo <- rgeolocate::ip_api(input$ipid)
+      systime <- lubridate::with_tz(Sys.time(), tzone = geolo$timezone)
+      #data frame pra preencher planilha. nomes das colunas tem que ser iguais ao da planilha
+      resp <- data.frame(nome=input$name,
+                         email=input$email,
+                         cidade=input$cidade,
+                         estado=input$estado,
+                         profissao=input$prof,
+                         emp_inst=input$emp_inst,
+                         aplicacao=input$motiv,
+                         data = format(systime, "%d/%m/%Y"),
+                         dia = format(systime, "%d"),
+                         mes = format(systime, "%B"),
+                         ano = format(systime, "%Y"),
+                         hora=format(systime, "%X"),
+                         app="App Inventário Florestal")
+      #loga no googlesheets com token
+      suppressWarnings(googlesheets::gs_auth("googlesheets_token.rds",verbose = FALSE))
+      
+      #procura a planilha pelo nome, e adiciona a tabela resp como uma nova linha
+      googlesheets::gs_add_row(googlesheets::gs_title("form_usecase",verbose=FALSE), 
+                               ws = 1,
+                               input = resp,
+                               verbose = TRUE)
+      
+      # fecha modal
+      shinyBS::toggleModal(session, 'formbs', toggle = "close")
+      
+      
+      # botão de enviado ao final do app
+      shinyalert::shinyalert("Enviado!",
+                             type = "success",
+                             closeOnEsc = TRUE)
+      
+    }
+  }) 
+  
+  
+  
+  ## pop-up de doação e envio de download para o drive ####
   
   # Cria um valor inicial zero para verificar se o usuario fez algum download ou nao.
   # Se o usuario clicar em algum botao de download, sera add a esse valor uma unidade.
@@ -2610,15 +2706,17 @@ shinyServer(function(input, output, session) {
   # Codigo para criar um poppup (modal)
   
   # Iremos observar o botao de download.
-  # Como shiny nao permite que observemos o botao de download diretamente,
+  # Como shiny nao permite que observemos o botao de do wnload diretamente,
   #iremos observar o objeto rnDownloads, que tera seu valor alterado sempre que um download for feito.
   
   # a funcao de javascript abaixo direciona o usuario ao link de doacao, caso ele clique em ok
   
   #print(rnDownloads$ndown)
   
+  
   observeEvent(rnDownloads$ndown, {
-    # Show a modal when the button is pressed
+    
+    
     shinyalert::shinyalert("Obrigado!", 
                            "Se esse app lhe foi útil, por favor considere fazer uma doação para nos ajudar a manter esse projeto no ar!",
                            type = "success",
@@ -2629,6 +2727,7 @@ shinyServer(function(input, output, session) {
                            cancelButtonText = ":(",
                            confirmButtonText = "Doar!") }, ignoreInit = TRUE)
   
+  ## shiny download code ####
   
   output$checkbox_df_download <- renderUI({
     
