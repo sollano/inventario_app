@@ -79,7 +79,7 @@ Conheça nossos outros projetos:
 
 
 ### Desenvolvido por:
-[Sollano Rabelo Braga](https://www.linkedin.com/in/sollano/ "LinkedIn"), [Marcio Leles R. de Oliveira](http://lattes.cnpq.br/1808132114787261 "Curriculum Lattes") & [Eric Bastos Gorgens](http://lattes.cnpq.br/2266409430041146 "Curriculum Lattes")
+[Sollano Rabelo Braga](https://www.linkedin.com/in/sollano/ "LinkedIn")
 
 
 #### Para citar e referenciar este app, utilize:
@@ -94,12 +94,3 @@ BRAGA, S. R.; OLIVEIRA, M. L. R. DE; GORGENS, E. B. Inventário Florestal: Aplic
 CAMPOS, J. C. C.; LEITE, H. G. Mensuração florestal: perguntas e respostas. 3ª. ed. Viçosa: Editora UFV, 2013. 605 p.
 
 SOARES, C. P. B.; NETO, F. D. P.; SOUZA, A. L. D. Dendrometria e Inventário Florestal. 2ª. ed. Viçosa: UFV, 2012. 272 p.
-
-<div style="text-align:right">
-<a href="http://www.ufvjm.edu.br/"><img src="www/UFVJM_logo2.png" width="50" height="50"/> </a>
-<img src="www/EF_logo.png" width="50" height="50" />
-<a href="http://marcioromarco.webnode.com/"><img src="www/GEMMF_logo2.png" width="50" height="50"/> </a>
-<a href="https://sites.google.com/view/treelab-ufvjm"><img src="www/LAB_logo.png" width="50"height="50" /></a> 
-</div>
-
-
