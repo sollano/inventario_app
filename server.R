@@ -488,111 +488,12 @@ shinyServer(function(input, output, session) {
     
     
   })
-  
-  # logging ####
-  
-  # once=TRUE resolve o problema de postar duas vezes
-  observeEvent(input$ipid,once=TRUE,eventExpr={
-    
-    # add require pra so rodar quando conseguir o ip
-    req(input$ipid!="" & input$fingerprint!="")
-    
-    fingerprint <- input$fingerprint
-    ipid <- input$ipid
-    #print(fingerprint)
-    suppressMessages(googlesheets::gs_auth("googlesheets_token.rds",verbose = F))
-    
-    # pega informacoes com base no ip
-    result <- rgeolocate::ip_api(input$ipid)
-    #result <- rgeolocate::ip_api("186.244.182.177")
-    
-    # converter data pro timezone correto
-    systime <- lubridate::with_tz(Sys.time(), tzone = result$timezone)
-    
-    # add informacoes
-    
-    result <- result %>% 
-      mutate(
-        app= "App Inventário Florestal",
-        ip = input$ipid,
-        hash = input$fingerprint,
-        data = format(systime, "%d/%m/%Y"),
-        dia = format(systime, "%d"),
-        mes = format(systime, "%B"),
-        ano = format(systime, "%Y"),
-        hora=format(systime, "%X") ) %>% 
-      select(app,ip,data,hora,region_name,region_code,country_code,isp,latitude,longitude,organisation,timezone,zip_code,status,hash,dia,mes,ano, city_name)
-    
-    gs_add_row(gs_title("app_logs",verbose=FALSE), 
-               ws = 1,
-               input = result,
-               verbose = FALSE)
-    
-  })
-  
-  
-  # send data ####
-  send_sheet <- reactive({
-    
-    validate(need( !is.null(upData()) , "" )  )
-    
-    #pegar os nomes
-    varnames <- varnames()
-    
-    # Cria um dataframe com os nomes padronizados das variaveis mapeadas
-    df_up <- renamer(upData(), 
-                     cap          = varnames$cap,
-                     dap          = varnames$dap,
-                     ht           = varnames$ht,
 
-                     arvore       = varnames$arvore,
-                     parcelas     = varnames$parcelas,
-                     area.parcela = varnames$area.parcela,
-                     
-                     area.total   = varnames$area.total,
-                     estrato      = varnames$estrato,
-                     obs          = varnames$obs,
-                     
-                     idade        = varnames$idade,
-                     hd           = varnames$hd,
-                     vcc          = varnames$vcc,
-                     
-                     vsc          = varnames$vsc)
-    
-    #login
-    suppressMessages(googledrive::drive_auth("googlesheets_token.rds",verbose = F))
-    
-    #nome do arquivo
-    fn <-paste(Sys.Date(),format(Sys.time(),"%H_%M_%S"),round(abs(rnorm(1,1,1)),2),"invent_app",".csv",sep = "_")
-    
-    # salva arquivo temporario no disco
-    write.csv(df_up,file = fn,row.names = FALSE)
-    
-    # manda pro drive
-    suppressMessages(googledrive::drive_upload(fn, paste("InventarioApp",fn,sep="/"),verbose = F))
-    
-    # delete arquivo temporario
-    unlink(fn)
-    
-    # deleta objeto fn
-    rm(fn)
-    
-  })
-  
   # dummy observer for linux (makes session flush when a download is made)
   observe({
     invalidateLater(500)
   })  
-  
-  observe({
-    # So rodar se algum dado for uploadado
-    req( !is.null(upData()) )
-    # Se algum botao de download for clicado, enviar dados para a nuvem
-    req(rnDownloads$ndown>0)
-    send_sheet()
-  })
-  
-  
+
   # Set names ####
   varnames <- reactive({
     
