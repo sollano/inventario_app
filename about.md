@@ -12,45 +12,9 @@ precisamos de doações para cobrir os custos do servidor que mantêm o app disp
 
 <div><p style="float:left;">
 
-<p><font size="5"><a href="https://www.linkedin.com/in/marcio-manfrenato-80032ba6/">Marcio Manfrenato</a></font></p>
-  
-<p><font size="4"> R$ 150,00 </font></p>
-      
-        
-</div>
-        
-<div style="clear: left;"></div>
+<p><font size="5"> Jordanna Cardoso Gomes - R$ 10,00 </a></font></p>
 
-<div><p style="float:left;">
- 
-<p><font size="5"><a href="https://www.linkedin.com/in/fernanda-luiza-silva-de-oliveira-0a3bbb43/">Fernanda Luiza Silva de Oliveira</a></font></p>
-        
-<p><font size="4"> R$ 80,00</font></p>
-      
 </div>
-        
-<div style="clear: left;"></div>
-
-
-<div><p style="float:left;">
-  
-<p><font size="5"><a href="https://www.linkedin.com/in/jorge-luiz-b-mainart-15442866/">Jorge Luiz B. Mainart</a></font></p>
-    
-<p><font size="4"> R$ 75,00</font></p>
-      
-</div>
-        
-<div style="clear: left;"></div>
-
-<div><p style="float:left;">
-  
-<p><font size="5"><a href="https://www.linkedin.com/in/karize-patriota-80927258/">Karize Patriota</a></font></p>
-  
-<p><font size="4"> R$ 50,00</font></p>
-      
-</div>
-        
-<div style="clear: left;"></div>
 
 <p><font size="3">  Para contribuir com o nosso projeto, basta clicar no botão abaixo!</font></p>
 
