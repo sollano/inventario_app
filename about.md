@@ -8,11 +8,21 @@ precisamos de doações para cobrir os custos do servidor que mantêm o app disp
 </div>
 
 
-## Apoiadores do Mês 
+## Apoiadores do Mês de Novembro:
 
 <div><p style="float:left;">
 
-<p><font size="5"> Jordanna Cardoso Gomes - R$ 10,00 </a></font></p>
+<p><font size="5"> Mariana Miranda Andrade </a></font></p>
+
+<p><font size="5"> Múcio Nepomuceno </a></font></p>
+
+<p><font size="5"> Rauff Barbosa </a></font></p>
+
+<p><font size="5"> Karizen Patriota </a></font></p>
+
+<p><font size="5"> Fernanda Luiza Silva de Oliveira </a></font></p>
+
+<p><font size="5"> Jorge Luiz Mainart </a></font></p>
 
 </div>
 
