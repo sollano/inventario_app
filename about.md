@@ -26,6 +26,7 @@ precisamos de doações para cobrir os custos do servidor que mantêm o app disp
 
 </div>
 
+
 ###  Contribua com o nosso projeto via PIX por chave ou código QR, ou por cartão de crédito via Paypal:
 
 <div style="text-align:center">
